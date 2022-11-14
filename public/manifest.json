@@ -1,0 +1,9 @@
+{
+  "short_name": "React Tailwind by MZA",
+  "name": "React App Tailwind Template",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

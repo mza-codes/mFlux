@@ -1,0 +1,28 @@
+.horizRow {
+    display: flex;
+    overflow-x: auto;
+    gap: 14px;
+    padding: 1rem;
+    backdrop-filter: blur(22px);
+    &::-webkit-scrollbar{
+        display: none;
+    }
+    .poster {
+        filter: drop-shadow(0 0 0.1rem rgb(56, 219, 248));
+        img {
+            min-width: 10vw;
+            min-height: 16vh;
+            border-radius: 6px;
+            transition: scale 900ms ease-in-out;
+            transition: transform 600ms linear;
+            
+            &:hover{
+               transform: scale(1.1);
+            }
+        }
+    }
+}
+
+.title{
+    text-transform: capitalize;
+}
