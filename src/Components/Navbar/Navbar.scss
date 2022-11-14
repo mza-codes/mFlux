@@ -1,0 +1,42 @@
+.navBar {
+    width: 100%;
+    height: 70px;
+    // background: linear-gradient(to left, rgb(1, 31, 1), wheat, rgb(71, 64, 1));
+    position: fixed;
+    z-index: 1;
+
+
+    .navWrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+        padding: 0.4rem 0.6rem;
+
+        .logo {
+            img {
+                width: 140px;
+                height: 60px;
+                padding: .6rem;
+            }
+
+            padding: 0.4rem 0.2rem;
+            border-radius: 8px 4px 8px 4px;
+            transition: all 900ms !important;
+
+            &:hover {
+                filter: drop-shadow(0 0 1rem rgba(255, 103, 56, 0.685));
+                background: rgb(34, 1, 1);
+                cursor: pointer;
+            }
+        }
+
+        .Avatar {
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border-radius: 6px;
+        }
+    }
+}

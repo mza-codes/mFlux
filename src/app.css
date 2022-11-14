@@ -14,9 +14,12 @@ font-family: 'Righteous', cursive; */
 body {
     margin: 0;
     font-family: 'Abel', cursive;
-    /* background: rgba(0, 0, 0, 0.788); */
     background: #111;
     scroll-behavior: smooth !important;
+}
+
+body::-webkit-scrollbar{
+    display: none;
 }
 
 .LazyLoad {

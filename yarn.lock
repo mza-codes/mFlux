@@ -6091,6 +6091,11 @@ lower-case@^2.0.2:
   dependencies:
     tslib "^2.0.3"
 
+lozad@^1.16.0:
+  version "1.16.0"
+  resolved "https://registry.yarnpkg.com/lozad/-/lozad-1.16.0.tgz#86ce732c64c69926ccdebb81c8c90bb3735948b4"
+  integrity sha512-JBr9WjvEFeKoyim3svo/gsQPTkgG/mOHJmDctZ/+U9H3ymUuvEkqpn8bdQMFsvTMcyRJrdJkLv0bXqGm0sP72w==
+
 lru-cache@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-6.0.0.tgz#6d6fe6570ebd96aaf90fcad1dafa3b2566db3a94"

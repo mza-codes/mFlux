@@ -10,7 +10,7 @@ import {
 
 const Home = () => {
 
-    const listValues = [
+    const listCategories = [
         "trending",
         "romance",
         "popular",
@@ -70,27 +70,43 @@ const Home = () => {
         family: [],
     });
 
-    console.log("dataValues prinitn", data);
+    const fetchAll = () => {
+        for (let i = 0; i < listCategories.length; i++) {
+            const data = localStorage.getItem(listCategories[i]);
+            if (data) {
+                console.log("got data");
+                let value = JSON.parse(data);
+                console.log("data", listCategories[i], "<><>", [listCategories[i]])
+                setData((current) => ({ ...current, [listCategories[i]]: value }));
+            } else {
+                console.log("no data found");
+                fetchData();
+                break;
+            };
+        };
+    };
 
     const fetchData = async () => {
         console.log("Fetching Data");
         for (let i = 0; i < list.length; i++) {
             const { data } = await axios.get(list[i]);
-            setData((current) => ({ ...current, [listValues[i]]: data?.results }));
+            setData((current) => ({ ...current, [listCategories[i]]: data?.results }));
+            localStorage.setItem(listCategories[i], JSON.stringify(data?.results));
         };
     };
 
     useEffect(() => {
-        fetchData();
+        // fetchData();
+        fetchAll()
     }, []);
 
     return (
         <>
-            {listValues.map((value, i) => (
-                <HorizRow key={i} title={value} data={data[value] || []} />
+            {listCategories.map((value, i) => (
+                <HorizRow key={i} title={value.replace(/[0-9]/g, '')} data={data[value] || []} />
             ))}
         </>
     )
-}
+};
 
-export default Home
+export default Home;
