@@ -5,6 +5,7 @@
     // padding: 1rem;
     padding: 2rem 0.8rem;
     // backdrop-filter: blur(22px);
+    position: relative;
 
     &::-webkit-scrollbar {
         display: none;
@@ -20,6 +21,28 @@
             border-radius: 6px;
             transition: scale 900ms ease-in-out;
             transition: transform 600ms linear;
+        }
+    }
+
+    .scrollButtons {
+        display: flex;
+        justify-content: space-between;
+        z-index: 80;
+        button {
+            // border-radius: 50%;
+            color: white;
+            padding: 6px 12px;
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            &:first-child {
+                position: absolute;
+                right: 10px;
+            }
+            &:last-child{
+                position: absolute;
+                left: 10px;
+            }
         }
     }
 }
