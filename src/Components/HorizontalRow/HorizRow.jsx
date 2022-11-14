@@ -5,9 +5,9 @@ import './HorizRow.scss';
 const HorizRow = ({ data, title, ...props }) => {
     // data = [];
     return (
-        <div className='p-3'>
+        <div>
             {data.length ? <>
-                <h3 className='text-white text-2xl p-3 font-righteous pointer-events-none title'>
+                <h3 className='px-4 text-white text-2xl font-righteous pointer-events-none capitalize'>
                     {title || "Loading.."}
                 </h3>
                 <div className="horizRow">

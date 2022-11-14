@@ -3,8 +3,7 @@
     height: 70px;
     // background: linear-gradient(to left, rgb(1, 31, 1), wheat, rgb(71, 64, 1));
     position: fixed;
-    z-index: 1;
-
+    z-index: 20;
 
     .navWrapper {
         display: flex;
@@ -18,7 +17,8 @@
             img {
                 width: 140px;
                 height: 60px;
-                padding: .6rem;
+                padding: .4rem;
+                filter: drop-shadow(0 0 1.5rem black);
             }
 
             padding: 0.4rem 0.2rem;
@@ -27,7 +27,7 @@
 
             &:hover {
                 filter: drop-shadow(0 0 1rem rgba(255, 103, 56, 0.685));
-                background: rgb(34, 1, 1);
+                background: rgba(0, 0, 0, 0.521);
                 cursor: pointer;
             }
         }
@@ -37,6 +37,13 @@
             height: 40px;
             background: #fff;
             border-radius: 6px;
+            transition: all 900ms !important;
+
+            &:hover {
+                filter: drop-shadow(0 0 1rem rgba(255, 103, 56, 0.685));
+                background: rgb(255, 240, 109);
+                cursor: pointer;
+            }
         }
     }
 }

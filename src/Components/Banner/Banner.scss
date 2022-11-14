@@ -1,0 +1,77 @@
+.Banner {
+    min-height: 68vh;
+    position: relative;
+
+    .bg {
+        background-position: center;
+        height: 68vh;
+        width: 100%;
+        background-size: cover;
+        position: relative;
+        color: white;
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            left: 4px;
+            bottom: 2.5rem;
+            z-index: 6;
+            max-width: 35vw;
+            text-shadow: -3px -4px 13px black;
+
+            h5 {
+                max-width: 35vw;
+                max-height: 19vh;
+                overflow-y: hidden;
+                overflow-x: hidden;
+                overflow-wrap: break-word;
+            }
+
+            .buttons {
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+
+                button {
+                    padding: 6px 1.3rem;
+                    background: rgba($color: #000, $alpha: 0.3);
+                    border-radius: 8px;
+                    // font-weight: 600;
+
+                    &:hover {
+                        background: rgba($color: #fff, $alpha: 0.7);
+                        color: #000000;
+                    }
+                }
+            }
+        }
+
+        .changeBtn {
+            position: absolute;
+            right: 10px;
+            bottom: 3rem;
+            z-index: 12;
+
+            button {
+                padding: 6px 1.3rem;
+                background: rgba($color: #000, $alpha: 0.3);
+                border-radius: 8px;
+                // font-weight: 600;
+
+                &:hover {
+                    background: rgba($color: #fff, $alpha: 0.7);
+                    color: #000000;
+                }
+            }
+        }
+    }
+
+    .fade {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(to bottom, transparent 0%, #111 80%);
+    }
+}

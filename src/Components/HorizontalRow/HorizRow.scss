@@ -2,7 +2,8 @@
     display: flex;
     overflow-x: auto;
     gap: 14px;
-    padding: 1rem;
+    // padding: 1rem;
+    padding: 2rem 0.8rem;
     // backdrop-filter: blur(22px);
 
     &::-webkit-scrollbar {
@@ -10,21 +11,37 @@
     }
 
     .poster {
+        transition: all 700ms;
 
         // filter: drop-shadow(0 0 0.1rem rgb(56, 219, 248));
         img {
-            min-width: 10vw;
-            min-height: 16vh;
+            min-width: 12vw;
+            min-height: 18vh;
             border-radius: 6px;
             transition: scale 900ms ease-in-out;
             transition: transform 600ms linear;
-
-            &:hover {
-                transform: scale(1.1);
-            }
         }
     }
 }
+
+// Animate
+.horizRow:focus-within .poster,
+.horizRow:hover .poster {
+    transform: translateX(-25%);
+    z-index: 70;
+}
+
+.poster:focus~.poster,
+.poster:hover~.poster {
+    transform: translateX(25%);
+}
+
+.horizRow .poster:focus,
+.horizRow .poster:hover {
+    transform: scale(1.2);
+}
+
+// Closed
 
 .title {
     text-transform: capitalize;
@@ -32,13 +49,9 @@
 
 .rowSkeleton {
     display: flex;
-    overflow-x: auto;
+    overflow-x: hidden;
     gap: 14px;
     padding: 0.5rem;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
 
     div {
         min-width: 10vw;
