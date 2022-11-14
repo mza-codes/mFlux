@@ -2,10 +2,14 @@ import { w500 } from '../../Constants/Constants';
 import { useState } from 'react';
 import LazyImage from '../LazyImage';
 import './HorizRow.scss';
+import { useRecents } from '../../Contexts/RecentsProvider';
+import { useNavigate } from 'react-router-dom';
 
 const HorizRow = ({ data, title, ...props }) => {
     // data = [];
     const [scrollValue, setScrollValue] = useState(0);
+    const { recents, setRecents } = useRecents();
+    const route = useNavigate();
 
     const handleScroll = (param) => {
         switch (param) {
@@ -32,6 +36,18 @@ const HorizRow = ({ data, title, ...props }) => {
         };
     };
 
+    const handleStore = (data) => {
+        const duplicate = recents.filter((item) => {
+            return item.id !== data.id
+        });
+        duplicate.push(data);
+        duplicate.reverse();
+        console.log(duplicate);
+        setRecents(duplicate);
+        route('/recents');
+        return;
+    };
+
     return (
         <div>
             {data.length ? <>
@@ -48,7 +64,8 @@ const HorizRow = ({ data, title, ...props }) => {
                         </button>
                     </div>
                     {data.map((item, i) => (
-                        <div key={i} className="poster" style={{ translate: `-${scrollValue}px` }}>
+                        <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)}
+                            style={{ translate: `-${scrollValue}px` }}>
                             <LazyImage url={w500 + (item?.poster_path || item?.backdrop_path)} />
                         </div>
                     ))}
@@ -63,4 +80,4 @@ const HorizRow = ({ data, title, ...props }) => {
     )
 }
 
-export default HorizRow
+export default HorizRow;
