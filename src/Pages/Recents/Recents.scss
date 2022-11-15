@@ -1,0 +1,65 @@
+.itemWrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 16px;
+    align-items: center;
+    justify-content: center;
+
+    .info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        max-width: 40%;
+        min-width: 300px;
+    }
+
+    i{
+        color: #ffbb00;
+        padding-top: 6px;
+    }
+
+    .moviePoster{
+        
+        img{
+            // flex: 1;
+            border-radius: 16px;
+            filter: drop-shadow(0 0 .25rem white);
+            max-height: 70vh;
+            min-height: 40vh;
+            min-width: 300px;
+        }
+    }
+
+    // .buttons{
+        
+    //     &:first-child{
+            
+    //     }
+    //     &:last-child{
+            
+    //     }
+    // }
+
+
+}
+
+.poster {
+    border-radius: 16px !important;
+}
+
+.roundBtn{
+    border-radius: 50%;
+    &:first-child{
+        color: aquamarine;
+        &:hover{
+            color: #ffbb00;
+        }
+    }
+    &:last-child{
+        color: #ac0000;
+        &:hover{
+            color: red;
+        }
+    }
+}

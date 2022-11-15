@@ -76,7 +76,6 @@ const Home = () => {
             if (data) {
                 console.log("got data");
                 let value = JSON.parse(data);
-                console.log("data", listCategories[i], "<><>", [listCategories[i]])
                 setData((current) => ({ ...current, [listCategories[i]]: value }));
             } else {
                 console.log("no data found");

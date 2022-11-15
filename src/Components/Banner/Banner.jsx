@@ -24,7 +24,7 @@ const Banner = () => {
         <div className='Banner'>
             <div className="bg"
                 style={{ backgroundImage: `url(${POSTER_URL + banner?.backdrop_path || "/ekZobS8isE6mA53RAiGDG93hBxL.jpg"})` }}>
-                <div className="content capitalize">
+                <div className="content sm:w-full lg:w-1/2 capitalize">
                     <h2 className='font-righteous text-4xl p-3'>{banner?.title || banner?.original_title}</h2>
                     <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
                     <div className="buttons p-3 font-righteous">
