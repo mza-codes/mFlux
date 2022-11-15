@@ -4,20 +4,24 @@
     gap: 14px;
     padding: 2rem 0.8rem;
     // backdrop-filter: blur(22px);
-    position: relative;
-
+    // position: relative;
+    transition: all 800ms linear ;
+    scroll-behavior: smooth;
     &::-webkit-scrollbar {
         display: none;
     }
 
     .poster {
         transition: all 700ms;
-
+        // translate: -1300%;
         // translate: -2300px;
         // filter: drop-shadow(0 0 0.1rem rgb(56, 219, 248));
+        // animation: scrollHoriz 1s linear infinite alternate;
+        min-width: 200px;
+        min-height: 200px;
         img {
-            min-width: 12vw;
-            min-height: 18vh;
+            width:  100%;
+            height: 100%;
             border-radius: 6px;
             transition: scale 900ms ease-in-out;
             transition: transform 600ms linear;
@@ -33,6 +37,9 @@
         button {
             color: white;
             padding: 6px 12px;
+            position: absolute;
+            outline: none;
+            border: none;
 
             i {
                 background: rgba(0, 0, 0, 0.39);
@@ -48,12 +55,12 @@
             }
 
             &:first-child {
-                position: absolute;
+                
                 right: 0;
             }
 
             &:last-child {
-                position: absolute;
+                
                 left: 0;
             }
         }
@@ -76,12 +83,7 @@
 .horizRow .poster:hover {
     transform: scale(1.2);
 }
-
 // Closed
-
-.title {
-    text-transform: capitalize;
-}
 
 .rowSkeleton {
     display: flex;
@@ -108,6 +110,15 @@
     to {
         // background: rgba($color: #ffffff, $alpha: 0.1);
         opacity: 0.6;
+    }
+}
+
+@keyframes scrollHoriz {
+    from{
+        transform: translateX(0%);
+    }
+    to{
+        transform: translateX(-1200%);
     }
 }
 

@@ -8,7 +8,7 @@ const Navbar = () => {
   return (
     <div className='navBar'>
       <div className="navWrapper">
-        <div className="logo" onClick={e => route('/', { replace: true })}>
+        <div className="logo" onClick={e => route('/')}>
           <img src={mFlux} alt="_logo_mFlux" />
         </div>
         <div className='Avatar'>

@@ -8,5 +8,29 @@
         flex: 1;
         display: flex;
         flex-direction: column;
+
     }
+
+    .moviePoster{
+        img{
+            border-radius: 16px;
+            filter: drop-shadow(0 0 .25rem white);
+        }
+    }
+
+    // .buttons{
+        
+    //     &:first-child{
+            
+    //     }
+    //     &:last-child{
+            
+    //     }
+    // }
+
+
+}
+
+.poster {
+    border-radius: 16px !important;
 }

@@ -1,5 +1,5 @@
 import { w500 } from '../../Constants/Constants';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import LazyImage from '../LazyImage';
 import './HorizRow.scss';
 import { useRecents } from '../../Contexts/RecentsProvider';
@@ -7,29 +7,22 @@ import { useNavigate } from 'react-router-dom';
 
 const HorizRow = ({ data, title, ...props }) => {
     // data = [];
-    const [scrollValue, setScrollValue] = useState(0);
+    // const [scrollValue, setScrollValue] = useState(0);
     const { recents, setRecents } = useRecents();
+    const elRef = useRef();
     const route = useNavigate();
 
     const handleScroll = (param) => {
         switch (param) {
             case "next":
-                console.log("NEXT");
-                if (scrollValue > 1500) {
-                    setScrollValue(2300);
-                    console.log("limit reached", scrollValue);
-                    return;
-                };
-                setScrollValue((curr) => (curr + 500));
+                elRef.current.scrollTo({
+                    left: elRef.current.scrollLeft + 200
+                });
                 break;
             case "prev":
-                console.log("PREVI");
-                if (scrollValue < 0) {
-                    setScrollValue(0);
-                    console.log("scroll value negative", scrollValue);
-                    return;
-                };
-                setScrollValue((curr) => (curr - 500));
+                elRef.current.scrollTo({
+                    left: elRef.current.scrollLeft - 200
+                });
                 break;
             default:
                 break;
@@ -48,24 +41,41 @@ const HorizRow = ({ data, title, ...props }) => {
         return;
     };
 
+    // const scrollHoriz = () => {
+    //     const el = elRef.current;
+    //     if (el) {
+    //         const onWheel = e => {
+    //             if (e.deltaY == 0) return;
+    //             e.preventDefault();
+    //             el.scrollTo({
+    //                 left: el.scrollLeft + e.deltaY,
+    //                 behavior: "smooth"
+    //             });
+    //         };
+    //         el.addEventListener("wheel", onWheel);
+    //         return () => el.removeEventListener("wheel", onWheel);
+    //     };
+    // };
+
     return (
         <div>
             {data.length ? <>
                 <h3 className='px-4 text-white text-2xl font-righteous pointer-events-none capitalize'>
                     {title || "Loading.."}
                 </h3>
-                <div className="horizRow">
+                <div className="horizRow" ref={elRef} >
                     <div className="scrollButtons">
-                        <button onClick={() => handleScroll("next")} onMouseEnter={e => handleScroll("next")} >
+                        <button onClick={() => handleScroll("next")} onMouseEnter={e => handleScroll("next")}>
                             <i className="ri-arrow-right-s-line"></i>
                         </button>
-                        <button onClick={() => handleScroll("prev")} onMouseEnter={e => handleScroll("prev")} >
+                        <button onClick={() => handleScroll("prev")} onMouseEnter={e => handleScroll("prev")}>
                             <i className="ri-arrow-left-s-line"></i>
                         </button>
                     </div>
                     {data.map((item, i) => (
                         <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)}
-                            style={{ translate: `-${scrollValue}px` }}>
+                        // style={{ translate: `-${scrollValue}%` }}
+                        >
                             <LazyImage url={w500 + (item?.poster_path || item?.backdrop_path)} />
                         </div>
                     ))}
