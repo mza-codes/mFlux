@@ -18,25 +18,40 @@ const Recents = () => {
         data: {}
     });
     const { recents } = useRecents();
-    console.log(movie);
+    const [loading, setLoading] = useState(false);
+    const [err, setErr] = useState({
+        trailer: {
+            active: false,
+            msg: ""
+        }
+    });
 
     const playTrailer = async (id) => {
+        setLoading(true);
         const controller = new AbortController();
         try {
             const { data } = await
                 axios.get(`${TMDB_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`, { signal: controller.signal });
             controller.abort("data fetch success");
             if (data?.results?.length) {
-                // case
                 let v = Math.floor(Math.random() * data.results.length);
-                // let v = count
                 console.log(data?.results);
                 setTrailers((curr) => ({ ...curr, list: data.results, data: data?.results[v], isActive: true }));
+                setTimeout(() => {
+                    const view = document.getElementById('watchTrailer');
+                    view && view.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    setLoading(false);
+                    return;
+                }, 1500);
             } else {
+                let reason = "There are no related videos available!";
+                setLoading(false);
                 console.log("No videos Available");
+                setErr((curr) => ({ ...curr, trailer: { active: true, msg: reason } }))
                 controller.abort("No Videos Available");
             };
         } catch (err) {
+            setLoading(false);
             console.log("Error Fetching Trailer", err);
             controller.abort("Error Occured");
         };
@@ -47,23 +62,30 @@ const Recents = () => {
         console.log(isAvailable);
         if (isAvailable) {
             let v = Math.floor(Math.random() * trailers?.list?.length);
-            // let v = count
             setTrailers((curr) => ({ ...curr, data: curr?.list[v] }));
             return;
         } else { return false; };
     };
 
     useEffect(() => {
-        setPlayerScreen({
-            width: window.innerWidth - 10,
-            height: window.innerHeight / 2 - 10
-        });
+        if (window.innerWidth <= 640) {
+            setPlayerScreen({
+                width: window.innerWidth - 10,
+                height: window.innerHeight / 2 - 10
+            });
+        } else {
+            setPlayerScreen({
+                width: window.innerWidth - 10,
+                height: window.innerHeight - 10
+            });
+        };
         recents?.length && setMovie(recents[0]);
     }, []);
 
     return (
         <> <Navbar />
-            <div className='recentBg pt-20'>
+            <div className='recentBg0 pt-20 '
+                style={{ backgroundImage: `url(${POSTER_URL + movie?.backdrop_path || ""})` }}>
                 <div className="itemWrapper ">
                     <div className='moviePoster'>
                         <LazyImage url={POSTER_URL + movie?.poster_path || movie?.backdrop_path || ""} />
@@ -81,15 +103,24 @@ const Recents = () => {
                             </h4>
                         </div>
                         <div className="buttons gap-2">
-                            <button className='p-2 my-2 rounded-md bg-white bg-opacity-10 hover:bg-lime-800 text-white'
-                                onClick={e => playTrailer(movie?.id)}>
+                            <button className='p-2 my-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600
+                             text-white disabled:line-through disabled:hover:bg-inherit'
+                                onClick={e => playTrailer(movie?.id)} disabled={trailers.isActive}>
                                 Watch Trailer</button>
-                            <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-lime-800 text-white'
+                            <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
                             > Add to Watch</button>
                         </div>
+                        {err?.trailer?.active && <div className='w-1/2'>
+                            <p className='font-kanit text-red-600'>{err?.trailer?.msg}</p>
+                        </div>}
+                        {loading && <div className='w-full py-2'>
+                            <div className='load'><div> <h5 className='text-xl font-righteous text-center text-black'>
+                                Loading...</h5>
+                            </div></div>
+                        </div>}
                     </div>}
                 </div>
-                {trailers.isActive && <div className='w-auto h-auto p-2 m-2'>
+                {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto p-2 m-2'>
                     <div className='w-full flex flex-row justify-between text-white'>
                         <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
                             <i className="ri-refresh-fill"></i>
@@ -104,7 +135,6 @@ const Recents = () => {
                             <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 bg-gradient-to-br
                              from-orange-400 to-red-600 cursor-pointer text-white rounded-lg opacity-50 
                              hover:opacity-100 p-3 m-1 text-xs" onClick={e => setTrailers(curr => ({ ...curr, data: video }))}>
-                                {/* <p className='text-xs'>{video?.type}</p> */}
                                 {video?.type}
                             </div>
                         ))}

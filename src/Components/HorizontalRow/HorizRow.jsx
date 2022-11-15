@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 const HorizRow = ({ data, title, ...props }) => {
     // data = [];
-    // const [scrollValue, setScrollValue] = useState(0);
     const { recents, setRecents } = useRecents();
     const elRef = useRef();
     const route = useNavigate();
