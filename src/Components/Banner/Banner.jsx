@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { POSTER_URL } from '../../Constants/Constants';
 import { useRecents } from '../../Contexts/RecentsProvider';
+import HorizRow from '../HorizontalRow/HorizRow';
 import './Banner.scss';
 
 const Banner = () => {
@@ -36,6 +37,7 @@ const Banner = () => {
     }, []);
 
     return (
+        <>
         <div className='Banner'>
             <div className="bg"
                 style={{ backgroundImage: `url(${POSTER_URL + banner?.backdrop_path || ""})` }}>
@@ -53,7 +55,8 @@ const Banner = () => {
             </div>
             <div className="fade"></div>
         </div>
-    )
+        <HorizRow title={"LoadNow"} data={[]} />
+    </>)
 }
 
 export default Banner
