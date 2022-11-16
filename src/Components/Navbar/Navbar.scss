@@ -26,8 +26,8 @@
             transition: all 900ms !important;
 
             &:hover {
-                filter: drop-shadow(0 0 1rem rgba(255, 103, 56, 0.685));
-                background: rgba(0, 0, 0, 0.521);
+                filter: drop-shadow(0 0 1rem rgba(255, 0, 0, 0.685));
+                background: rgba(0, 0, 0, 0.411);
                 cursor: pointer;
             }
         }
@@ -45,5 +45,28 @@
                 cursor: pointer;
             }
         }
+    }
+}
+
+.inputArea {
+
+    input {
+        width: 200px;
+        outline: none;
+        border-radius: 6px 6px 0px 0px;
+        padding: .5rem;
+        background: rgba($color: #000000, $alpha: 0.6);
+        color: #fff;
+        border-bottom: 2px solid black;
+
+        &:focus {
+            border-bottom: 2px solid rgb(154, 255, 108);
+        }
+    }
+}
+
+.searchBtn{
+    i{
+        font-weight: 600;
     }
 }
