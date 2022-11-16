@@ -4,10 +4,12 @@ import LazyImage from '../LazyImage';
 import './HorizRow.scss';
 import { useRecents } from '../../Contexts/RecentsProvider';
 import { useNavigate } from 'react-router-dom';
+import useSearchResults from '../../Services/ResultFetch';
 
-const HorizRow = ({ data, title, ...props }) => {
+const HorizRow = ({ data, title, close, ...props }) => {
     // data = [];
     const { recents, setRecents } = useRecents();
+    const closeResult = useSearchResults(state => state.toggleClose);
     const elRef = useRef();
     const route = useNavigate();
 
@@ -59,9 +61,14 @@ const HorizRow = ({ data, title, ...props }) => {
     return (
         <div>
             {data.length ? <>
-                <h3 className='px-4 text-white text-2xl font-righteous pointer-events-none capitalize'>
-                    {title || "Loading.."}
-                </h3>
+                <div className='w-full flex flex-row justify-between items-center'>
+                    <h3 className={`px-4 text-white text-2xl font-righteous pointer-events-none ${close ? "text-emerald-400" : "capitalize"}`}>
+                        {title || "Loading.."}
+                    </h3>
+                    {close && <button className='text-2xl mx-3 text-red-600 hover:text-orange-500' onClick={e => closeResult()}>
+                        <iconify-icon icon="eva:close-square-fill" height="34" width={"34"} />
+                    </button>}
+                </div>
                 <div className="horizRow" ref={elRef} >
                     <div className="scrollButtons">
                         <button onClick={() => handleScroll("next")} onMouseEnter={e => handleScroll("next")}>

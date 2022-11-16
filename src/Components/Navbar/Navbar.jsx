@@ -21,7 +21,9 @@ const Navbar = () => {
       e.target.style.borderBottom = "3px solid #68fc54";
       // FetchData
       fetchresult(key);
+      return;
     } else {
+      
       e.target.style.borderBottom = "3px solid red";
       return;
     };

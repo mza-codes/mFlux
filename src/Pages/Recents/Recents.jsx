@@ -85,7 +85,7 @@ const Recents = () => {
     return (
         <> <Navbar />
             <div className='recentBg0 pt-20 '
-                style={{ backgroundImage: `url(${POSTER_URL + movie?.backdrop_path || ""})` }}>
+                style={{ backgroundImage: `url(${(POSTER_URL + movie?.backdrop_path) || ""})` }}>
                 <div className="itemWrapper ">
                     <div className='moviePoster'>
                         <LazyImage url={POSTER_URL + movie?.poster_path || movie?.backdrop_path || ""} />
@@ -130,7 +130,7 @@ const Recents = () => {
                         </button>
                     </div>
                     {trailers?.list?.length && <div className='w-full flex flex-row items-center flex-wrap p-2
-                    justify-center text-center gap-2'>
+                        justify-center text-center gap-2'>
                         {trailers?.list?.map((video) => (
                             <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 bg-gradient-to-br
                              from-orange-400 to-red-600 cursor-pointer text-white rounded-lg opacity-50 z-50
