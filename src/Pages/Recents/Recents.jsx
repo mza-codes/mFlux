@@ -133,7 +133,7 @@ const Recents = () => {
                     justify-center text-center gap-2'>
                         {trailers?.list?.map((video) => (
                             <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 bg-gradient-to-br
-                             from-orange-400 to-red-600 cursor-pointer text-white rounded-lg opacity-50 
+                             from-orange-400 to-red-600 cursor-pointer text-white rounded-lg opacity-50 z-50
                              hover:opacity-100 p-3 m-1 text-xs" onClick={e => setTrailers(curr => ({ ...curr, data: video }))}>
                                 {video?.type}
                             </div>

@@ -3,11 +3,13 @@ import mFlux from './mFlux.png';
 import Avatar from './userAvatar.png';
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react';
+import useSearchResults from '../../Services/ResultFetch';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const route = useNavigate();
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
+  const fetchresult = useSearchResults((state) => state.getResults);
 
   const handleSearch = (e) => {
     console.log("QUERY++", e.target.value);
@@ -18,8 +20,8 @@ const Navbar = () => {
       console.log("SET");
       e.target.style.borderBottom = "3px solid #68fc54";
       // FetchData
+      fetchresult(key);
     } else {
-      console.log(e.target);
       e.target.style.borderBottom = "3px solid red";
       return;
     };
