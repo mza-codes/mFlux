@@ -67,6 +67,10 @@ const Recents = () => {
         } else { return false; };
     };
 
+    const addToWishlist = (data) => {
+        console.log("add to wishlist");
+    };
+
     useEffect(() => {
         if (window.innerWidth <= 640) {
             setPlayerScreen({
@@ -80,6 +84,7 @@ const Recents = () => {
             });
         };
         recents?.length && setMovie(recents[0]);
+        console.log("Loading Wishlist", JSON.parse(localStorage.getItem('mflux-wishlist')));
     }, []);
 
     return (
@@ -108,7 +113,7 @@ const Recents = () => {
                                 onClick={e => playTrailer(movie?.id)} disabled={trailers.isActive}>
                                 Watch Trailer</button>
                             <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
-                            > Add to Watch</button>
+                                onClick={e => addToWishlist(movie)}> Add to Watch</button>
                         </div>
                         {err?.trailer?.active && <div className='w-1/2'>
                             <p className='font-kanit text-red-600'>{err?.trailer?.msg}</p>

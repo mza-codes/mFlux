@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { POSTER_URL } from '../../Constants/Constants';
 import { useRecents } from '../../Contexts/RecentsProvider';
 import useSearchResults from '../../Services/ResultFetch';
-// import HorizRow from '../HorizontalRow/HorizRow';
 import './Banner.scss';
 
 const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
@@ -15,7 +14,8 @@ const Banner = () => {
     const movie = localStorage.getItem("family");
     const values = useSearchResults((state) => state);
     const { result: results, query, error: err, gotResult } = values;
-    console.log("logging Results from Banner", values);
+    console.log("currentPage", values?.response?.page);
+    console.log(values?.response);
 
     const changeBg = () => {
         if (movie) {

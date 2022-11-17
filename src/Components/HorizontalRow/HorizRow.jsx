@@ -1,15 +1,18 @@
 import { w500 } from '../../Constants/Constants';
-import { useRef } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import LazyImage from '../LazyImage';
 import './HorizRow.scss';
 import { useRecents } from '../../Contexts/RecentsProvider';
 import { useNavigate } from 'react-router-dom';
 import useSearchResults from '../../Services/ResultFetch';
+import defaultImg from '../../placeholder/default.jpg';
+
+const PaginatedItems = lazy(() => import('../ReactPagination'));
 
 const HorizRow = ({ data, title, close, ...props }) => {
     // data = [];
     const { recents, setRecents } = useRecents();
-    const { toggleClose: closeResult, response: resultData, getResults, query } = useSearchResults();
+    const { toggleClose: closeResult, response: resultData } = useSearchResults();
     const elRef = useRef();
     const route = useNavigate();
 
@@ -42,31 +45,6 @@ const HorizRow = ({ data, title, close, ...props }) => {
         return;
     };
 
-    const getPage = (value) => {
-        console.log(value);
-        const { total_pages, page } = resultData;
-        if (page >= total_pages) return;
-        let pageNum = value === 0 ? parseInt(page) - 1 : parseInt(page) + 1;
-        console.log(pageNum);
-        getResults(query, pageNum);
-    };
-
-    // const scrollHoriz = () => {
-    //     const el = elRef.current;
-    //     if (el) {
-    //         const onWheel = e => {
-    //             if (e.deltaY == 0) return;
-    //             e.preventDefault();
-    //             el.scrollTo({
-    //                 left: el.scrollLeft + e.deltaY,
-    //                 behavior: "smooth"
-    //             });
-    //         };
-    //         el.addEventListener("wheel", onWheel);
-    //         return () => el.removeEventListener("wheel", onWheel);
-    //     };
-    // };
-
     return (
         <div>
             {data.length ? <>
@@ -89,20 +67,19 @@ const HorizRow = ({ data, title, close, ...props }) => {
                     </div>
                     {data.map((item, i) => (
                         <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)} >
-                            <LazyImage url={w500 + (item?.poster_path || item?.backdrop_path)} />
+                            <LazyImage
+                                url={item?.poster_path || item?.backdrop_path ?
+                                    (w500 + item?.poster_path || item?.backdrop_path) : defaultImg} />
                         </div>
                     ))}
                 </div>
                 {close && resultData?.total_pages > 1 &&
-                    <div className='w-full flex flex-row justify-between items-center'>
-                        {resultData?.page > 1 &&
-                            <button className='text-2xl mx-4 pb-2 mb-2 text-blue-600 hover:text-cyan-500' onClick={e => getPage(0)}>
-                                <iconify-icon icon="material-symbols:arrow-circle-left-rounded" height="34" width={"34"} />
-                            </button>}
-                        {resultData?.total_pages > resultData?.page &&
-                            <button className='text-2xl mx-4 pb-2 mb-2 text-red-600 hover:text-orange-500' onClick={e => getPage(1)}>
-                                <iconify-icon icon="material-symbols:arrow-circle-right-rounded" height="34" width={"34"} />
-                            </button>}
+                    <div className='w-full flex flex-row justify-center items-center'>
+                        <div>
+                            <Suspense fallback={<h1 className='text-2xl text-yellow-400 font-righteous'>Loading Page Controls...</h1>}>
+                                <PaginatedItems itemsPerPage={20} data={{ resultData }} />
+                            </Suspense>
+                        </div>
                     </div>}
             </> : <>
                 <div className='loadText'></div>

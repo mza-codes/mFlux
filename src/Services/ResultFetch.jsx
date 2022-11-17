@@ -16,6 +16,8 @@ const useSearchResults = create((set) => ({
     response: {},
     getResults: async (query, page) => {
         console.log("data got to zustandstore", query, page);
+        // let pageNum = parseInt(page) + 1;
+        console.log(`Fetching PAGE ${page}`);
         try {
             const { data } = await tmdbApi.get(`/search/movie?api_key=${API_KEY}&query=${query}&page=${page}`);
             console.log("RESULT Fetched", data);
@@ -24,7 +26,7 @@ const useSearchResults = create((set) => ({
                     ...state,
                     gotResult: true,
                     query: query,
-                    result: [...data?.results, ...state.result.slice(0,6)],
+                    result: [...data?.results, ...state.result.slice(0, 6)],
                     response: data,
                     isClosed: false
                 }));
@@ -53,9 +55,10 @@ const useSearchResults = create((set) => ({
             isClosed: !state.isClosed
         }))
     },
-    getPage: async (page, data) => {
-        console.log("Page ", page, "MAIN DATA:", data);
+    getPage: async (page) => {
+        console.log("Page MAIN DATA: ", page);
         // const { data } = await tmdbApi.get(`/search/movie?query=${"g"}&page=${page}&api_key=${API_KEY}`);
+        // parseInt(page) + 1
         set(state => ({
             ...state,
             response: { ...state.response, page: page }

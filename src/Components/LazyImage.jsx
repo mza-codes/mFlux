@@ -4,7 +4,7 @@ const LazyImage = ({ h, w, url, ...other }) => {
     return (
         <>
             <LazyLoad offset={200}>
-                <img src={url} alt="_loading.." {...other} />
+                <img src={url} alt="_loading.." {...other} className="text-white" />
             </LazyLoad>
         </>
     )
