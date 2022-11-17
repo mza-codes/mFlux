@@ -1,5 +1,5 @@
 import { w500 } from '../../Constants/Constants';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import LazyImage from '../LazyImage';
 import './HorizRow.scss';
 import { useRecents } from '../../Contexts/RecentsProvider';
@@ -9,7 +9,7 @@ import useSearchResults from '../../Services/ResultFetch';
 const HorizRow = ({ data, title, close, ...props }) => {
     // data = [];
     const { recents, setRecents } = useRecents();
-    const closeResult = useSearchResults(state => state.toggleClose);
+    const { toggleClose: closeResult, response: resultData, getResults, query } = useSearchResults();
     const elRef = useRef();
     const route = useNavigate();
 
@@ -40,6 +40,15 @@ const HorizRow = ({ data, title, close, ...props }) => {
         setRecents(duplicate);
         route('/recents');
         return;
+    };
+
+    const getPage = (value) => {
+        console.log(value);
+        const { total_pages, page } = resultData;
+        if (page >= total_pages) return;
+        let pageNum = value === 0 ? parseInt(page) - 1 : parseInt(page) + 1;
+        console.log(pageNum);
+        getResults(query, pageNum);
     };
 
     // const scrollHoriz = () => {
@@ -79,13 +88,22 @@ const HorizRow = ({ data, title, close, ...props }) => {
                         </button>
                     </div>
                     {data.map((item, i) => (
-                        <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)}
-                        // style={{ translate: `-${scrollValue}%` }}
-                        >
+                        <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)} >
                             <LazyImage url={w500 + (item?.poster_path || item?.backdrop_path)} />
                         </div>
                     ))}
                 </div>
+                {close && resultData?.total_pages > 1 &&
+                    <div className='w-full flex flex-row justify-between items-center'>
+                        {resultData?.page > 1 &&
+                            <button className='text-2xl mx-4 pb-2 mb-2 text-blue-600 hover:text-cyan-500' onClick={e => getPage(0)}>
+                                <iconify-icon icon="material-symbols:arrow-circle-left-rounded" height="34" width={"34"} />
+                            </button>}
+                        {resultData?.total_pages > resultData?.page &&
+                            <button className='text-2xl mx-4 pb-2 mb-2 text-red-600 hover:text-orange-500' onClick={e => getPage(1)}>
+                                <iconify-icon icon="material-symbols:arrow-circle-right-rounded" height="34" width={"34"} />
+                            </button>}
+                    </div>}
             </> : <>
                 <div className='loadText'></div>
                 <div className='rowSkeleton'>

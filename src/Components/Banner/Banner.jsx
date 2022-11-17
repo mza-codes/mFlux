@@ -46,7 +46,7 @@ const Banner = () => {
         <>
             <div className='Banner'>
                 <div className="bg"
-                    style={{ backgroundImage: `url(${(POSTER_URL + banner?.backdrop_path) || ""})` }}>
+                    style={{ backgroundImage: `url(${POSTER_URL + (banner?.backdrop_path ? banner?.backdrop_path : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})` }}>
                     <div className="content sm:w-full lg:w-1/2 capitalize">
                         <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title}</h2>
                         <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
