@@ -13,26 +13,41 @@ const useSearchResults = create((set) => ({
     query: "",
     error: "",
     isClosed: false,
-    getResults: async (query) => {
-        console.log("data got to zustandstore", query);
-        const { data } = await tmdbApi.get(`/search/movie?api_key=${API_KEY}&query=${query}`);
-        console.log("RESULT Fetched", data);
-        if (data?.results?.length) {
-            set((state) => ({
-                gotResult: true,
-                query: query,
-                result: data?.results,
-                isClosed: false
-            }))
-        } else {
+    response: {},
+    getResults: async (query, page) => {
+        console.log("data got to zustandstore", query, page);
+        // let pageNum = parseInt(page) + 1;
+        console.log(`Fetching PAGE ${page}`);
+        try {
+            const { data } = await tmdbApi.get(`/search/movie?api_key=${API_KEY}&query=${query}&page=${page}`);
+            console.log("RESULT Fetched", data);
+            if (data?.results?.length) {
+                set((state) => ({
+                    ...state,
+                    gotResult: true,
+                    query: query,
+                    result: [...data?.results, ...state.result.slice(0, 6)],
+                    response: data,
+                    isClosed: false
+                }));
+            } else {
+                set(state => ({
+                    ...state,
+                    gotResult: false,
+                    query: query,
+                    result: [],
+                    error: `No titles found regarding query "${query}"`,
+                    isClosed: false
+                }));
+            };
+        } catch (err) {
+            console.log("Error Fetching", err);
             set(state => ({
+                ...state,
                 gotResult: false,
-                query: query,
-                result: [],
-                error: `No titles found regarding query "${query}"`,
-                isClosed: false
-            }))
-        }
+                error: "Failed to connect with server !"
+            }));
+        };
     },
     toggleClose: () => {
         set(state => ({
@@ -40,6 +55,15 @@ const useSearchResults = create((set) => ({
             isClosed: !state.isClosed
         }))
     },
+    getPage: async (page) => {
+        console.log("Page MAIN DATA: ", page);
+        // const { data } = await tmdbApi.get(`/search/movie?query=${"g"}&page=${page}&api_key=${API_KEY}`);
+        // parseInt(page) + 1
+        set(state => ({
+            ...state,
+            response: { ...state.response, page: page }
+        }))
+    }
 
 
 }));

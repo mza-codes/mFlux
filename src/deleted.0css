@@ -19,7 +19,7 @@ body {
     scroll-behavior: smooth !important;
 }
 
-body::-webkit-scrollbar{
+body::-webkit-scrollbar {
     display: none;
 }
 
@@ -30,4 +30,13 @@ body::-webkit-scrollbar{
 
 .is-visible {
     opacity: 1;
+}
+
+.activePg>a {
+    background: #42fc5b;
+    border-radius: 4px;
+    padding: 6px;
+    color: black;
+    font-style: 'Poppins', 'cursive';
+    font-weight: 600;
 }
