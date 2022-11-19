@@ -77,7 +77,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
                     <div className='w-full flex flex-row justify-center items-center'>
                         <div>
                             <Suspense fallback={<h1 className='text-2xl text-yellow-400 font-righteous'>Loading Page Controls...</h1>}>
-                                <PaginatedItems itemsPerPage={20} data={{ resultData }} />
+                                <PaginatedItems data={{ resultData }} />
                             </Suspense>
                         </div>
                     </div>}

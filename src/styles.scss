@@ -17,6 +17,16 @@ body {
     font-family: 'Abel', cursive;
     background: #111;
     scroll-behavior: smooth !important;
+
+    button{
+        outline: none;
+    }
+}
+
+// Error Bar
+.errBar{
+    background: linear-gradient(to right, transparent,rgb(255, 33, 33), rgb(255, 94, 94),transparent);
+    z-index: 101;
 }
 
 body::-webkit-scrollbar {

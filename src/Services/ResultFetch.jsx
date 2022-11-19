@@ -1,11 +1,6 @@
-import axios from 'axios';
 import create from 'zustand';
 import { API_KEY, TMDB_URL } from '../Constants/Constants';
-
-const tmdbApi = axios.create({
-    baseURL: TMDB_URL,
-    timeout: 5000
-});
+import { tmdbApi } from '../Utils/tmdb';
 
 const useSearchResults = create((set) => ({
     gotResult: false,

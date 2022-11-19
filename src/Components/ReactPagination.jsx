@@ -1,18 +1,15 @@
 import ReactPaginate from 'react-paginate';
 import useSearchResults from '../Services/ResultFetch';
 
-function PaginatedItems({ itemsPerPage, data }) {
+function PaginatedItems({ data }) {
     const { resultData } = data;
     const { page, total_pages } = resultData;
-    const { getResults, query, getPage } = useSearchResults();
+    const { getResults, query } = useSearchResults();
 
     const handlePageBrowse = (e) => {
         let pageNum = (parseInt(e.selected) + 1);
         console.log("trying fetch", e.selected);
         if (page > total_pages || pageNum < 1) return;
-        // console.log(pageNum);
-        // getPage(e.selected);
-        // return;
         getResults(query, pageNum);
         return;
     };
@@ -39,5 +36,3 @@ function PaginatedItems({ itemsPerPage, data }) {
 }
 
 export default PaginatedItems;
-// Add a <div id="container"> to your HTML to see the componend rendered.
-    // <PaginatedItems itemsPerPage={4} />

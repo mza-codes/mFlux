@@ -144,8 +144,8 @@ const Recents = () => {
                             </div>
                         ))}
                     </div>}
-                    <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} title="YTPlayer"
-                        src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=0`}>
+                    <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true}
+                        title="mFlux Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
                     </iframe>
                 </div>}
 
