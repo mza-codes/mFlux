@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './Recents.scss';
-import { useRecents } from '../../Contexts/RecentsProvider';
+import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
 import { API_KEY, POSTER_URL, TMDB_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
@@ -22,7 +22,8 @@ const Recents = () => {
     const [err, setErr] = useState({
         trailer: {
             active: false,
-            msg: ""
+            msg: "",
+            err: {}
         }
     });
 
@@ -53,6 +54,7 @@ const Recents = () => {
         } catch (err) {
             setLoading(false);
             console.log("Error Fetching Trailer", err);
+            setErr((curr) => ({ ...curr, trailer: { active: true, msg: err?.message, err: err } }))
             controller.abort("Error Occured");
         };
     };
@@ -72,6 +74,7 @@ const Recents = () => {
     };
 
     useEffect(() => {
+        console.log(recents);
         if (window.innerWidth <= 640) {
             setPlayerScreen({
                 width: window.innerWidth - 10,
@@ -83,7 +86,7 @@ const Recents = () => {
                 height: window.innerHeight - 10
             });
         };
-        recents?.length && setMovie(recents[0]);
+        recents?.length !== 0 && setMovie(recents[0]);
         console.log("Loading Wishlist", JSON.parse(localStorage.getItem('mflux-wishlist')));
     }, []);
 
@@ -97,7 +100,7 @@ const Recents = () => {
                     </div>
                     {movie?.id && <div className="info m-6 text-white min-[220px]:text-center min-[220px]:w-3/4
                      sm:text-center md:text-start">
-                        <h1 className='text-4xl font-righteous py-1'>{movie?.original_title || movie?.title || ""}</h1>
+                        <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
                         <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
                         <h2 className='text-xl font-kanit py-1 overflow-hidden'>{movie?.overview}</h2>
                         <h4>{movie?.popularity}</h4>
@@ -117,6 +120,7 @@ const Recents = () => {
                         </div>
                         {err?.trailer?.active && <div className='w-1/2'>
                             <p className='font-kanit text-red-600'>{err?.trailer?.msg}</p>
+                            <p className='font-kanit text-red-600'>{err?.trailer?.err?.code}</p>
                         </div>}
                         {loading && <div className='w-full py-2'>
                             <div className='load'><div> <h5 className='text-xl font-righteous text-center text-black'>

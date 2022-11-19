@@ -2,8 +2,8 @@ import ReactPaginate from 'react-paginate';
 import useSearchResults from '../Services/ResultFetch';
 
 function PaginatedItems({ data }) {
-    const { resultData } = data;
-    const { page, total_pages } = resultData;
+    console.log("props Data from pagination",data);
+    const { page, total_pages } = data;
     const { getResults, query } = useSearchResults();
 
     const handlePageBrowse = (e) => {

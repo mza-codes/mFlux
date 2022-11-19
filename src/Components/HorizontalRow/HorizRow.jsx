@@ -2,16 +2,16 @@ import { w500 } from '../../Constants/Constants';
 import { lazy, Suspense, useRef } from 'react';
 import LazyImage from '../LazyImage';
 import './HorizRow.scss';
-import { useRecents } from '../../Contexts/RecentsProvider';
+import useRecents from '../../Contexts/useRecents';
 import { useNavigate } from 'react-router-dom';
 import useSearchResults from '../../Services/ResultFetch';
-import defaultImg from '../../placeholder/default.jpg';
+import defaultImg from '../../Assets/default.jpg';
 
 const PaginatedItems = lazy(() => import('../ReactPagination'));
 
 const HorizRow = ({ data, title, close, ...props }) => {
     // data = [];
-    const { recents, setRecents } = useRecents();
+    const { recents, addItem: setRecents } = useRecents();
     const { toggleClose: closeResult, response: resultData } = useSearchResults();
     const elRef = useRef();
     const route = useNavigate();
@@ -39,7 +39,6 @@ const HorizRow = ({ data, title, close, ...props }) => {
         });
         duplicate.push(data);
         duplicate.reverse();
-        console.log(duplicate);
         setRecents(duplicate);
         route('/recents');
         return;
@@ -52,9 +51,12 @@ const HorizRow = ({ data, title, close, ...props }) => {
                     <h3 className={`px-4 text-white text-2xl font-righteous pointer-events-none ${close ? "text-emerald-400" : "capitalize"}`}>
                         {title || "Loading.."}
                     </h3>
-                    {close && <button className='text-2xl mx-3 text-red-600 hover:text-orange-500' onClick={e => closeResult()}>
-                        <iconify-icon icon="eva:close-square-fill" height="34" width={"34"} />
-                    </button>}
+                    {close && <div>
+                        <button onClick={e => route('/search-results')} className='text-white hover:text-yellow-400' >
+                            <iconify-icon icon="material-symbols:grid-view-rounded" width="33" height="33"/> </button>
+                        <button className='text-2xl mx-3 text-red-600 hover:text-orange-500' onClick={e => closeResult()}>
+                            <iconify-icon icon="eva:close-square-fill" height="34" width={"34"} />
+                        </button> </div>}
                 </div>
                 <div className="horizRow" ref={elRef} >
                     <div className="scrollButtons">
@@ -77,7 +79,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
                     <div className='w-full flex flex-row justify-center items-center'>
                         <div>
                             <Suspense fallback={<h1 className='text-2xl text-yellow-400 font-righteous'>Loading Page Controls...</h1>}>
-                                <PaginatedItems data={{ resultData }} />
+                                <PaginatedItems data={ resultData } />
                             </Suspense>
                         </div>
                     </div>}

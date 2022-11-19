@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { POSTER_URL } from '../../Constants/Constants';
-import { useRecents } from '../../Contexts/RecentsProvider';
+import useRecents from '../../Contexts/useRecents';
 import useSearchResults from '../../Services/ResultFetch';
 import './Banner.scss';
 
@@ -9,7 +9,7 @@ const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 
 const Banner = () => {
     const [banner, setBanner] = useState({});
-    const { recents, setRecents } = useRecents();
+    const { recents, addItem: setRecents } = useRecents();
     const route = useNavigate();
     const movie = localStorage.getItem("family");
     const values = useSearchResults((state) => state);

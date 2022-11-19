@@ -1,6 +1,7 @@
 import { useRoutes } from 'react-router-dom';
 import App from './App';
 import Recents from './Pages/Recents/Recents';
+import SearchResults from './Pages/SearchResults';
 
 export default function Router() {
 
@@ -11,5 +12,6 @@ export default function Router() {
         { path: 'account', element: <div /> },
         { path: 'view', element: <div /> },
         { path: '/*', element: <divt /> },
+        { path: 'search-results', element: <SearchResults /> }
     ]);
 };

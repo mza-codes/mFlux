@@ -29,16 +29,22 @@ const Navbar = () => {
     };
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    } else return false;
+  };
+
   return (<>
     <div className='navBar'>
       <div className="navWrapper">
         <div className="logo" onClick={e => route('/')}>
-          <img src={mFlux} className={`${isOpen && "invisible" } min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
+          <img src={mFlux} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
         </div>
         <div className='flex flex-row gap-2 items-center justify-center searchSection sm:m-2'>
           <div className={`relative inputArea font-poppins text-sm ${isOpen ? "visible" : "invisible"}`}>
-            <input type="text" id='inputRef' placeholder='Search titles...' maxLength={50} />
-            <button onClick={handleSearch} className='text-white opacity-30 hover:opacity-100 my-1 rounded-xl absolute right-2'>
+            <input type="text" id='inputRef' onKeyPress={handleKeyPress} placeholder='Search titles...' maxLength={50} />
+            <button onClick={handleSearch}  className='text-white opacity-30 hover:opacity-100 my-1 rounded-xl absolute right-2'>
               <iconify-icon width="24" height="24" icon="ic:round-send" />
             </button>
           </div>
