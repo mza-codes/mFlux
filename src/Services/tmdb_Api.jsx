@@ -23,6 +23,8 @@ const useTmdbApi = create((set) => ({
     genres: [],
     error: {},
     failed: false,
+    actor: {},
+    actorMovies: [],
     getMovies: async (genreIdOrCategoryName, page, searchQuery) => {
         console.log("fetching movies by GETMovies", genreIdOrCategoryName, page, searchQuery);
         // Get Movies by Search
@@ -63,18 +65,28 @@ const useTmdbApi = create((set) => ({
     getRecommendations: async ({ movie_id, list }) => {
         console.log("fetching recommendations", movie_id, list);
         const data = await fetchData(`/movie/${movie_id}/${list}?api_key=${API_KEY}`);
+        data?.code && set(state => ({ ...state, error: data, failed: true }));
+        // Default Error handling
         console.log("Fetched Response in setFunction", data);
     },
     // Get ActorDetails
-    getActor: async (id) => {
+    getActor: async ({ id }) => {
         console.log("fetching ACTOR", id);
         const data = await fetchData(`/person/${id}?api_key=${API_KEY}`);
+        data?.code && set(state => ({ ...state, error: data, failed: true }));
+        // Default Error handling
+        set((state) => ({
+            ...state,
+            actor: data
+        }))
         console.log("Fetched Response in setFunction", data);
     },
     // Get Movies by Actor
     getMoviesByActorId: async ({ id, page }) => {
         console.log("fetching movies by Actorid", id);
         const data = await fetchData(`/discover/movie?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
+        data?.code && set(state => ({ ...state, error: data, failed: true }));
+        // Default Error handling
         console.log("Fetched Response in setFunction", data);
     },
 }))

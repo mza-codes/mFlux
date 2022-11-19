@@ -7,9 +7,11 @@ import LazyImage from '../../Components/LazyImage';
 import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
+import defImage from '../../Assets/default.jpg'
+import ActorBio from '../../Components/ActorBio';
 
 const RecentsNew = () => {
-    const { getMovie, movieData, cast, production, genres, error, failed } = useTmdbApi();
+    const { getMovie, getActor, movieData, cast, production, genres, error, failed, actor } = useTmdbApi();
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
         width: 360,
@@ -189,15 +191,18 @@ const RecentsNew = () => {
                                     <i className="ri-arrow-right-s-line "></i> </button>
                             </div>
                             {cast?.map((person, i) => (
-                                <div className='mx-1 p-3'>
-                                    <LazyImage key={i} url={`https://image.tmdb.org/t/p/w300${person?.profile_path}`}
-                                        className="rounded-lg min-w-[164px] h-64 object-cover" />
+                                <div className='mx-1 p-3 cursor-pointer hover:scale-105 transition-all ease-linear'
+                                    onClick={e => getActor(person)} >
+                                    <LazyImage key={i} url={person?.profile_path ?
+                                        `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
+                                        className="rounded-lg min-w-[164px] max-h-[200px] object-cover" />
                                     <span className='text-white text-base truncate'>{person?.name || person?.original_name}</span>
                                     <h4 className='text-gray-400 text-sm truncate'>{person?.character}</h4>
                                 </div>
                             ))}
                         </div>
                     </div>)}
+                {actor?.id && <ActorBio />}
                 {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto p-2 m-2'>
                     <div className='w-full flex flex-row justify-between text-white'>
                         <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
