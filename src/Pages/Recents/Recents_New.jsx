@@ -8,10 +8,8 @@ import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 
-const data = [1, 2, 3, 6, 5, 9, 6, 6, 85, 9, 9, 9, 9, 99, 9, 954, 4, 49, 9, 4, 4, 9, 9, 9, 49, 94, 49, 49, 9, 4, 49, 9, 49, 49, 49, 4]
-
 const RecentsNew = () => {
-    const { getMovie, movieData, cast, production, genres } = useTmdbApi();
+    const { getMovie, movieData, cast, production, genres, error, failed } = useTmdbApi();
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
         width: 360,
@@ -89,12 +87,14 @@ const RecentsNew = () => {
         switch (param) {
             case "next":
                 scrollRef.current.scrollTo({
-                    left: scrollRef.current.scrollLeft + 200
+                    left: scrollRef.current.scrollLeft + 200,
+                    behavior: "smooth"
                 });
                 break;
             case "prev":
                 scrollRef.current.scrollTo({
-                    left: scrollRef.current.scrollLeft - 200
+                    left: scrollRef.current.scrollLeft - 200,
+                    behavior: "smooth"
                 });
                 break;
             default:
@@ -157,6 +157,10 @@ const RecentsNew = () => {
                                  via-orange-500 to-amber-900 `}>{genre?.name}</p>
                             ))}
                         </div>
+                        {failed && <div className='w-1/2'>
+                            <p className='font-kanit text-red-600'>{error?.message}</p>
+                            <p className='font-kanit text-red-600'>{error?.response?.data?.status_message}</p>
+                        </div>}
                         {err?.trailer?.active && <div className='w-1/2'>
                             <p className='font-kanit text-red-600'>{err?.trailer?.msg}</p>
                             <p className='font-kanit text-red-600'>{err?.trailer?.err?.code}</p>
@@ -169,9 +173,21 @@ const RecentsNew = () => {
                     </div>}
                 </div>
                 {cast?.length >= 1 &&
-                    (<div className='w-full px-3'>
-                        <h2 className='font-righteous text-2xl py-2 ml-4'>Top Cast</h2>
-                        <div ref={scrollRef} className='relative w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
+                    (<div className='w-full px-3 relative'>
+                        <h2 className='font-righteous text-2xl py-2 ml-4'>Top Cast &nbsp;
+                            <span className='py-1 px-2 bg-green-700 font-poppins text-sm rounded-md '>{cast?.length}</span>
+                        </h2>
+                        <div ref={scrollRef} className='w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
+                            <div className=''>
+                                <button onClick={e => handleScroll("prev")} onMouseEnter={e => handleScroll("prev")}
+                                    className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
+                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
+                                    <i className="ri-arrow-left-s-line"></i> </button>
+                                <button onClick={e => handleScroll("next")} onMouseEnter={e => handleScroll("next")}
+                                    className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
+                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
+                                    <i className="ri-arrow-right-s-line "></i> </button>
+                            </div>
                             {cast?.map((person, i) => (
                                 <div className='mx-1 p-3'>
                                     <LazyImage key={i} url={`https://image.tmdb.org/t/p/w300${person?.profile_path}`}
@@ -180,18 +196,6 @@ const RecentsNew = () => {
                                     <h4 className='text-gray-400 text-sm truncate'>{person?.character}</h4>
                                 </div>
                             ))}
-                            <div>
-                                <button onClick={e => handleScroll("prev")} 
-                                // onMouseEnter={e => handleScroll("prev")}
-                                    className='absolute top-0 bottom-0 text-2xl bg-zinc-800 opacity-40
-                                     hover:bg-slate-50 hover:opacity-75 left-0' >
-                                    <i className="ri-arrow-left-s-line"></i> </button>
-                                <button onClick={e => handleScroll("next")} 
-                                // onMouseEnter={e => handleScroll("next")}
-                                    className='absolute top-0 bottom-0 text-2xl bg-zinc-800 opacity-40
-                                     hover:bg-slate-50 hover:opacity-75 right-0' >
-                                    <i className="ri-arrow-right-s-line "></i> </button>
-                            </div>
                         </div>
                     </div>)}
                 {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto p-2 m-2'>

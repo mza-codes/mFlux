@@ -19,8 +19,10 @@ const useTmdbApi = create((set) => ({
     movieData: {},
     isFetching: false,
     cast: [],
-    production:[],
-    genres:[],
+    production: [],
+    genres: [],
+    error: {},
+    failed: false,
     getMovies: async (genreIdOrCategoryName, page, searchQuery) => {
         console.log("fetching movies by GETMovies", genreIdOrCategoryName, page, searchQuery);
         // Get Movies by Search
@@ -47,6 +49,7 @@ const useTmdbApi = create((set) => ({
         console.log("fetching movie", id);
         const data = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
         console.log("Fetched Response in setFunction", data);
+        data?.code && set(state => ({ ...state, error: data, failed: true }));
         set((state) => ({
             ...state,
             movieData: data,
