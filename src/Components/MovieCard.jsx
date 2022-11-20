@@ -3,7 +3,6 @@ import { w500 } from "../Constants/Constants";
 import defaultImg from '../Assets/default.jpg';
 
 const MovieCard = ({ movie, handleStore }) => (
-
     <div className="imageContainer max-h-screen max-w-xs m-4 " onClick={e => handleStore(movie)} >
         <div className="image w-64 h-96 sm:w-full sm:h-full relative resultImg">
             <LazyImage alt="_loading" className="rounded-xl"
