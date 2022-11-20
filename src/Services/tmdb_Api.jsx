@@ -15,7 +15,7 @@ const fetchData = async (url) => {
     };
 };
 
-const useTmdbApi = create((set) => ({
+const initialState = {
     movieData: {},
     isFetching: false,
     cast: [],
@@ -26,6 +26,11 @@ const useTmdbApi = create((set) => ({
     actor: {},
     actorMovies: [],
     actorResult: {},
+};
+
+const useTmdbApi = create((set) => ({
+    ...initialState,
+
     getMovies: async (genreIdOrCategoryName, page, searchQuery) => {
         console.log("fetching movies by GETMovies", genreIdOrCategoryName, page, searchQuery);
         // Get Movies by Search
@@ -52,7 +57,7 @@ const useTmdbApi = create((set) => ({
         console.log("fetching movie", id);
         const data = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
         console.log("Fetched Response in setFunction", data);
-        data?.code && set(state => ({ ...state, error: data, failed: true }));
+        if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         set((state) => ({
             ...state,
             movieData: data,
@@ -68,7 +73,7 @@ const useTmdbApi = create((set) => ({
     getRecommendations: async ({ movie_id, list }) => {
         console.log("fetching recommendations", movie_id, list);
         const data = await fetchData(`/movie/${movie_id}/${list}?api_key=${API_KEY}`);
-        data?.code && set(state => ({ ...state, error: data, failed: true }));
+        if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         // Default Error handling
         console.log("Fetched Response in setFunction", data);
     },
@@ -76,7 +81,7 @@ const useTmdbApi = create((set) => ({
     getActor: async ({ id }) => {
         console.log("fetching ACTOR", id);
         const data = await fetchData(`/person/${id}?api_key=${API_KEY}`);
-        data?.code && set(state => ({ ...state, error: data, failed: true }));
+        if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         // Default Error handling
         set((state) => ({
             ...state,
@@ -90,7 +95,7 @@ const useTmdbApi = create((set) => ({
     getMoviesByActorId: async ({ id, page = 1 }) => {
         console.log("fetching movies by Actorid", id, page);
         const data = await fetchData(`/discover/movie?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
-        data?.code && set(state => ({ ...state, error: data, failed: true }));
+        if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         // Default Error handling
         set((state) => ({
             ...state,
@@ -100,7 +105,16 @@ const useTmdbApi = create((set) => ({
             failed: false
         }));
         console.log("Fetched Response in setFunction", data);
+        return true;
     },
+    resetAll: () => {
+        set((state) => ({ ...initialState }));
+        return true;
+    },
+    updateState: (newState) => {
+        set((state) => ({ ...state, newState }));
+        return true;
+    }
 }))
 
 export default useTmdbApi;

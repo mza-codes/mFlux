@@ -8,10 +8,13 @@ import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import ErrorBar from '../../Components/ErrorBar';
 
 const RecentsNew = () => {
-    const { getMovie, getActor, movieData, cast, production, genres, error, failed } = useTmdbApi();
+    const { getMovie, getActor, movieData, cast, genres, error, failed, resetAll } = useTmdbApi();
+    const { state } = useLocation();
+    console.log("location state value", state);
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
         width: 360,
@@ -22,7 +25,7 @@ const RecentsNew = () => {
         list: [],
         data: {}
     });
-    const { recents } = useRecents();
+    const { recents, currentMovie } = useRecents();
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState({
         trailer: {
@@ -110,6 +113,20 @@ const RecentsNew = () => {
         navigate('/actor-details', { replace: true });
     };
 
+    const handleReset = () => {
+        if (currentMovie?.id === recents[0]?.id) {
+            console.log("movie id matched with currenMovie set #1 SET");
+            return false;
+        } else if (movie?.id === recents[0]?.id) {
+            console.log("movie id matched SET");
+            return false;
+        } else if (state === true) {
+            console.log("Movie id not matched restall() calling");
+            resetAll();
+            return true;
+        };
+    };
+
     useEffect(() => {
         console.log(recents);
         if (window.innerWidth <= 640) {
@@ -124,10 +141,12 @@ const RecentsNew = () => {
             });
         };
         recents?.length !== 0 && setMovie(recents[0]);
-    }, []);
+        handleReset();
+    }, [state]);
 
     return (
         <> <Navbar />
+            {(err?.trailer?.active || failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
             <div className='recentBg0 pt-20'
                 style={{ backgroundImage: `url(${(POSTER_URL + movie?.backdrop_path) || ""})` }}>
                 <div className="flex flex-row flex-wrap p-3 gap-2 lg:items-start lg:justify-start lg:text-start
@@ -167,12 +186,12 @@ const RecentsNew = () => {
                             ))}
                         </div>
                         {failed && <div className='w-1/2'>
-                            <p className='font-kanit text-red-600'>{error?.message}</p>
-                            <p className='font-kanit text-red-600'>{error?.response?.data?.status_message}</p>
+                            <p className='font-kanit red'>{error?.message}</p>
+                            <p className='font-kanit red'>{error?.response?.data?.status_message}</p>
                         </div>}
                         {err?.trailer?.active && <div className='w-1/2'>
-                            <p className='font-kanit text-red-600'>{err?.trailer?.msg}</p>
-                            <p className='font-kanit text-red-600'>{err?.trailer?.err?.code}</p>
+                            <p className='font-kanit red'>{err?.trailer?.msg}</p>
+                            <p className='font-kanit red'>{err?.trailer?.err?.code}</p>
                         </div>}
                         {loading && <div className='w-full py-2'>
                             <div className='load'><div> <h5 className='text-xl font-righteous text-center text-black'>

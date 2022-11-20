@@ -40,7 +40,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
         duplicate.push(data);
         duplicate.reverse();
         setRecents(duplicate);
-        route('/recents');
+        route('/recents', { state: true });
         return;
     };
 
@@ -53,7 +53,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
                     </h3>
                     {close && <div>
                         <button onClick={e => route('/search-results')} className='text-white hover:text-yellow-400' >
-                            <iconify-icon icon="material-symbols:grid-view-rounded" width="33" height="33"/> </button>
+                            <iconify-icon icon="material-symbols:grid-view-rounded" width="33" height="33" /> </button>
                         <button className='text-2xl mx-3 text-red-600 hover:text-orange-500' onClick={e => closeResult()}>
                             <iconify-icon icon="eva:close-square-fill" height="34" width={"34"} />
                         </button> </div>}
@@ -79,7 +79,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
                     <div className='w-full flex flex-row justify-center items-center'>
                         <div>
                             <Suspense fallback={<h1 className='text-2xl text-yellow-400 font-righteous'>Loading Page Controls...</h1>}>
-                                <PaginatedItems data={ resultData } />
+                                <PaginatedItems data={resultData} />
                             </Suspense>
                         </div>
                     </div>}

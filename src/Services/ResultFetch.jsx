@@ -7,6 +7,7 @@ const useSearchResults = create((set) => ({
     result: [],
     query: "",
     error: "",
+    oldResult: [],
     isClosed: false,
     response: {},
     getResults: async (query, page) => {
@@ -21,7 +22,8 @@ const useSearchResults = create((set) => ({
                     ...state,
                     gotResult: true,
                     query: query,
-                    result: [...data?.results, ...state.result.slice(0, 6)],
+                    result: data?.results,
+                    oldResult: [...state.result],
                     response: data,
                     isClosed: false
                 }));

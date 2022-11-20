@@ -12,7 +12,6 @@ const App = lazy(() => import('./App'));
 const SearchResults = lazy(() => import('./Pages/SearchResults'));
 const ViewActor = lazy(() => import('./Pages/ViewActor'));
 
-
 export default function Router() {
 
     return useRoutes([

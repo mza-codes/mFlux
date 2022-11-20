@@ -4,7 +4,9 @@ import defImage from '../Assets/default.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import useTmdbApi from '../Services/tmdb_Api';
+import { atom, useAtom } from 'jotai';
 
+const loaderAtom = atom(true);
 const ErrMsg = ({ route }) => (
     <>
         <h1 className='text-rose-600 text-4xl text-center font-kanit'>
@@ -18,6 +20,7 @@ const ErrMsg = ({ route }) => (
 
 const ActorBio = ({ actor }) => {
     const { getMoviesByActorId } = useTmdbApi();
+    const [loading, setLoading] = useAtom(loaderAtom);
     const navigate = useNavigate();
     const goBack = () => {
         navigate('/recents', { replace: true });
@@ -29,10 +32,16 @@ const ActorBio = ({ actor }) => {
         if (actor?.id || actor?.name) {
             console.log("inside actor true,function calling...");
             getMoviesByActorId(actor);
+            setLoading(false);
         };
     }, [actor]);
 
     if (!actor?.id || !actor?.name) { return <ErrMsg route={goBack} /> };
+    if (loading) {
+        return (
+            <h1 className=' text-6xl py-8 font-righteous text-center text-teal-400'>Loading..</h1>
+        );
+    };
     return (
         <div className='w-full text-white py-6'>
             <div className="actorWrapper flex flex-row flex-wrap justify-evenly ">

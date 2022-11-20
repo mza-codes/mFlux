@@ -10,19 +10,29 @@ const Navbar = () => {
   const route = useNavigate();
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
   const fetchresult = useSearchResults((state) => state.getResults);
+  const query = useSearchResults(state => state?.query);
 
   const handleSearch = (e) => {
     const inputRef = document.getElementById('inputRef');
     console.log("QUERY++", inputRef.value);
     const key = inputRef.value;
+
     const isValid = reExSymbols.test(key);
+    if (key?.toLowerCase() === query?.toLowerCase()) {
+      inputRef.style.borderBottom = "3px solid red";
+      return;
+    }
     console.log(isValid);
     if (isValid) {
       console.log("SET");
       inputRef.style.borderBottom = "3px solid #68fc54";
-      // FetchData
       fetchresult(key, 1);
-      return;
+      if (window?.location?.pathname === "/") {
+        return true;
+      } else {
+        route('/search-results');
+        return true;
+      };
     } else {
       inputRef.style.borderBottom = "3px solid red";
       return;
@@ -44,7 +54,7 @@ const Navbar = () => {
         <div className='flex flex-row gap-2 items-center justify-center searchSection sm:m-2'>
           <div className={`relative inputArea font-poppins text-sm ${isOpen ? "visible" : "invisible"}`}>
             <input type="text" id='inputRef' onKeyPress={handleKeyPress} placeholder='Search titles...' maxLength={50} />
-            <button onClick={handleSearch}  className='text-white opacity-30 hover:opacity-100 my-1 rounded-xl absolute right-2'>
+            <button onClick={handleSearch} className='text-white opacity-30 hover:opacity-100 my-1 rounded-xl absolute right-2'>
               <iconify-icon width="24" height="24" icon="ic:round-send" />
             </button>
           </div>

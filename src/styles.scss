@@ -23,16 +23,28 @@ body {
     }
 }
 
+// testclass
+.test {
+    color: #42fc5b;
+}
+
 // Error Bar
 .errBar {
     background: linear-gradient(to right, transparent, rgb(255, 33, 33), rgb(255, 94, 94), transparent);
     z-index: 101;
 }
 
+// redColor
+.red {
+    color: red;
+}
+
+// hide scrollbar
 body::-webkit-scrollbar {
     display: none;
 }
 
+// Lazyload react
 .LazyLoad {
     opacity: 0;
     transition: all 1s ease-in-out;
@@ -42,6 +54,7 @@ body::-webkit-scrollbar {
     opacity: 1;
 }
 
+// React-Pagination
 .activePg>a {
     background: #42fc5b;
     border-radius: 4px;
@@ -53,6 +66,7 @@ body::-webkit-scrollbar {
 
 .mypagination {
     z-index: 104;
+
     ul {
         font-family: "Poppins", 'serif';
         padding-top: 1rem;
@@ -107,24 +121,30 @@ body::-webkit-scrollbar {
     max-width: 75%;
     display: none;
 }
-.resultImg{
+
+.resultImg {
     transition: all 900ms;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
         transform: scale(1.1);
         z-index: 6;
-        img{
-           opacity: 0.3;
+
+        img {
+            opacity: 0.3;
         }
-        .text{
+
+        .text {
             display: block;
             color: #fff;
-            &:hover{
+
+            &:hover {
                 color: #ff7525;
             }
         }
     }
-    .overview{
+
+    .overview {
         max-height: 200px;
         overflow-y: hidden;
     }

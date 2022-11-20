@@ -8,13 +8,13 @@ import useRecents from '../Contexts/useRecents';
 
 const ViewActor = () => {
     const { actor, actorMovies, actorResult, getMoviesByActorId } = useTmdbApi();
-    const { recents, addOne } = useRecents();
+    const { addOne } = useRecents();
     const route = useNavigate();
 
     const getFunc = (data) => {
         console.log("getfunc called", data);
         addOne(data);
-        route('/recents');
+        route('/recents', { state: true });
         return;
     };
 

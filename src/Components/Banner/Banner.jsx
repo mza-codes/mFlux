@@ -34,7 +34,7 @@ const Banner = () => {
         filtered.push(banner);
         filtered.reverse();
         setRecents(filtered);
-        route('/recents');
+        route('/recents', { state: true });
         return;
     };
 
