@@ -6,11 +6,15 @@ import { API_KEY, POSTER_URL, TMDB_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
 import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
+import { useRef } from 'react';
+import defImage from '../../Assets/default.jpg'
+import { useNavigate, useLocation } from 'react-router-dom';
+import ErrorBar from '../../Components/ErrorBar';
 
-const data = [1, 2, 3, 6, 5, 9, 6, 6, 85, 9, 9, 9, 9, 99, 9, 954, 4, 49, 9, 4, 4, 9, 9, 9, 49, 94, 49, 49, 9, 4, 49, 9, 49, 49, 49, 4]
-
-const Recents = () => {
-    const { getMovie, movieData } = useTmdbApi();
+const RecentsNew = () => {
+    const { getMovie, getActor, movieData, cast, genres, error, failed, resetAll } = useTmdbApi();
+    const { state } = useLocation();
+    console.log("location state value", state);
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
         width: 360,
@@ -21,7 +25,7 @@ const Recents = () => {
         list: [],
         data: {}
     });
-    const { recents } = useRecents();
+    const { recents, currentMovie } = useRecents();
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState({
         trailer: {
@@ -30,6 +34,8 @@ const Recents = () => {
             err: {}
         }
     });
+    const scrollRef = useRef();
+    const navigate = useNavigate();
 
     const playTrailer = async (id) => {
         setLoading(true);
@@ -78,6 +84,49 @@ const Recents = () => {
         console.log(movieData);
     };
 
+    const fetchDetails = async (data) => {
+        const values = await getMovie(data);
+        console.log("values after fetching", values);
+    };
+
+    const handleScroll = (param) => {
+        switch (param) {
+            case "next":
+                scrollRef.current.scrollTo({
+                    left: scrollRef.current.scrollLeft + 200,
+                    behavior: "smooth"
+                });
+                break;
+            case "prev":
+                scrollRef.current.scrollTo({
+                    left: scrollRef.current.scrollLeft - 200,
+                    behavior: "smooth"
+                });
+                break;
+            default:
+                break;
+        };
+    };
+
+    const fetchPerson = (person) => {
+        getActor(person);
+        navigate('/actor-details', { replace: true });
+    };
+
+    const handleReset = () => {
+        if (currentMovie?.id === recents[0]?.id) {
+            console.log("movie id matched with currenMovie set #1 SET");
+            return false;
+        } else if (movie?.id === recents[0]?.id) {
+            console.log("movie id matched SET");
+            return false;
+        } else if (state === true) {
+            console.log("Movie id not matched restall() calling");
+            resetAll();
+            return true;
+        };
+    };
+
     useEffect(() => {
         console.log(recents);
         if (window.innerWidth <= 640) {
@@ -92,30 +141,34 @@ const Recents = () => {
             });
         };
         recents?.length !== 0 && setMovie(recents[0]);
-    }, []);
+        handleReset();
+    }, [state]);
 
     return (
         <> <Navbar />
-            <div className='recentBg0 pt-20 '
+            {(err?.trailer?.active || failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
+            <div className='recentBg0 pt-20'
                 style={{ backgroundImage: `url(${(POSTER_URL + movie?.backdrop_path) || ""})` }}>
-                <div className="itemWrapper">
-                    <div className='moviePoster sm:w-full'>
-                        <LazyImage url={POSTER_URL + movie?.poster_path || movie?.backdrop_path || ""} />
+                <div className="flex flex-row flex-wrap p-3 gap-2 lg:items-start lg:justify-start lg:text-start
+                 md:items-center md:justify-center md:text-center sm:items-center sm:justify-center sm:text-center">
+                    <div className='sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px]'>
+                        <LazyImage url={POSTER_URL + movie?.poster_path || movie?.backdrop_path || ""}
+                            className="w-auto h-auto rounded-2xl" />
                     </div>
-                    {movie?.id && <div className="info sm:w-full">
-                        <div className="texts">
+                    {movie?.id && <div className="sm:w-full md:w-1/2 lg:w-1/2 min-w-[280px] ml-4">
+                        <div className="md:max-w-[480px]">
                             <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
                             <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
-                            <h2 className='text-xl font-kanit py-1 overflow-hidden'>{movie?.overview}</h2>
+                            <h2 className='text-xl font-kanit py-1 '>{movie?.overview}</h2>
                             <h4>{movie?.popularity}</h4>
                             <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
-                                <i className="ri-star-s-fill text-3xl py-2"></i>
+                                <i className="ri-star-s-fill text-3xl py-2 text-amber-500"></i>
                                 <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movie?.vote_average)?.slice(0, 3)}
                                     <span className='text-base text-gray-500'>&nbsp;({movie?.vote_count})</span>
                                 </h4>
                             </div>
                         </div>
-                        <div className="buttons gap-2">
+                        <div className="gap-2">
                             <button className='p-2 my-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600
                              text-white disabled:line-through disabled:hover:bg-inherit'
                                 onClick={e => playTrailer(movie?.id)} disabled={trailers.isActive}>
@@ -123,40 +176,59 @@ const Recents = () => {
                             <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
                                 onClick={e => addToWishlist(movie)}> Add to Watch</button>
                             <button className='p-2 my-2 ml-2 rounded-lg bg-white bg-opacity-10 hover:bg-emerald-600 text-white'
-                                onClick={e => getMovie(movie)}>More Details</button>
+                                onClick={e => fetchDetails(movie)}>More Details</button>
                         </div>
+                        <div className='genreWrapper flex flex-row flex-wrap gap-3'>
+                            {genres?.map((genre, i) => (
+                                <p key={genre?.id || i} className={`p-2 rounded-2xl font-kanit text-base bg-gradient-to-tr
+                                 from-yellow-200 cursor-pointer
+                                 via-orange-500 to-amber-900 hover:bg-slate-100 hover:opacity-60`}>{genre?.name}</p>
+                            ))}
+                        </div>
+                        {failed && <div className='w-1/2'>
+                            <p className='font-kanit red'>{error?.message}</p>
+                            <p className='font-kanit red'>{error?.response?.data?.status_message}</p>
+                        </div>}
                         {err?.trailer?.active && <div className='w-1/2'>
-                            <p className='font-kanit text-red-600'>{err?.trailer?.msg}</p>
-                            <p className='font-kanit text-red-600'>{err?.trailer?.err?.code}</p>
+                            <p className='font-kanit red'>{err?.trailer?.msg}</p>
+                            <p className='font-kanit red'>{err?.trailer?.err?.code}</p>
                         </div>}
                         {loading && <div className='w-full py-2'>
                             <div className='load'><div> <h5 className='text-xl font-righteous text-center text-black'>
                                 Loading...</h5>
                             </div></div>
                         </div>}
-                        {
-                            // movieData && 
-                            (<div>
-                                <h2 className='font-righteous text-2xl py-2'>Top Cast</h2>
-                                <div className="castWrapper relative">
-                                    {data.map((n, i) => (
-                                        <div className='px-2'>
-                                            <LazyImage key={i} url={"https://image.tmdb.org/t/p/w780//bhlM1xNzBvc8jTw42YloUKlGTCL.jpg"}
-                                                className="rounded-lg" />
-                                            <span className='text-white text-lg truncate'>Andrew Jose</span>
-                                        </div>
-                                    ))}
-                                    <div className="castScroll">
-                                        <button className='absolute text-2xl hover:opacity-90 left-0'> 
-                                        <i className="ri-arrow-left-s-line"></i> </button>
-                                        <button className='absolute text-2xl hover:opacity-90 right-0'>
-                                             <i className="ri-arrow-right-s-line "></i> </button>
-                                    </div>
-                                </div>
-
-                            </div>)}
                     </div>}
                 </div>
+                {cast?.length >= 1 &&
+                    (<div className='w-full px-3 relative'>
+                        <h2 className='font-righteous text-2xl py-2 ml-4'>Top Cast &nbsp;
+                            <span className='py-1 px-2 bg-green-700 font-poppins text-sm rounded-md '>{cast?.length}</span>
+                        </h2>
+                        <div ref={scrollRef} className='w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
+                            <div className=''>
+                                <button onClick={e => handleScroll("prev")} onMouseEnter={e => handleScroll("prev")}
+                                    className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
+                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
+                                    <i className="ri-arrow-left-s-line"></i> </button>
+                                <button onClick={e => handleScroll("next")} onMouseEnter={e => handleScroll("next")}
+                                    className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
+                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
+                                    <i className="ri-arrow-right-s-line "></i> </button>
+                            </div>
+                            {cast?.map((person, i) => (
+                                <div className='mx-1 p-3 cursor-pointer hover:scale-105 transition-all ease-linear'
+                                    onClick={e => fetchPerson(person)} key={person?.id || i} >
+                                    <LazyImage key={i} url={person?.profile_path ?
+                                        `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
+                                        className="rounded-lg min-w-[164px] max-h-[200px] object-cover" />
+                                    <span className='text-white text-base truncate'>{person?.name || person?.original_name}</span>
+                                    <h4 className='text-gray-400 text-sm truncate'>{person?.character}</h4>
+                                </div>
+                            ))}
+                        </div>
+                    </div>)}
+                {/* Trailer Using current innerwidth values */}
                 {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto p-2 m-2'>
                     <div className='w-full flex flex-row justify-between text-white'>
                         <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
@@ -166,6 +238,7 @@ const Recents = () => {
                             <i className="ri-close-circle-fill"></i>
                         </button>
                     </div>
+
                     {trailers?.list?.length && <div className='w-full flex flex-row items-center flex-wrap p-2
                         justify-center text-center gap-2'>
                         {trailers?.list?.map((video) => (
@@ -186,4 +259,4 @@ const Recents = () => {
     );
 };
 
-export default Recents;
+export default RecentsNew;

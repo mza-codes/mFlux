@@ -17,12 +17,34 @@ body {
     font-family: 'Abel', cursive;
     background: #111;
     scroll-behavior: smooth !important;
+
+    button {
+        outline: none;
+    }
 }
 
+// testclass
+.test {
+    color: #42fc5b;
+}
+
+// Error Bar
+.errBar {
+    background: linear-gradient(to right, transparent, rgb(255, 33, 33), rgb(255, 94, 94), transparent);
+    z-index: 101;
+}
+
+// redColor
+.red {
+    color: red;
+}
+
+// hide scrollbar
 body::-webkit-scrollbar {
     display: none;
 }
 
+// Lazyload react
 .LazyLoad {
     opacity: 0;
     transition: all 1s ease-in-out;
@@ -32,6 +54,7 @@ body::-webkit-scrollbar {
     opacity: 1;
 }
 
+// React-Pagination
 .activePg>a {
     background: #42fc5b;
     border-radius: 4px;
@@ -42,6 +65,7 @@ body::-webkit-scrollbar {
 }
 
 .mypagination {
+    z-index: 104;
 
     ul {
         font-family: "Poppins", 'serif';
@@ -86,5 +110,42 @@ body::-webkit-scrollbar {
                 }
             }
         }
+    }
+}
+
+// SearchResult.jsx
+.text {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 75%;
+    display: none;
+}
+
+.resultImg {
+    transition: all 900ms;
+    cursor: pointer;
+
+    &:hover {
+        transform: scale(1.1);
+        z-index: 6;
+
+        img {
+            opacity: 0.3;
+        }
+
+        .text {
+            display: block;
+            color: #fff;
+
+            &:hover {
+                color: #ff7525;
+            }
+        }
+    }
+
+    .overview {
+        max-height: 200px;
+        overflow-y: hidden;
     }
 }

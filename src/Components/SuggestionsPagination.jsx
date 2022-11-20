@@ -1,16 +1,12 @@
 import ReactPaginate from 'react-paginate';
-import useSearchResults from '../Services/ResultFetch';
 
-function PaginatedItems({ data }) {
-    console.log("props Data from pagination", data);
-    const { page, total_pages } = data;
-    const { getResults, query } = useSearchResults();
+function SuggestionsPagination({ api, currentPage, totalPage, query }) {
 
     const handlePageBrowse = (e) => {
         let pageNum = (parseInt(e.selected) + 1);
         console.log("trying fetch", e.selected);
-        if (page > total_pages || pageNum < 1) return;
-        getResults(query, pageNum);
+        if (currentPage > totalPage || pageNum < 1) return;
+        api({ id: query, page: pageNum });
         return;
     };
 
@@ -23,16 +19,16 @@ function PaginatedItems({ data }) {
                 breakLabel="..."
                 containerClassName='pagination'
                 activeClassName="activePg"
-                nextLabel={page !== total_pages && nextBtn}
+                nextLabel={currentPage !== totalPage && nextBtn}
                 onPageChange={handlePageBrowse}
                 marginPagesDisplayed={2}
                 pageRangeDisplayed={2}
-                pageCount={total_pages}
-                previousLabel={page !== 1 && previousBtn}
+                pageCount={totalPage}
+                previousLabel={currentPage !== 1 && previousBtn}
                 renderOnZeroPageCount={null}
             />
         </div>
     );
 }
 
-export default PaginatedItems;
+export default SuggestionsPagination;

@@ -3,54 +3,57 @@ import mFlux from './mFlux.png';
 import Avatar from './userAvatar.png';
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react';
-import { atom, useAtom } from 'jotai';
 import useSearchResults from '../../Services/ResultFetch';
-
-const viewAtom = atom(true);
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [viewLogo, setViewLogo] = useAtom(viewAtom);
-  const [isDesktop, setIsDesktop] = useAtom(viewAtom);
   const route = useNavigate();
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
   const fetchresult = useSearchResults((state) => state.getResults);
-
-  // useEffect(() => {
-  if (window.innerWidth <= 460) {
-    setViewLogo(false);
-  } else {
-    setViewLogo(true);
-  };
-  // }, []);
+  const query = useSearchResults(state => state?.query);
 
   const handleSearch = (e) => {
     const inputRef = document.getElementById('inputRef');
     console.log("QUERY++", inputRef.value);
     const key = inputRef.value;
+
     const isValid = reExSymbols.test(key);
+    if (key?.toLowerCase() === query?.toLowerCase()) {
+      inputRef.style.borderBottom = "3px solid red";
+      return;
+    }
     console.log(isValid);
     if (isValid) {
       console.log("SET");
       inputRef.style.borderBottom = "3px solid #68fc54";
-      // FetchData
       fetchresult(key, 1);
-      return;
+      if (window?.location?.pathname === "/") {
+        return true;
+      } else {
+        route('/search-results');
+        return true;
+      };
     } else {
       inputRef.style.borderBottom = "3px solid red";
       return;
     };
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    } else return false;
+  };
+
   return (<>
     <div className='navBar'>
       <div className="navWrapper">
         <div className="logo" onClick={e => route('/')}>
-          {(isOpen && !isDesktop) || (viewLogo) && (<img src={mFlux} alt="_logo_mFlux" />)}
+          <img src={mFlux} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
         </div>
-        <div className='flex flex-row gap-2 items-center justify-center'>
+        <div className='flex flex-row gap-2 items-center justify-center searchSection sm:m-2'>
           <div className={`relative inputArea font-poppins text-sm ${isOpen ? "visible" : "invisible"}`}>
-            <input type="text" id='inputRef' placeholder='Search titles...' maxLength={50} />
+            <input type="text" id='inputRef' onKeyPress={handleKeyPress} placeholder='Search titles...' maxLength={50} />
             <button onClick={handleSearch} className='text-white opacity-30 hover:opacity-100 my-1 rounded-xl absolute right-2'>
               <iconify-icon width="24" height="24" icon="ic:round-send" />
             </button>

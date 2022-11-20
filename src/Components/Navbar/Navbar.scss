@@ -8,43 +8,51 @@
     .navWrapper {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
         align-items: center;
         text-align: center;
         padding: 0.4rem 0.6rem;
+        position: relative;
 
         .logo {
+            left: 4px;
+            top: 4px;
+            position: absolute;
             img {
-                width: 140px;
-                height: 60px;
-                padding: .4rem;
+                // min-width: 140px;
+                // min-height: 60px;
+                width: 120px;
+                height: 46px;
                 filter: drop-shadow(0 0 1.5rem black);
             }
 
-            padding: 0.4rem 0.2rem;
             border-radius: 8px 4px 8px 4px;
             transition: all 900ms !important;
 
             &:hover {
-                filter: drop-shadow(0 0 1rem rgba(255, 0, 0, 0.685));
-                background: rgba(0, 0, 0, 0.411);
+                filter: drop-shadow(0 0 1rem rgba(255, 0, 0, 0.986));
                 cursor: pointer;
             }
         }
 
-        .Avatar {
-            width: 40px;
-            height: 40px;
-            background: #fff;
-            border-radius: 6px;
-            transition: all 900ms !important;
+        .searchSection {
+            position: absolute;
+            right: 4px;
+            top: 8px;
+            .Avatar {
+                width: 40px;
+                height: 40px;
+                background: #fff;
+                border-radius: 6px;
+                transition: all 900ms !important;
 
-            &:hover {
-                filter: drop-shadow(0 0 1rem rgba(255, 103, 56, 0.685));
-                background: rgb(255, 240, 109);
-                cursor: pointer;
+                &:hover {
+                    filter: drop-shadow(0 0 1rem rgba(255, 103, 56, 0.685));
+                    background: rgb(255, 240, 109);
+                    cursor: pointer;
+                }
             }
         }
+
     }
 }
 
@@ -62,11 +70,5 @@
         &:focus {
             border-bottom: 2px solid rgb(154, 255, 108);
         }
-    }
-}
-
-.searchBtn{
-    i{
-        font-weight: 600;
     }
 }

@@ -1,17 +1,13 @@
-import axios from 'axios';
 import create from 'zustand';
 import { API_KEY, TMDB_URL } from '../Constants/Constants';
-
-const tmdbApi = axios.create({
-    baseURL: TMDB_URL,
-    timeout: 5000
-});
+import { tmdbApi } from '../Utils/tmdb';
 
 const useSearchResults = create((set) => ({
     gotResult: false,
     result: [],
     query: "",
     error: "",
+    oldResult: [],
     isClosed: false,
     response: {},
     getResults: async (query, page) => {
@@ -26,7 +22,8 @@ const useSearchResults = create((set) => ({
                     ...state,
                     gotResult: true,
                     query: query,
-                    result: [...data?.results, ...state.result.slice(0, 6)],
+                    result: data?.results,
+                    oldResult: [...state.result],
                     response: data,
                     isClosed: false
                 }));
