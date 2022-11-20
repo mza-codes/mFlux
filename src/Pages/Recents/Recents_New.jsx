@@ -8,10 +8,10 @@ import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
-import ActorBio from '../../Components/ActorBio';
+import { useNavigate } from 'react-router-dom';
 
 const RecentsNew = () => {
-    const { getMovie, getActor, movieData, cast, production, genres, error, failed, actor } = useTmdbApi();
+    const { getMovie, getActor, movieData, cast, production, genres, error, failed } = useTmdbApi();
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
         width: 360,
@@ -32,6 +32,7 @@ const RecentsNew = () => {
         }
     });
     const scrollRef = useRef();
+    const navigate = useNavigate();
 
     const playTrailer = async (id) => {
         setLoading(true);
@@ -104,6 +105,11 @@ const RecentsNew = () => {
         };
     };
 
+    const fetchPerson = (person) => {
+        getActor(person);
+        navigate('/actor-details', { replace: true });
+    };
+
     useEffect(() => {
         console.log(recents);
         if (window.innerWidth <= 640) {
@@ -137,7 +143,7 @@ const RecentsNew = () => {
                             <h2 className='text-xl font-kanit py-1 '>{movie?.overview}</h2>
                             <h4>{movie?.popularity}</h4>
                             <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
-                                <i className="ri-star-s-fill text-3xl py-2"></i>
+                                <i className="ri-star-s-fill text-3xl py-2 text-amber-500"></i>
                                 <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movie?.vote_average)?.slice(0, 3)}
                                     <span className='text-base text-gray-500'>&nbsp;({movie?.vote_count})</span>
                                 </h4>
@@ -155,8 +161,9 @@ const RecentsNew = () => {
                         </div>
                         <div className='genreWrapper flex flex-row flex-wrap gap-3'>
                             {genres?.map((genre, i) => (
-                                <p key={i} className={`p-2 rounded-2xl font-kanit text-base bg-gradient-to-tr from-yellow-200
-                                 via-orange-500 to-amber-900 `}>{genre?.name}</p>
+                                <p key={genre?.id || i} className={`p-2 rounded-2xl font-kanit text-base bg-gradient-to-tr
+                                 from-yellow-200 cursor-pointer
+                                 via-orange-500 to-amber-900 hover:bg-slate-100 hover:opacity-60`}>{genre?.name}</p>
                             ))}
                         </div>
                         {failed && <div className='w-1/2'>
@@ -192,7 +199,7 @@ const RecentsNew = () => {
                             </div>
                             {cast?.map((person, i) => (
                                 <div className='mx-1 p-3 cursor-pointer hover:scale-105 transition-all ease-linear'
-                                    onClick={e => getActor(person)} >
+                                    onClick={e => fetchPerson(person)} key={person?.id || i} >
                                     <LazyImage key={i} url={person?.profile_path ?
                                         `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
                                         className="rounded-lg min-w-[164px] max-h-[200px] object-cover" />
@@ -202,7 +209,7 @@ const RecentsNew = () => {
                             ))}
                         </div>
                     </div>)}
-                {actor?.id && <ActorBio />}
+                {/* Trailer Using current innerwidth values */}
                 {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto p-2 m-2'>
                     <div className='w-full flex flex-row justify-between text-white'>
                         <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
@@ -212,6 +219,7 @@ const RecentsNew = () => {
                             <i className="ri-close-circle-fill"></i>
                         </button>
                     </div>
+
                     {trailers?.list?.length && <div className='w-full flex flex-row items-center flex-wrap p-2
                         justify-center text-center gap-2'>
                         {trailers?.list?.map((video) => (

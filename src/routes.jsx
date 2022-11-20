@@ -3,6 +3,7 @@ import App from './App';
 // import Recents from './Pages/Recents/Recents';
 import RecentsNew from './Pages/Recents/Recents_New';
 import SearchResults from './Pages/SearchResults';
+import ViewActor from './Pages/ViewActor';
 
 export default function Router() {
 
@@ -12,7 +13,8 @@ export default function Router() {
         { path: 'recents', element: <RecentsNew /> },
         { path: 'account', element: <div /> },
         { path: 'view', element: <div /> },
-        { path: '/*', element: <divt /> },
-        { path: 'search-results', element: <SearchResults /> }
+        { path: '/*', element: <div /> },
+        { path: 'search-results', element: <SearchResults /> },
+        { path: 'actor-details', element: <ViewActor /> }
     ]);
 };
