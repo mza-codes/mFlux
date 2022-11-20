@@ -1,8 +1,9 @@
 import { w500 } from '../Constants/Constants';
-import useTmdbApi from '../Services/tmdb_Api'
 import LazyImage from './LazyImage';
 import defImage from '../Assets/default.jpg';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import useTmdbApi from '../Services/tmdb_Api';
 
 const ErrMsg = ({ route }) => (
     <>
@@ -15,16 +16,23 @@ const ErrMsg = ({ route }) => (
     </>
 )
 
-const ActorBio = () => {
-    const { actor } = useTmdbApi();
+const ActorBio = ({ actor }) => {
+    const { getMoviesByActorId } = useTmdbApi();
     const navigate = useNavigate();
-
     const goBack = () => {
         navigate('/recents', { replace: true });
         return;
     };
-    if (!actor?.id || !actor?.name) { return <ErrMsg route={goBack} /> };
 
+    useEffect(() => {
+        console.log("inside useEffect");
+        if (actor?.id || actor?.name) {
+            console.log("inside actor true,function calling...");
+            getMoviesByActorId(actor);
+        };
+    }, [actor]);
+
+    if (!actor?.id || !actor?.name) { return <ErrMsg route={goBack} /> };
     return (
         <div className='w-full text-white py-6'>
             <div className="actorWrapper flex flex-row flex-wrap justify-evenly ">

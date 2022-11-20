@@ -25,6 +25,7 @@ const useTmdbApi = create((set) => ({
     failed: false,
     actor: {},
     actorMovies: [],
+    actorResult: {},
     getMovies: async (genreIdOrCategoryName, page, searchQuery) => {
         console.log("fetching movies by GETMovies", genreIdOrCategoryName, page, searchQuery);
         // Get Movies by Search
@@ -57,7 +58,9 @@ const useTmdbApi = create((set) => ({
             movieData: data,
             cast: data?.credits?.cast,
             genres: data?.genres,
-            isFetching: false
+            isFetching: false,
+            error: {},
+            failed: false
         }));
         return data;
     },
@@ -77,16 +80,25 @@ const useTmdbApi = create((set) => ({
         // Default Error handling
         set((state) => ({
             ...state,
-            actor: data
+            actor: data,
+            error: {},
+            failed: false
         }))
         console.log("Fetched Response in setFunction", data);
     },
     // Get Movies by Actor
-    getMoviesByActorId: async ({ id, page }) => {
-        console.log("fetching movies by Actorid", id);
+    getMoviesByActorId: async ({ id, page = 1 }) => {
+        console.log("fetching movies by Actorid", id, page);
         const data = await fetchData(`/discover/movie?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
         data?.code && set(state => ({ ...state, error: data, failed: true }));
         // Default Error handling
+        set((state) => ({
+            ...state,
+            actorMovies: data?.results,
+            actorResult: data,
+            error: {},
+            failed: false
+        }));
         console.log("Fetched Response in setFunction", data);
     },
 }))
