@@ -34,7 +34,7 @@ const Banner = () => {
         filtered.push(banner);
         filtered.reverse();
         setRecents(filtered);
-        route('/recents', { state: true });
+        route(`/recents/${banner?.id}`, { state: true });
         return;
     };
 

@@ -4,6 +4,12 @@ import Banner from './Components/Banner/Banner';
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Pages/Home/Home';
 
+if (process.env.NODE_ENV === 'production') {
+    console.log = () => {return true; }
+    console.error = () => {return true; }
+    console.debug = () => {return true; }
+}
+
 const App = () => {
 
     return (

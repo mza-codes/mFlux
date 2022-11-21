@@ -8,15 +8,14 @@ import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
 
 const RecentsNew = () => {
-    const { getMovie, getActor, movieData, cast, genres, error, failed, resetAll} = useTmdbApi();
-    const { state } = useLocation();
-    console.log("location state value", state);
+    const { getMovie, movieData, cast, genres, error, failed, resetAll } = useTmdbApi();
+    const { id } = useParams();
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
         width: 360,
@@ -37,7 +36,7 @@ const RecentsNew = () => {
         }
     });
     const scrollRef = useRef();
-    const navigate = useNavigate();
+    const route = useNavigate();
 
     const playTrailer = async (id) => {
         setLoading(true);
@@ -111,8 +110,7 @@ const RecentsNew = () => {
     };
 
     const fetchPerson = (person) => {
-        getActor(person);
-        navigate('/actor-details', { replace: true });
+        route(`/actor-details/${person?.id}`, { state: true });
     };
 
     const handleReset = () => {
@@ -122,11 +120,17 @@ const RecentsNew = () => {
         } else if (movie?.id === recents[0]?.id) {
             console.log("movie id matched SET");
             return false;
-        } else if (state === true) {
+        } else if ("state" === true) {
             console.log("Movie id not matched reset all() calling");
             resetAll();
             return true;
         };
+    };
+
+    const fetchMovie = async () => {
+        const data = await getMovie({id});
+        setMovie(data);
+        return;
     };
 
     useEffect(() => {
@@ -142,11 +146,15 @@ const RecentsNew = () => {
                 height: window.innerHeight - 10
             });
         };
-        recents?.length !== 0 && setMovie(recents[0]);
-        handleReset();
-    }, [state]);
+        // recents?.length !== 0 && setMovie(recents[0]);
+        // handleReset();
+    }, []);
 
-    if (!movie?.id) {
+    useEffect(() => {
+        fetchMovie();
+    }, []);
+
+    if (!movie?.id || !id) {
         return (
             <Loading err={"No Movie Found!"} msg={"Please try Refreshing the page or Navigate to Home!"} />
         )
@@ -233,8 +241,8 @@ const RecentsNew = () => {
                                     <LazyImage key={i} url={person?.profile_path ?
                                         `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
                                         className="rounded-lg min-w-[164px] max-h-[200px] object-cover" />
-                                    <span className='text-white text-base truncate'>{person?.name || person?.original_name}</span>
-                                    <h4 className='text-gray-400 text-sm truncate'>{person?.character}</h4>
+                                    <span className='text-white text-base max-w-[95%]'>{person?.name || person?.original_name}</span>
+                                    <h4 className='text-gray-400 text-sm max-w-[95%]'>{person?.character}</h4>
                                 </div>
                             ))}
                         </div>

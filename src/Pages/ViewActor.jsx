@@ -1,32 +1,45 @@
 import Navbar from '../Components/Navbar/Navbar';
 import useTmdbApi from '../Services/tmdb_Api';
 import ActorBio from '../Components/ActorBio';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MovieCard from '../Components/MovieCard';
 import SuggestionsPagination from '../Components/SuggestionsPagination';
 import useRecents from '../Contexts/useRecents';
+import { useEffect } from 'react';
+import Loading from './Loading';
 
 const ViewActor = () => {
-    const { actor, actorMovies, actorResult, getMoviesByActorId } = useTmdbApi();
+    const { actor, actorMovies, actorResult, getMoviesByActorId,getActor } = useTmdbApi();
     const { addOne } = useRecents();
+    const { id } = useParams();
     const route = useNavigate();
-
     const getFunc = (data) => {
         console.log("getfunc called", data);
         addOne(data);
-        route('/recents', { state: true });
+        route(`/recents/${data?.id}`, { state: true });
         return;
     };
+
+    const fetchActor = async () => {
+        await getActor({ id });
+        return;
+    };
+
+    useEffect(() => {
+        fetchActor();
+    }, [id]);
+
+    if(!actor?.id) {return <Loading err={`404 Not Found`} msg={`Actor with id "${id}" not found on TMDB Database !`} />}
 
     return (
         <>
             <Navbar />
             <div className='mainPage pt-20  text-white'>
-                <button onClick={e => route('/recents')} className='bg-white bg-opacity-30 text-black
+                <button onClick={e => route(-1)} className='bg-white bg-opacity-30 text-black
                  hover:bg-orange-500 p-2 font-kanit fixed z-50 bottom-2 right-1'>
                     Go Back
                 </button>
-                <ActorBio actor={actor} />
+                {actor?.id && <ActorBio actor={actor} />}
                 {/* Actor Based Movies */}
                 {actorMovies?.length > 0 && <div className="suggestionSection w-full text-center">
                     <h3 className='text-3xl py-3'>You Might Also Like</h3>
