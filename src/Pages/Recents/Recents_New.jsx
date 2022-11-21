@@ -11,9 +11,10 @@ import defImage from '../../Assets/default.jpg'
 import { useNavigate, useLocation } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import defaultImg from '../../Assets/default.jpg';
+import Loading from '../Loading';
 
 const RecentsNew = () => {
-    const { getMovie, getActor, movieData, cast, genres, error, failed, resetAll } = useTmdbApi();
+    const { getMovie, getActor, movieData, cast, genres, error, failed, resetAll} = useTmdbApi();
     const { state } = useLocation();
     console.log("location state value", state);
     const [movie, setMovie] = useState({});
@@ -122,7 +123,7 @@ const RecentsNew = () => {
             console.log("movie id matched SET");
             return false;
         } else if (state === true) {
-            console.log("Movie id not matched restall() calling");
+            console.log("Movie id not matched reset all() calling");
             resetAll();
             return true;
         };
@@ -145,12 +146,19 @@ const RecentsNew = () => {
         handleReset();
     }, [state]);
 
+    if (!movie?.id) {
+        return (
+            <Loading err={"No Movie Found!"} msg={"Please try Refreshing the page or Navigate to Home!"} />
+        )
+    };
+
     return (
         <> <Navbar />
             {(err?.trailer?.active || failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
-            <div className='recentBg0 pt-20'
+            <div className='recentBg0 pt-16'
                 style={{ backgroundImage: `url(${(POSTER_URL + movie?.backdrop_path) || ""})` }}>
-                <div className="flex flex-row flex-wrap p-3 gap-2 text-center items-center justify-center lg:items-start lg:justify-start lg:text-start xl:items-start xl:justify-start xl:text-start
+                <div className="flex flex-row flex-wrap p-3 gap-2 text-center items-center justify-center lg:items-start 
+                lg:justify-start lg:text-start xl:items-start xl:justify-start xl:text-start
                  md:items-center md:justify-center md:text-center sm:items-center sm:justify-center sm:text-center">
                     <div className='sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px]'>
                         <LazyImage url={movie?.poster_path || movie?.backdrop_path ?
@@ -158,10 +166,10 @@ const RecentsNew = () => {
                             className="w-auto h-auto rounded-2xl" />
                     </div>
                     {movie?.id && <div className="sm:w-full md:w-1/2 lg:w-1/2 min-w-[280px] ml-4">
-                        <div className="md:max-w-[380px]">
+                        <div>
                             <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
                             <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
-                            <h2 className='text-xl font-kanit py-1 '>{movie?.overview}</h2>
+                            <h2 className='text-xl font-kanit py-1 max-h-[40vh] overflow-y-hidden'>{movie?.overview}</h2>
                             <h4>{movie?.popularity}</h4>
                             <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
                                 <i className="ri-star-s-fill text-3xl py-2 text-amber-500"></i>

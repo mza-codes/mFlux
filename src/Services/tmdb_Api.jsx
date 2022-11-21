@@ -114,7 +114,10 @@ const useTmdbApi = create((set) => ({
     updateState: (newState) => {
         set((state) => ({ ...state, newState }));
         return true;
-    }
+    },
+    resetAndUpdate: (newState) => {
+        set((state) => ({ ...initialState ,newState }))
+    },
 }))
 
 export default useTmdbApi;

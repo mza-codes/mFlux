@@ -1,4 +1,4 @@
-import { w500 } from '../Constants/Constants';
+import { w780 } from '../Constants/Constants';
 import LazyImage from './LazyImage';
 import defImage from '../Assets/default.jpg';
 import { useNavigate } from 'react-router-dom';
@@ -46,7 +46,7 @@ const ActorBio = ({ actor }) => {
         <div className='w-full text-white py-6'>
             <div className="actorWrapper flex flex-row flex-wrap justify-evenly ">
                 <div className="actorImage sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px] p-3 max-h-[70vh]">
-                    <LazyImage url={actor?.profile_path ? w500 + actor?.profile_path : defImage}
+                    <LazyImage url={actor?.profile_path ? w780 + actor?.profile_path : defImage}
                         className="w-auto rounded-3xl" />
                 </div>
                 <div className="profile min-w-[280px] max-w-[50vw] flex flex-col mx-4 items- justify-center ">
