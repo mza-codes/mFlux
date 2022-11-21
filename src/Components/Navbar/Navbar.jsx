@@ -11,7 +11,6 @@ const viewAtom = atom(false);
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hide, setHide] = useAtom(viewAtom);
-  console.log("hide Status", hide);
   const route = useNavigate();
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
   const fetchresult = useSearchResults((state) => state.getResults);
@@ -19,22 +18,18 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     const inputRef = document.getElementById('inputRef');
-    console.log("QUERY++", inputRef.value);
     const key = inputRef.value;
-
     const isValid = reExSymbols.test(key);
+    // Preventing fetching result from same query
     if (key?.toLowerCase() === query?.toLowerCase()) {
       inputRef.style.borderBottom = "3px solid red";
       return;
-    }
-    console.log(isValid);
+    };
+
     if (isValid) {
-      console.log("SET");
       inputRef.style.borderBottom = "3px solid #68fc54";
       fetchresult(key, 1);
-      if (window?.location?.pathname === "/") {
-        return true;
-      } else {
+      if (window?.location?.pathname !== "/") {
         route('/search-results');
         return true;
       };
@@ -47,6 +42,7 @@ const Navbar = () => {
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();
+      return true;
     } else return false;
   };
 

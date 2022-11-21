@@ -7,9 +7,11 @@ import SuggestionsPagination from '../Components/SuggestionsPagination';
 import useRecents from '../Contexts/useRecents';
 import { useEffect } from 'react';
 import Loading from './Loading';
+import { useState } from 'react';
 
 const ViewActor = () => {
-    const { actor, actorMovies, actorResult, getMoviesByActorId,getActor } = useTmdbApi();
+    const { actor, actorMovies, actorResult, getMoviesByActorId, getActor } = useTmdbApi();
+    const [loading, setLoading] = useState(true);
     const { addOne } = useRecents();
     const { id } = useParams();
     const route = useNavigate();
@@ -22,6 +24,7 @@ const ViewActor = () => {
 
     const fetchActor = async () => {
         await getActor({ id });
+        setLoading(false);
         return;
     };
 
@@ -29,7 +32,7 @@ const ViewActor = () => {
         fetchActor();
     }, [id]);
 
-    if(!actor?.id) {return <Loading err={`404 Not Found`} msg={`Actor with id "${id}" not found on TMDB Database !`} />}
+    if (!actor?.id || loading) { return <Loading err={`404 Not Found`} msg={`Actor with id "${id}" not found on TMDB Database !`} /> }
 
     return (
         <>

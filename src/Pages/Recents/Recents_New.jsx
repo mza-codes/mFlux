@@ -4,7 +4,6 @@ import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
 import { API_KEY, POSTER_URL, TMDB_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
-import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
@@ -12,9 +11,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
+import MovieCard from '../../Components/MovieCard';
 
 const RecentsNew = () => {
-    const { getMovie, movieData, cast, genres, error, failed, resetAll } = useTmdbApi();
+    const { getMovie, movieData, cast, genres, error, failed,
+        getSuggestions, suggestions, fetchTrailer } = useTmdbApi();
+    const { addOne } = useRecents();
     const { id } = useParams();
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
@@ -40,33 +42,28 @@ const RecentsNew = () => {
 
     const playTrailer = async (id) => {
         setLoading(true);
-        const controller = new AbortController();
-        try {
-            const { data } = await
-                axios.get(`${TMDB_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`, { signal: controller.signal });
-            controller.abort("data fetch success");
-            if (data?.results?.length) {
-                let v = Math.floor(Math.random() * data.results.length);
-                console.log(data?.results);
-                setTrailers((curr) => ({ ...curr, list: data.results, data: data?.results[v], isActive: true }));
-                setTimeout(() => {
-                    const view = document.getElementById('watchTrailer');
-                    view && view.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                    setLoading(false);
-                    return;
-                }, 1500);
-            } else {
-                let reason = "There are no related videos available!";
+        const data = await fetchTrailer(`${TMDB_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
+        if (data?.results?.length) {
+            let v = Math.floor(Math.random() * data.results.length);
+            console.log(data?.results);
+            setTrailers((curr) => ({ ...curr, list: data.results, data: data?.results[v], isActive: true }));
+            setTimeout(() => {
+                const view = document.getElementById('watchTrailer');
+                view && view.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 setLoading(false);
-                console.log("No videos Available");
-                setErr((curr) => ({ ...curr, trailer: { active: true, msg: reason } }))
-                controller.abort("No Videos Available");
-            };
-        } catch (err) {
+                return;
+            }, 1500);
+        } else if (data?.code) {
             setLoading(false);
             console.log("Error Fetching Trailer", err);
             setErr((curr) => ({ ...curr, trailer: { active: true, msg: err?.message, err: err } }))
-            controller.abort("Error Occured");
+            return false;
+        } else {
+            let reason = "There are no related videos available!";
+            setLoading(false);
+            console.log("No videos Available");
+            setErr((curr) => ({ ...curr, trailer: { active: true, msg: reason } }))
+            return false;
         };
     };
 
@@ -83,53 +80,55 @@ const RecentsNew = () => {
     const addToWishlist = (data) => {
         console.log("add to wishlist");
         console.log(movieData);
+        return true;
     };
 
     const fetchDetails = async (data) => {
         const values = await getMovie(data);
         console.log("values after fetching", values);
+        return true;
     };
 
     const handleScroll = (param) => {
-        switch (param) {
-            case "next":
-                scrollRef.current.scrollTo({
-                    left: scrollRef.current.scrollLeft + 200,
-                    behavior: "smooth"
-                });
-                break;
-            case "prev":
-                scrollRef.current.scrollTo({
-                    left: scrollRef.current.scrollLeft - 200,
-                    behavior: "smooth"
-                });
-                break;
-            default:
-                break;
+        if (param === "next") {
+            scrollRef.current.scrollTo({
+                left: scrollRef.current.scrollLeft + 200,
+                behavior: "smooth"
+            });
+            return;
+        } else if (param === "prev") {
+            scrollRef.current.scrollTo({
+                left: scrollRef.current.scrollLeft - 200,
+                behavior: "smooth"
+            });
+            return;
         };
     };
 
     const fetchPerson = (person) => {
         route(`/actor-details/${person?.id}`, { state: true });
-    };
-
-    const handleReset = () => {
-        if (currentMovie?.id === recents[0]?.id) {
-            console.log("movie id matched with currenMovie set #1 SET");
-            return false;
-        } else if (movie?.id === recents[0]?.id) {
-            console.log("movie id matched SET");
-            return false;
-        } else if ("state" === true) {
-            console.log("Movie id not matched reset all() calling");
-            resetAll();
-            return true;
-        };
+        return true;
     };
 
     const fetchMovie = async () => {
-        const data = await getMovie({id});
+        if (movieData?.id == id) {
+            console.log("Matched with currentMovie");
+            setMovie(movieData);
+            return true;
+        };
+        const data = await getMovie({ id });
         setMovie(data);
+        let v = Math.floor(Math.random() * data?.genres?.length);
+        getSuggestions({ genreId: data?.genres[v]?.id });
+        return;
+    };
+
+    const getFunc = async (data) => {
+        console.log("getfunc called", data);
+        addOne(data);
+        const newMovie = await getMovie(data);
+        setMovie(newMovie);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     };
 
@@ -146,8 +145,6 @@ const RecentsNew = () => {
                 height: window.innerHeight - 10
             });
         };
-        // recents?.length !== 0 && setMovie(recents[0]);
-        // handleReset();
     }, []);
 
     useEffect(() => {
@@ -193,9 +190,6 @@ const RecentsNew = () => {
                                 Watch Trailer</button>
                             <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
                                 onClick={e => addToWishlist(movie)}> Add to Watch</button>
-                            <button className='p-2 my-2 ml-2 rounded-lg bg-white bg-opacity-10 hover:bg-emerald-600 text-white
-                                disabled:line-through disabled:hover:bg-red-800'
-                                onClick={e => fetchDetails(movie)} disabled={movieData?.id ? true : false} >More Details</button>
                         </div>
                         <div className='space-x-2'>
                             {genres?.map((genre, i) => (
@@ -240,9 +234,9 @@ const RecentsNew = () => {
                                     onClick={e => fetchPerson(person)} key={person?.id || i} >
                                     <LazyImage key={i} url={person?.profile_path ?
                                         `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
-                                        className="rounded-lg min-w-[164px] max-h-[200px] object-cover" />
-                                    <span className='text-white text-base max-w-[95%]'>{person?.name || person?.original_name}</span>
-                                    <h4 className='text-gray-400 text-sm max-w-[95%]'>{person?.character}</h4>
+                                        className="rounded-lg min-w-[124px] max-h-[180px] object-cover" />
+                                    <span className='text-white text-base max-w-[100%]'>{person?.name || person?.original_name}</span>
+                                    <h4 className='text-gray-400 text-sm max-w-[100%]'>{person?.character}</h4>
                                 </div>
                             ))}
                         </div>
@@ -250,7 +244,7 @@ const RecentsNew = () => {
                 {movieData?.id && cast?.length <= 0 && <div className='w-full text-center'>
                     <p className='font-kanit text-2xl'>There is no cast information available</p></div>}
                 {/* Trailer Using current innerwidth values */}
-                {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto p-2 m-2'>
+                {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto '>
                     <div className='w-full flex flex-row justify-between text-white'>
                         <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
                             <i className="ri-refresh-fill"></i>
@@ -273,6 +267,23 @@ const RecentsNew = () => {
                     <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true}
                         title="mFlux Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
                     </iframe>
+                </div>}
+                {suggestions?.length > 0 && <div className="suggestionSection w-full text-center">
+                    <h3 className='text-3xl py-3 font-righteous'>You Might Also Like</h3>
+                    <div className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
+                        {suggestions?.map((movie) => (
+                            <MovieCard key={movie?.id} movie={movie} handleStore={getFunc} />
+                        ))}
+                    </div>
+                    {/* {actorResult?.total_pages > 1 && <div className="w-full pagin flex items-center justify-center fixed bottom-1">
+                    <div className='bg-zinc-600 rounded-lg'>
+                        <SuggestionsPagination
+                            currentPage={actorResult?.page}
+                            totalPage={actorResult?.total_pages}
+                            api={getMoviesByActorId}
+                            query={actor?.id} />
+                    </div>
+                </div>} */}
                 </div>}
 
             </div>

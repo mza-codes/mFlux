@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { useRoutes } from 'react-router-dom';
 import LoaderMini from './Components/LoaderMini';
 import Loading from './Pages/Loading';
+import ErrorPage from './Components/ErrorPage';
 
 const RecentsNew = lazy(() => import('./Pages/Recents/Recents_New'));
 const App = lazy(() => import('./App'));
@@ -33,7 +34,7 @@ export default function Router() {
         },
         {
             path: '/*', element:
-                <Suspense fallback={<Loading />}> <LoaderMini /> </Suspense>
+                <Suspense fallback={<Loading />}> <ErrorPage /> </Suspense>
         },
         {
             path: 'search-results', element:

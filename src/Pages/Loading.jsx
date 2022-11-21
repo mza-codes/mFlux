@@ -14,7 +14,7 @@ const Loading = ({ err, msg }) => {
             element && (element.innerText = err || "Loading Content");
             messager && (messager.innerText = msg || "Taking too long to load ? Try reloading ! ");
         }, 7000);
-    }, []);
+    }, [err, msg]);
 
     return (
         <div className='loadPage '>

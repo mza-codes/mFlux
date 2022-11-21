@@ -7,6 +7,7 @@ import useTmdbApi from '../Services/tmdb_Api';
 import { atom, useAtom } from 'jotai';
 
 const loaderAtom = atom(true);
+
 const ErrMsg = ({ route }) => (
     <>
         <h1 className='text-rose-600 text-4xl text-center font-kanit'>

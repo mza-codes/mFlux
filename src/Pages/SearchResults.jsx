@@ -7,15 +7,12 @@ import MovieCard from "../Components/MovieCard";
 
 const SearchResults = () => {
     const { query, result, response, oldResult } = useSearchResults();
-    const { recents, addItem } = useRecents();
+    const { addOne } = useRecents();
     const route = useNavigate();
 
     const handleStore = (movie) => {
-        const newArray = recents?.filter((item) => item?.id !== movie?.id);
-        newArray.push(movie);
-        newArray.reverse();
-        addItem(newArray);
-        route('/recents', { state: true });
+        addOne(movie);
+        route(`/recents/${movie?.id}`, { state: true });
         return;
     };
 
