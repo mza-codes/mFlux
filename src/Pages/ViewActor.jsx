@@ -30,7 +30,7 @@ const ViewActor = () => {
                 {/* Actor Based Movies */}
                 {actorMovies?.length > 0 && <div className="suggestionSection w-full text-center">
                     <h3 className='text-3xl py-3'>You Might Also Like</h3>
-                    <div className="suggestionsWrapper flex flex-row flex-wrap w-full ">
+                    <div className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
                         {actorMovies?.map((movie) => (
                             <MovieCard key={movie?.id} movie={movie} handleStore={getFunc} />
                         ))}

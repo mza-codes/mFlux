@@ -13,15 +13,32 @@ body {
         justify-content: center;
         text-align: center;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        .logoContainer{
-            img{
+
+        .logoContainer {
+            img {
                 max-width: 280px;
                 max-height: 400px;
             }
         }
-        .mza-link{
+
+        .mza-link {
+            margin-top: 6px ;
             text-decoration: none;
             color: #8afc56;
+        }
+
+        .homeBtn {
+            padding: 8px;
+            color: #000;
+            border-radius: 8px;
+            font-weight: 700;
+            background: rgba($color: #fff, $alpha: 0.4);
+            cursor: pointer;
+
+            &:hover {
+                background: linear-gradient(to right, yellow,rgba(255, 5, 5, 0.8));
+                color: #000;
+            }
         }
     }
 }

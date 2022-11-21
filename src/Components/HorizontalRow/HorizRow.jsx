@@ -48,13 +48,14 @@ const HorizRow = ({ data, title, close, ...props }) => {
         <div>
             {data.length ? <>
                 <div className='w-full flex flex-row justify-between items-center'>
-                    <h3 className={`px-4 text-white text-2xl font-righteous pointer-events-none ${close ? "text-emerald-400" : "capitalize"}`}>
+                    <h3 className={`px-4 text-white text-2xl font-righteous pointer-events-none max-w-[80%]
+                    ${close ? "text-emerald-400" : "capitalize"}`}>
                         {title || "Loading.."}
                     </h3>
-                    {close && <div>
+                    {close && <div className=''>
                         <button onClick={e => route('/search-results')} className='text-white hover:text-yellow-400' >
                             <iconify-icon icon="material-symbols:grid-view-rounded" width="33" height="33" /> </button>
-                        <button className='text-2xl mx-3 text-red-600 hover:text-orange-500' onClick={e => closeResult()}>
+                        <button className='text-2xl mr-1 text-red-600 hover:text-orange-500' onClick={e => closeResult()}>
                             <iconify-icon icon="eva:close-square-fill" height="34" width={"34"} />
                         </button> </div>}
                 </div>
