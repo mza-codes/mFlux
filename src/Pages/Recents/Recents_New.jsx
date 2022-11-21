@@ -28,7 +28,7 @@ const RecentsNew = () => {
         list: [],
         data: {}
     });
-    const { recents, currentMovie } = useRecents();
+    const { recents } = useRecents();
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState({
         trailer: {
@@ -80,12 +80,6 @@ const RecentsNew = () => {
     const addToWishlist = (data) => {
         console.log("add to wishlist");
         console.log(movieData);
-        return true;
-    };
-
-    const fetchDetails = async (data) => {
-        const values = await getMovie(data);
-        console.log("values after fetching", values);
         return true;
     };
 
@@ -174,13 +168,29 @@ const RecentsNew = () => {
                         <div>
                             <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
                             <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
+                            <div className='flex flex-row gap-2 rounded-lg font-righteous'>
+                                <a href={`https://imdb.com/title/${movieData?.imdb_id}`} target="_blank" rel="noreferrer"
+                                    className="text-amber-400 hover:text-yellow-600">
+                                    <iconify-icon icon="fa:imdb" width={34} height={34} />
+                                </a>
+                            </div>
                             <h2 className='text-xl font-kanit py-1 max-h-[40vh] overflow-y-hidden'>{movie?.overview}</h2>
-                            <h4>{movie?.popularity}</h4>
+                            <h4 className='font-righteous'>{movieData?.runtime && movieData?.runtime + " Minutes"}</h4>
                             <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
                                 <i className="ri-star-s-fill text-3xl py-2 text-amber-500"></i>
                                 <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movie?.vote_average)?.slice(0, 3)}
                                     <span className='text-base text-gray-500'>&nbsp;({movie?.vote_count})</span>
                                 </h4>
+                            </div>
+                            <div className='flex flex-row flex-wrap gap-2'>
+                                <p className='bg-blue-400 text-black rounded-tl-xl font-kanit p-2 rounded-sm 
+                                    hover:bg-opacity-90 cursor-pointer truncate' >{movieData?.production_countries[0]?.name}</p>
+                                <p className='bg-teal-400 text-black rounded-tl-xl font-kanit p-2 rounded-sm 
+                                    hover:bg-opacity-90 cursor-pointer truncate' >{movieData?.spoken_languages[0]?.name}</p>
+                                {movieData?.production_companies?.map((data) => (
+                                    <p key={data?.name} className='bg-orange-400 text-black font-kanit p-2 rounded-tr-xl 
+                                    hover:bg-opacity-90 cursor-pointer truncate' >{data?.name}</p>
+                                ))}
                             </div>
                         </div>
                         <div className="gap-2">
@@ -193,8 +203,8 @@ const RecentsNew = () => {
                         </div>
                         <div className='space-x-2'>
                             {genres?.map((genre, i) => (
-                                <button key={genre?.id || i} className={`p-2 rounded-2xl font-kanit text-base bg-gradient-to-tr
-                                 from-yellow-200 cursor-pointer via-orange-500 to-amber-900 
+                                <button key={genre?.id || i} className={`p-2 rounded-md font-kanit text-base bg-gradient-to-tr
+                                 from-teal-200 cursor-pointer to-sky-200 text-black 
                                  hover:bg-gradient-to-tl`}>{genre?.name}</button>
                             ))}
                         </div>
