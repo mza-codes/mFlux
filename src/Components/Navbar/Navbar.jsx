@@ -11,7 +11,6 @@ const viewAtom = atom(false);
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hide, setHide] = useAtom(viewAtom);
-  console.log("hide Status", hide);
   const route = useNavigate();
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
   const fetchresult = useSearchResults((state) => state.getResults);
@@ -19,22 +18,18 @@ const Navbar = () => {
 
   const handleSearch = (e) => {
     const inputRef = document.getElementById('inputRef');
-    console.log("QUERY++", inputRef.value);
     const key = inputRef.value;
-
     const isValid = reExSymbols.test(key);
+    // Preventing fetching result from same query
     if (key?.toLowerCase() === query?.toLowerCase()) {
       inputRef.style.borderBottom = "3px solid red";
       return;
-    }
-    console.log(isValid);
+    };
+
     if (isValid) {
-      console.log("SET");
       inputRef.style.borderBottom = "3px solid #68fc54";
       fetchresult(key, 1);
-      if (window?.location?.pathname === "/") {
-        return true;
-      } else {
+      if (window?.location?.pathname !== "/") {
         route('/search-results');
         return true;
       };
@@ -47,13 +42,15 @@ const Navbar = () => {
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();
+      return true;
     } else return false;
   };
 
   return (<>
     <div className={`navBar ${hide ? "fixed z-10" : "fixed z-50"}`}>
       <div className="navWrapper">
-        <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"}`} onClick={e => route('/')}>
+        <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"} w-[80px] m-1
+          xl:w-[120px] lg:w-[120px] md:w-[80px] sm:w-[60px] lg:m-0 `} onClick={e => route('/')}>
           <img src={mFlux} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
         </div>
         <div className={`flex flex-row gap-2 items-center justify-center searchSection sm:m-2 
@@ -71,7 +68,7 @@ const Navbar = () => {
           </div>
           <input id="toggler" type="checkbox" hidden onChange={e => setHide(e?.target?.checked)} />
           <label htmlFor="toggler">
-            <div className='Avatar'>
+            <div className='Avatar  w-[30px] xl:w-[40px] lg:w-[40px] md:w-[40px] sm:w-[30px] '>
               <img itemType='label' src={Avatar} alt="_avatar" />
             </div>
           </label>

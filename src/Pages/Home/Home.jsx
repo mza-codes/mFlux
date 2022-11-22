@@ -9,7 +9,7 @@ import {
 } from '../../URLs/URLS';
 
 const Home = () => {
-
+    const v = Math.floor(Math.random() * 100);
     const listCategories = [
         "trending",
         "romance",
@@ -76,7 +76,14 @@ const Home = () => {
             if (data) {
                 console.log("got data");
                 let value = JSON.parse(data);
-                setData((current) => ({ ...current, [listCategories[i]]: value }));
+                if (v <= 50) {
+                    value.reverse();
+                    setData((current) => ({ ...current, [listCategories[i]]: value }));
+                    // return;
+                } else {
+                    setData((current) => ({ ...current, [listCategories[i]]: value }));
+                    // return;
+                };
             } else {
                 console.log("no data found");
                 fetchData();

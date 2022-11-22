@@ -9,13 +9,11 @@ const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 
 const Banner = () => {
     const [banner, setBanner] = useState({});
-    const { recents, addItem: setRecents } = useRecents();
+    const { addOne } = useRecents();
     const route = useNavigate();
-    const movie = localStorage.getItem("family");
+    const movie = localStorage.getItem("comedy2");
     const values = useSearchResults((state) => state);
     const { result: results, query, error: err, gotResult } = values;
-    console.log("currentPage", values?.response?.page);
-    console.log(values?.response);
 
     const changeBg = () => {
         if (movie) {
@@ -28,13 +26,8 @@ const Banner = () => {
     };
 
     const handlePlay = () => {
-        const filtered = recents.map((item) => {
-            return item?.id !== banner?.id
-        });
-        filtered.push(banner);
-        filtered.reverse();
-        setRecents(filtered);
-        route('/recents', { state: true });
+        addOne(banner);
+        route(`/recents/${banner?.id}`, { state: true });
         return;
     };
 
@@ -45,8 +38,11 @@ const Banner = () => {
     return (
         <>
             <div className='Banner'>
-                <div className="bg"
-                    style={{ backgroundImage: `url(${POSTER_URL + (banner?.backdrop_path ? banner?.backdrop_path : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})` }}>
+                <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh]"
+                    style={{
+                        backgroundImage: `url(${POSTER_URL + (banner?.backdrop_path ? banner?.backdrop_path
+                            : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
+                    }}>
                     <div className="content sm:w-full lg:w-1/2 capitalize">
                         <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title}</h2>
                         <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
@@ -70,4 +66,4 @@ const Banner = () => {
         </>)
 }
 
-export default Banner
+export default Banner;

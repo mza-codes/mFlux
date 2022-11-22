@@ -40,7 +40,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
         duplicate.push(data);
         duplicate.reverse();
         setRecents(duplicate);
-        route('/recents', { state: true });
+        route(`/recents/${data?.id}`, { state: true });
         return;
     };
 

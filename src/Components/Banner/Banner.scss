@@ -1,10 +1,12 @@
 .Banner {
     min-height: 68vh;
+    max-height: 100vh;
     position: relative;
 
     .bg {
         background-position: center;
-        height: 68vh;
+        // height: 68vh;
+        transition: all 900ms;
         width: 100%;
         background-size: cover;
         position: relative;

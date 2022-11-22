@@ -22,6 +22,10 @@ module.exports = {
       poppins: ['Poppins', 'sans-serif']
     },
   },
-  plugins: [],
+  plugins: [
+    {
+      ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {})
+    }
+  ],
 
 }

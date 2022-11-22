@@ -20,8 +20,8 @@
             img {
                 // min-width: 140px;
                 // min-height: 60px;
-                width: 120px;
-                height: 46px;
+                // max-width: 120px;
+                // max-height: 46px;
                 filter: drop-shadow(0 0 1.5rem black);
             }
 
@@ -39,8 +39,8 @@
             right: 4px;
             top: 8px;
             .Avatar {
-                width: 40px;
-                height: 40px;
+                // width: 40px;
+                // height: 40px;
                 background: #fff;
                 border-radius: 6px;
                 transition: all 900ms !important;

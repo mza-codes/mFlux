@@ -2,21 +2,22 @@ import { useEffect, useState } from 'react';
 import './Recents.scss';
 import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
-import { API_KEY, POSTER_URL, TMDB_URL } from '../../Constants/Constants';
+import { POSTER_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
-import axios from 'axios';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
+import MovieCard from '../../Components/MovieCard';
 
 const RecentsNew = () => {
-    const { getMovie, getActor, movieData, cast, genres, error, failed, resetAll} = useTmdbApi();
-    const { state } = useLocation();
-    console.log("location state value", state);
+    const { getMovie, movieData, cast, genres, error, failed,
+        getSuggestions, suggestions, trailers: videos } = useTmdbApi();
+    const { addOne } = useRecents();
+    const { id } = useParams();
     const [movie, setMovie] = useState({});
     const [playerScreen, setPlayerScreen] = useState({
         width: 360,
@@ -27,8 +28,7 @@ const RecentsNew = () => {
         list: [],
         data: {}
     });
-    const { recents, currentMovie } = useRecents();
-    const [loading, setLoading] = useState(false);
+    const { recents } = useRecents();
     const [err, setErr] = useState({
         trailer: {
             active: false,
@@ -37,37 +37,22 @@ const RecentsNew = () => {
         }
     });
     const scrollRef = useRef();
-    const navigate = useNavigate();
+    const route = useNavigate();
 
-    const playTrailer = async (id) => {
-        setLoading(true);
-        const controller = new AbortController();
-        try {
-            const { data } = await
-                axios.get(`${TMDB_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`, { signal: controller.signal });
-            controller.abort("data fetch success");
-            if (data?.results?.length) {
-                let v = Math.floor(Math.random() * data.results.length);
-                console.log(data?.results);
-                setTrailers((curr) => ({ ...curr, list: data.results, data: data?.results[v], isActive: true }));
-                setTimeout(() => {
-                    const view = document.getElementById('watchTrailer');
-                    view && view.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                    setLoading(false);
-                    return;
-                }, 1500);
-            } else {
-                let reason = "There are no related videos available!";
-                setLoading(false);
-                console.log("No videos Available");
-                setErr((curr) => ({ ...curr, trailer: { active: true, msg: reason } }))
-                controller.abort("No Videos Available");
-            };
-        } catch (err) {
-            setLoading(false);
-            console.log("Error Fetching Trailer", err);
-            setErr((curr) => ({ ...curr, trailer: { active: true, msg: err?.message, err: err } }))
-            controller.abort("Error Occured");
+    const playTrailer = () => {
+        if (videos?.length) {
+            let v = Math.floor(Math.random() * videos.length);
+            setTrailers((curr) => ({ ...curr, list: videos, data: videos[v], isActive: true }));
+            setTimeout(() => {
+                const view = document.getElementById('watchTrailer');
+                view && view.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                return;
+            }, 1500);
+        } else {
+            let reason = "There are no related videos available!";
+            console.log("No videos Available");
+            setErr((curr) => ({ ...curr, trailer: { active: true, msg: reason } }))
+            return false;
         };
     };
 
@@ -84,49 +69,50 @@ const RecentsNew = () => {
     const addToWishlist = (data) => {
         console.log("add to wishlist");
         console.log(movieData);
-    };
-
-    const fetchDetails = async (data) => {
-        const values = await getMovie(data);
-        console.log("values after fetching", values);
+        return true;
     };
 
     const handleScroll = (param) => {
-        switch (param) {
-            case "next":
-                scrollRef.current.scrollTo({
-                    left: scrollRef.current.scrollLeft + 200,
-                    behavior: "smooth"
-                });
-                break;
-            case "prev":
-                scrollRef.current.scrollTo({
-                    left: scrollRef.current.scrollLeft - 200,
-                    behavior: "smooth"
-                });
-                break;
-            default:
-                break;
+        if (param === "next") {
+            scrollRef.current.scrollTo({
+                left: scrollRef.current.scrollLeft + 200,
+                behavior: "smooth"
+            });
+            return;
+        } else if (param === "prev") {
+            scrollRef.current.scrollTo({
+                left: scrollRef.current.scrollLeft - 200,
+                behavior: "smooth"
+            });
+            return;
         };
     };
 
     const fetchPerson = (person) => {
-        getActor(person);
-        navigate('/actor-details', { replace: true });
+        route(`/actor-details/${person?.id}`, { state: true });
+        return true;
     };
 
-    const handleReset = () => {
-        if (currentMovie?.id === recents[0]?.id) {
-            console.log("movie id matched with currenMovie set #1 SET");
-            return false;
-        } else if (movie?.id === recents[0]?.id) {
-            console.log("movie id matched SET");
-            return false;
-        } else if (state === true) {
-            console.log("Movie id not matched reset all() calling");
-            resetAll();
+    const fetchMovie = async () => {
+        if (movieData?.id == id) {
+            console.log("Matched with currentMovie");
+            setMovie(movieData);
             return true;
         };
+        const data = await getMovie({ id });
+        setMovie(data);
+        let v = Math.floor(Math.random() * data?.genres?.length);
+        getSuggestions({ genreId: data?.genres[v]?.id });
+        return;
+    };
+
+    const getFunc = async (data) => {
+        console.log("getfunc called", data);
+        addOne(data);
+        const newMovie = await getMovie(data);
+        setMovie(newMovie);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
     };
 
     useEffect(() => {
@@ -142,11 +128,13 @@ const RecentsNew = () => {
                 height: window.innerHeight - 10
             });
         };
-        recents?.length !== 0 && setMovie(recents[0]);
-        handleReset();
-    }, [state]);
+    }, []);
 
-    if (!movie?.id) {
+    useEffect(() => {
+        fetchMovie();
+    }, []);
+
+    if (!movie?.id || !id) {
         return (
             <Loading err={"No Movie Found!"} msg={"Please try Refreshing the page or Navigate to Home!"} />
         )
@@ -154,7 +142,7 @@ const RecentsNew = () => {
 
     return (
         <> <Navbar />
-            {(err?.trailer?.active || failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
+            {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
             <div className='recentBg0 pt-16'
                 style={{ backgroundImage: `url(${(POSTER_URL + movie?.backdrop_path) || ""})` }}>
                 <div className="flex flex-row flex-wrap p-3 gap-2 text-center items-center justify-center lg:items-start 
@@ -170,45 +158,56 @@ const RecentsNew = () => {
                             <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
                             <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
                             <h2 className='text-xl font-kanit py-1 max-h-[40vh] overflow-y-hidden'>{movie?.overview}</h2>
-                            <h4>{movie?.popularity}</h4>
+                            <h4 className='font-righteous'>{movieData?.runtime && movieData?.runtime + " Minutes"}</h4>
                             <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
                                 <i className="ri-star-s-fill text-3xl py-2 text-amber-500"></i>
                                 <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movie?.vote_average)?.slice(0, 3)}
                                     <span className='text-base text-gray-500'>&nbsp;({movie?.vote_count})</span>
                                 </h4>
                             </div>
+                            <div className=''>
+                                <div className=''>
+                                    <a href={`https://imdb.com/title/${movieData?.imdb_id}`} target="_blank" rel="noreferrer"
+                                        className="text-amber-400 hover:text-yellow-600">
+                                        <iconify-icon icon="fa:imdb" width={34} height={34} />
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <div className="gap-2">
                             <button className='p-2 my-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600
                              text-white disabled:line-through disabled:hover:bg-inherit'
-                                onClick={e => playTrailer(movie?.id)} disabled={trailers.isActive}>
+                                onClick={playTrailer} disabled={trailers.isActive}>
                                 Watch Trailer</button>
                             <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
                                 onClick={e => addToWishlist(movie)}> Add to Watch</button>
-                            <button className='p-2 my-2 ml-2 rounded-lg bg-white bg-opacity-10 hover:bg-emerald-600 text-white
-                                disabled:line-through disabled:hover:bg-red-800'
-                                onClick={e => fetchDetails(movie)} disabled={movieData?.id ? true : false} >More Details</button>
                         </div>
                         <div className='space-x-2'>
                             {genres?.map((genre, i) => (
-                                <button key={genre?.id || i} className={`p-2 rounded-2xl font-kanit text-base bg-gradient-to-tr
-                                 from-yellow-200 cursor-pointer via-orange-500 to-amber-900 
+                                <button key={genre?.id || i} className={`p-2 rounded-md font-kanit text-base bg-gradient-to-tr
+                                 from-teal-200 cursor-pointer to-sky-200 text-black 
                                  hover:bg-gradient-to-tl`}>{genre?.name}</button>
                             ))}
                         </div>
-                        {failed && <div className='w-1/2'>
-                            <p className='font-kanit red'>{error?.message}</p>
-                            <p className='font-kanit red'>{error?.response?.data?.status_message}</p>
-                        </div>}
-                        {err?.trailer?.active && <div className='w-1/2'>
-                            <p className='font-kanit red'>{err?.trailer?.msg}</p>
-                            <p className='font-kanit red'>{err?.trailer?.err?.code}</p>
-                        </div>}
-                        {loading && <div className='w-full py-2'>
-                            <div className='load'><div> <h5 className='text-xl font-righteous text-center text-black'>
-                                Loading...</h5>
-                            </div></div>
-                        </div>}
+                        <div className='py-1'>
+                            {movieData?.production_companies?.map((data) => (
+                                <span key={data?.name} className="truncate" >#{data?.name} &nbsp;</span>
+                            ))}
+                            <br />
+                            <span className='truncate' >#{movieData?.production_countries[0]?.name}</span>
+                            &nbsp;
+                            <span className='truncate' >#{movieData?.spoken_languages[0]?.name}</span>
+                        </div>
+                        {failed &&
+                            <div className='w-[90%] lg:w-1/2'>
+                                <p className='font-kanit red'>{error?.message}</p>
+                                <p className='font-kanit red'>{error?.response?.data?.status_message}</p>
+                            </div>}
+                        {err?.trailer?.active &&
+                            <div className='w-[90%] lg:w-1/2'>
+                                <p className='font-kanit red'>{err?.trailer?.msg}</p>
+                                <p className='font-kanit red'>{err?.trailer?.err?.code}</p>
+                            </div>}
                     </div>}
                 </div>
                 {cast?.length >= 1 &&
@@ -232,9 +231,9 @@ const RecentsNew = () => {
                                     onClick={e => fetchPerson(person)} key={person?.id || i} >
                                     <LazyImage key={i} url={person?.profile_path ?
                                         `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
-                                        className="rounded-lg min-w-[164px] max-h-[200px] object-cover" />
-                                    <span className='text-white text-base truncate'>{person?.name || person?.original_name}</span>
-                                    <h4 className='text-gray-400 text-sm truncate'>{person?.character}</h4>
+                                        className="rounded-lg min-w-[124px] max-h-[180px] object-cover" />
+                                    <span className='text-white text-base max-w-[100%]'>{person?.name || person?.original_name}</span>
+                                    <h4 className='text-gray-400 text-sm max-w-[100%]'>{person?.character}</h4>
                                 </div>
                             ))}
                         </div>
@@ -242,29 +241,53 @@ const RecentsNew = () => {
                 {movieData?.id && cast?.length <= 0 && <div className='w-full text-center'>
                     <p className='font-kanit text-2xl'>There is no cast information available</p></div>}
                 {/* Trailer Using current innerwidth values */}
-                {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto p-2 m-2'>
-                    <div className='w-full flex flex-row justify-between text-white'>
-                        <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
-                            <i className="ri-refresh-fill"></i>
-                        </button>
-                        <button className='text-2xl m-2 roundBtn' onClick={e => setTrailers(curr => ({ ...curr, isActive: false }))} >
-                            <i className="ri-close-circle-fill"></i>
-                        </button>
-                    </div>
-
-                    {trailers?.list?.length && <div className='w-full flex flex-row items-center flex-wrap p-2
+                {trailers.isActive &&
+                    <div id='watchTrailer' className='w-auto h-auto'>
+                        <div className='w-full flex flex-row justify-between text-white'>
+                            <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
+                                <i className="ri-refresh-fill"></i>
+                            </button>
+                            <button className='text-2xl m-2 roundBtn' onClick={e => setTrailers(curr => ({ ...curr, isActive: false }))} >
+                                <i className="ri-close-circle-fill"></i>
+                            </button>
+                        </div>
+                        {trailers?.list?.length &&
+                            <div className='w-full flex flex-row items-center flex-wrap p-2
                         justify-center text-center gap-2'>
-                        {trailers?.list?.map((video) => (
-                            <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 bg-gradient-to-br
-                             from-orange-400 to-red-600 cursor-pointer text-white rounded-lg opacity-50 z-50
-                             hover:opacity-100 p-3 m-1 text-xs" onClick={e => setTrailers(curr => ({ ...curr, data: video }))}>
-                                {video?.type}
-                            </div>
-                        ))}
+                                {trailers?.list?.map((video) => (
+                                    <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 
+                                    bg-gradient-to-br  from-orange-400 to-red-600 cursor-pointer text-white rounded-lg 
+                                    opacity-50 z-50 hover:opacity-100 p-3 m-1 text-xs"
+                                        onClick={e => setTrailers(curr => ({ ...curr, data: video }))}>
+                                        {video?.type}
+                                    </div>
+                                ))}
+                            </div>}
+                        <div className="w-full flex items-center justify-center text-center p-1 m-0 ">
+                            {/* <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true} */}
+                            <iframe allowFullScreen={true} style={{
+                                maxWidth: `${playerScreen.width}`, maxHeight: `${playerScreen.height}`, width: "100%", height: "100%"
+                            }}
+                                title="Movie Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
+                            </iframe>
+                        </div>
                     </div>}
-                    <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true}
-                        title="mFlux Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
-                    </iframe>
+                {suggestions?.length > 0 && <div className="suggestionSection w-full text-center">
+                    <h3 className='text-3xl py-3 font-righteous'>You Might Also Like</h3>
+                    <div className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
+                        {suggestions?.map((movie) => (
+                            <MovieCard key={movie?.id} movie={movie} handleStore={getFunc} />
+                        ))}
+                    </div>
+                    {/* {actorResult?.total_pages > 1 && <div className="w-full pagin flex items-center justify-center fixed bottom-1">
+                    <div className='bg-zinc-600 rounded-lg'>
+                        <SuggestionsPagination
+                            currentPage={actorResult?.page}
+                            totalPage={actorResult?.total_pages}
+                            api={getMoviesByActorId}
+                            query={actor?.id} />
+                    </div>
+                </div>} */}
                 </div>}
 
             </div>
