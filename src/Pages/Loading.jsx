@@ -29,7 +29,8 @@ const Loading = ({ err, msg }) => {
                 {/* <div class="lds-hourglass"></div> */}
             </div>
             <h1 id='title' className='text-white text-2xl font-kanit w-full text-center'>Loading Content</h1>
-            <p id='msg' className='text-white font-poppins my-2 font-normal'>This website is best viewed in large screens !</p>
+            <p id='msg' className='text-white font-poppins my-2 font-normal max-w-[90%]'>
+                This website is best viewed in larger screens!</p>
             <div className="lds-ellipsis">
                 <div /> <div /> <div /> <div />
             </div>

@@ -1,5 +1,4 @@
 import './styles.scss';
-import './index.css';
 import Banner from './Components/Banner/Banner';
 import Navbar from './Components/Navbar/Navbar';
 import Home from './Pages/Home/Home';

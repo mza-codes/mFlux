@@ -4,8 +4,8 @@ import defaultImg from '../Assets/default.jpg';
 
 const MovieCard = ({ movie, handleStore }) => (
     <div className="imageContainer max-h-screen max-w-xs m-4 " onClick={e => handleStore(movie)} >
-        <div className="image w-64 h-96 sm:w-full sm:h-full relative resultImg">
-            <LazyImage alt="_loading" className="rounded-xl"
+        <div className="image w-64  sm:w-full sm:h-full relative resultImg">
+            <LazyImage alt="_loading" className="rounded-xl object-cover h-[350px] w-64"
                 url={movie?.poster_path || movie?.backdrop_path ? (w500 + movie?.poster_path || movie?.backdrop_path) : defaultImg} />
             <div className="absolute text-white text-center text">
                 <h1 className="font-kanit text-2xl truncate">{movie?.title || movie?.original_title}</h1>

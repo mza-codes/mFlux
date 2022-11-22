@@ -38,8 +38,8 @@ const SearchResults = () => {
                 </div>
             </div>
             {response?.total_pages > 1 && result?.length > 0 &&
-                <div className=' w-full flex flex-row justify-center items-center bottom-0 z-50 fixed mb-2'>
-                    <div className="bg-gradient-to-r from-orange-600 via-amber-400 to-yellow-800 rounded-md">
+                <div className=' w-full flex flex-row justify-center items-center bottom-0 z-50 fixed mb-2 overflow-x-hidden'>
+                    <div className="bg-gradient-to-r from-orange-600 via-amber-400 to-yellow-800 rounded-md ">
                         <PaginatedItems data={response} />
                     </div>
                 </div>}
