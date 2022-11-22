@@ -13,6 +13,9 @@ import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
 import MovieCard from '../../Components/MovieCard';
 
+const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
+    "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
+
 const RecentsNew = () => {
     const { getMovie, movieData, cast, genres, error, failed,
         getSuggestions, suggestions, trailers: videos } = useTmdbApi();
@@ -94,7 +97,7 @@ const RecentsNew = () => {
     };
 
     const fetchMovie = async () => {
-        if (movieData?.id == id) {
+        if (movieData?.id === parseInt(id)) {
             console.log("Matched with currentMovie");
             setMovie(movieData);
             return true;
@@ -182,21 +185,21 @@ const RecentsNew = () => {
                             <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
                                 onClick={e => addToWishlist(movie)}> Add to Watch</button>
                         </div>
-                        <div className='space-x-2'>
+                        <div className='space-x-2 space-y-2'>
                             {genres?.map((genre, i) => (
-                                <button key={genre?.id || i} className={`p-2 rounded-md font-kanit text-base bg-gradient-to-tr
-                                 from-teal-200 cursor-pointer to-sky-200 text-black 
+                                <button key={genre?.id || i} className={`p-2 rounded-md font-semibold text-base bg-gradient-to-tr
+                                 from-orange-300 via-amber-300 to-indigo-300 text-black 
                                  hover:bg-gradient-to-tl`}>{genre?.name}</button>
                             ))}
                         </div>
-                        <div className='py-1'>
-                            {movieData?.production_companies?.map((data) => (
-                                <span key={data?.name} className="truncate" >#{data?.name} &nbsp;</span>
+                        <div className='py-1 flex flex-wrap flex-row xl:justify-start lg:justify-start justify-center '>
+                            {movieData?.production_companies?.map((data, i) => (
+                                <span key={data?.name} style={{ color: `${colors[i]}` }} >#{data?.name} &nbsp;</span>
                             ))}
-                            <br />
-                            <span className='truncate' >#{movieData?.production_countries[0]?.name}</span>
-                            &nbsp;
-                            <span className='truncate' >#{movieData?.spoken_languages[0]?.name}</span>
+                            {movieData?.production_countries[0]?.name &&
+                                <span className='text-orange-300' >#{movieData?.production_countries[0]?.name} &nbsp;</span>}
+                            {movieData?.spoken_languages[0]?.name &&
+                                <span className='text-orange-500' >#{movieData?.spoken_languages[0]?.name}</span>}
                         </div>
                         {failed &&
                             <div className='w-[90%] lg:w-1/2'>
