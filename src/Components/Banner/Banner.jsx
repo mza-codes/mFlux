@@ -38,7 +38,7 @@ const Banner = () => {
     return (
         <>
             <div className='Banner'>
-                <div className="bg"
+                <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh]"
                     style={{
                         backgroundImage: `url(${POSTER_URL + (banner?.backdrop_path ? banner?.backdrop_path
                             : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`

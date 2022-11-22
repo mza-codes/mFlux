@@ -26,8 +26,8 @@ const initialState = {
     actor: {},
     actorMovies: [],
     actorResult: {},
-    suggestions: []
-
+    suggestions: [],
+    trailers:[]
 };
 
 const useTmdbApi = create((set) => ({
@@ -69,7 +69,8 @@ const useTmdbApi = create((set) => ({
             genres: data?.genres,
             isFetching: false,
             error: {},
-            failed: false
+            failed: false,
+            trailers: data?.videos?.results || []
         }));
         return data;
     },

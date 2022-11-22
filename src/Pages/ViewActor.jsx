@@ -42,7 +42,11 @@ const ViewActor = () => {
                  hover:bg-orange-500 p-2 font-kanit fixed z-50 bottom-2 right-1'>
                     Go Back
                 </button>
-                {actor?.id && <ActorBio actor={actor} />}
+                {actor?.id &&
+                <div className="w-full">
+                    <ActorBio actor={actor} />
+                </div>
+                }
                 {/* Actor Based Movies */}
                 {actorMovies?.length > 0 && <div className="suggestionSection w-full text-center">
                     <h3 className='text-3xl py-3'>You Might Also Like</h3>

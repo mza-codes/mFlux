@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './Recents.scss';
 import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
-import { API_KEY, POSTER_URL, TMDB_URL } from '../../Constants/Constants';
+import { POSTER_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
@@ -15,7 +15,7 @@ import MovieCard from '../../Components/MovieCard';
 
 const RecentsNew = () => {
     const { getMovie, movieData, cast, genres, error, failed,
-        getSuggestions, suggestions, fetchTrailer } = useTmdbApi();
+        getSuggestions, suggestions, trailers: videos } = useTmdbApi();
     const { addOne } = useRecents();
     const { id } = useParams();
     const [movie, setMovie] = useState({});
@@ -29,7 +29,6 @@ const RecentsNew = () => {
         data: {}
     });
     const { recents } = useRecents();
-    const [loading, setLoading] = useState(false);
     const [err, setErr] = useState({
         trailer: {
             active: false,
@@ -40,27 +39,17 @@ const RecentsNew = () => {
     const scrollRef = useRef();
     const route = useNavigate();
 
-    const playTrailer = async (id) => {
-        setLoading(true);
-        const data = await fetchTrailer(`${TMDB_URL}/movie/${id}/videos?api_key=${API_KEY}&language=en-US`);
-        if (data?.results?.length) {
-            let v = Math.floor(Math.random() * data.results.length);
-            console.log(data?.results);
-            setTrailers((curr) => ({ ...curr, list: data.results, data: data?.results[v], isActive: true }));
+    const playTrailer = () => {
+        if (videos?.length) {
+            let v = Math.floor(Math.random() * videos.length);
+            setTrailers((curr) => ({ ...curr, list: videos, data: videos[v], isActive: true }));
             setTimeout(() => {
                 const view = document.getElementById('watchTrailer');
                 view && view.scrollIntoView({ behavior: 'smooth', block: 'end' });
-                setLoading(false);
                 return;
             }, 1500);
-        } else if (data?.code) {
-            setLoading(false);
-            console.log("Error Fetching Trailer", err);
-            setErr((curr) => ({ ...curr, trailer: { active: true, msg: err?.message, err: err } }))
-            return false;
         } else {
             let reason = "There are no related videos available!";
-            setLoading(false);
             console.log("No videos Available");
             setErr((curr) => ({ ...curr, trailer: { active: true, msg: reason } }))
             return false;
@@ -153,7 +142,7 @@ const RecentsNew = () => {
 
     return (
         <> <Navbar />
-            {(err?.trailer?.active || failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
+            {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
             <div className='recentBg0 pt-16'
                 style={{ backgroundImage: `url(${(POSTER_URL + movie?.backdrop_path) || ""})` }}>
                 <div className="flex flex-row flex-wrap p-3 gap-2 text-center items-center justify-center lg:items-start 
@@ -168,12 +157,6 @@ const RecentsNew = () => {
                         <div>
                             <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
                             <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
-                            <div className='flex flex-row gap-2 rounded-lg font-righteous'>
-                                <a href={`https://imdb.com/title/${movieData?.imdb_id}`} target="_blank" rel="noreferrer"
-                                    className="text-amber-400 hover:text-yellow-600">
-                                    <iconify-icon icon="fa:imdb" width={34} height={34} />
-                                </a>
-                            </div>
                             <h2 className='text-xl font-kanit py-1 max-h-[40vh] overflow-y-hidden'>{movie?.overview}</h2>
                             <h4 className='font-righteous'>{movieData?.runtime && movieData?.runtime + " Minutes"}</h4>
                             <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
@@ -182,21 +165,19 @@ const RecentsNew = () => {
                                     <span className='text-base text-gray-500'>&nbsp;({movie?.vote_count})</span>
                                 </h4>
                             </div>
-                            <div className='flex flex-row flex-wrap gap-2'>
-                                <p className='bg-blue-400 text-black rounded-tl-xl font-kanit p-2 rounded-sm 
-                                    hover:bg-opacity-90 cursor-pointer truncate' >{movieData?.production_countries[0]?.name}</p>
-                                <p className='bg-teal-400 text-black rounded-tl-xl font-kanit p-2 rounded-sm 
-                                    hover:bg-opacity-90 cursor-pointer truncate' >{movieData?.spoken_languages[0]?.name}</p>
-                                {movieData?.production_companies?.map((data) => (
-                                    <p key={data?.name} className='bg-orange-400 text-black font-kanit p-2 rounded-tr-xl 
-                                    hover:bg-opacity-90 cursor-pointer truncate' >{data?.name}</p>
-                                ))}
+                            <div className=''>
+                                <div className=''>
+                                    <a href={`https://imdb.com/title/${movieData?.imdb_id}`} target="_blank" rel="noreferrer"
+                                        className="text-amber-400 hover:text-yellow-600">
+                                        <iconify-icon icon="fa:imdb" width={34} height={34} />
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div className="gap-2">
                             <button className='p-2 my-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600
                              text-white disabled:line-through disabled:hover:bg-inherit'
-                                onClick={e => playTrailer(movie?.id)} disabled={trailers.isActive}>
+                                onClick={playTrailer} disabled={trailers.isActive}>
                                 Watch Trailer</button>
                             <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
                                 onClick={e => addToWishlist(movie)}> Add to Watch</button>
@@ -208,19 +189,25 @@ const RecentsNew = () => {
                                  hover:bg-gradient-to-tl`}>{genre?.name}</button>
                             ))}
                         </div>
-                        {failed && <div className='w-1/2'>
-                            <p className='font-kanit red'>{error?.message}</p>
-                            <p className='font-kanit red'>{error?.response?.data?.status_message}</p>
-                        </div>}
-                        {err?.trailer?.active && <div className='w-1/2'>
-                            <p className='font-kanit red'>{err?.trailer?.msg}</p>
-                            <p className='font-kanit red'>{err?.trailer?.err?.code}</p>
-                        </div>}
-                        {loading && <div className='w-full py-2'>
-                            <div className='load'><div> <h5 className='text-xl font-righteous text-center text-black'>
-                                Loading...</h5>
-                            </div></div>
-                        </div>}
+                        <div className='py-1'>
+                            {movieData?.production_companies?.map((data) => (
+                                <span key={data?.name} className="truncate" >#{data?.name} &nbsp;</span>
+                            ))}
+                            <br />
+                            <span className='truncate' >#{movieData?.production_countries[0]?.name}</span>
+                            &nbsp;
+                            <span className='truncate' >#{movieData?.spoken_languages[0]?.name}</span>
+                        </div>
+                        {failed &&
+                            <div className='w-[90%] lg:w-1/2'>
+                                <p className='font-kanit red'>{error?.message}</p>
+                                <p className='font-kanit red'>{error?.response?.data?.status_message}</p>
+                            </div>}
+                        {err?.trailer?.active &&
+                            <div className='w-[90%] lg:w-1/2'>
+                                <p className='font-kanit red'>{err?.trailer?.msg}</p>
+                                <p className='font-kanit red'>{err?.trailer?.err?.code}</p>
+                            </div>}
                     </div>}
                 </div>
                 {cast?.length >= 1 &&
@@ -254,30 +241,37 @@ const RecentsNew = () => {
                 {movieData?.id && cast?.length <= 0 && <div className='w-full text-center'>
                     <p className='font-kanit text-2xl'>There is no cast information available</p></div>}
                 {/* Trailer Using current innerwidth values */}
-                {trailers.isActive && <div id='watchTrailer' className='w-auto h-auto '>
-                    <div className='w-full flex flex-row justify-between text-white'>
-                        <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
-                            <i className="ri-refresh-fill"></i>
-                        </button>
-                        <button className='text-2xl m-2 roundBtn' onClick={e => setTrailers(curr => ({ ...curr, isActive: false }))} >
-                            <i className="ri-close-circle-fill"></i>
-                        </button>
-                    </div>
-
-                    {trailers?.list?.length && <div className='w-full flex flex-row items-center flex-wrap p-2
+                {trailers.isActive &&
+                    <div id='watchTrailer' className='w-auto h-auto'>
+                        <div className='w-full flex flex-row justify-between text-white'>
+                            <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
+                                <i className="ri-refresh-fill"></i>
+                            </button>
+                            <button className='text-2xl m-2 roundBtn' onClick={e => setTrailers(curr => ({ ...curr, isActive: false }))} >
+                                <i className="ri-close-circle-fill"></i>
+                            </button>
+                        </div>
+                        {trailers?.list?.length &&
+                            <div className='w-full flex flex-row items-center flex-wrap p-2
                         justify-center text-center gap-2'>
-                        {trailers?.list?.map((video) => (
-                            <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 bg-gradient-to-br
-                             from-orange-400 to-red-600 cursor-pointer text-white rounded-lg opacity-50 z-50
-                             hover:opacity-100 p-3 m-1 text-xs" onClick={e => setTrailers(curr => ({ ...curr, data: video }))}>
-                                {video?.type}
-                            </div>
-                        ))}
+                                {trailers?.list?.map((video) => (
+                                    <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 
+                                    bg-gradient-to-br  from-orange-400 to-red-600 cursor-pointer text-white rounded-lg 
+                                    opacity-50 z-50 hover:opacity-100 p-3 m-1 text-xs"
+                                        onClick={e => setTrailers(curr => ({ ...curr, data: video }))}>
+                                        {video?.type}
+                                    </div>
+                                ))}
+                            </div>}
+                        <div className="w-full flex items-center justify-center text-center p-1 m-0 ">
+                            {/* <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true} */}
+                            <iframe allowFullScreen={true} style={{
+                                maxWidth: `${playerScreen.width}`, maxHeight: `${playerScreen.height}`, width: "100%", height: "100%"
+                            }}
+                                title="Movie Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
+                            </iframe>
+                        </div>
                     </div>}
-                    <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true}
-                        title="mFlux Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
-                    </iframe>
-                </div>}
                 {suggestions?.length > 0 && <div className="suggestionSection w-full text-center">
                     <h3 className='text-3xl py-3 font-righteous'>You Might Also Like</h3>
                     <div className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">

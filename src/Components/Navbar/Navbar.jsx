@@ -49,7 +49,8 @@ const Navbar = () => {
   return (<>
     <div className={`navBar ${hide ? "fixed z-10" : "fixed z-50"}`}>
       <div className="navWrapper">
-        <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"}`} onClick={e => route('/')}>
+        <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"} w-[80px] m-1
+          xl:w-[120px] lg:w-[120px] md:w-[80px] sm:w-[60px] lg:m-0 `} onClick={e => route('/')}>
           <img src={mFlux} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
         </div>
         <div className={`flex flex-row gap-2 items-center justify-center searchSection sm:m-2 
@@ -67,7 +68,7 @@ const Navbar = () => {
           </div>
           <input id="toggler" type="checkbox" hidden onChange={e => setHide(e?.target?.checked)} />
           <label htmlFor="toggler">
-            <div className='Avatar'>
+            <div className='Avatar  w-[30px] xl:w-[40px] lg:w-[40px] md:w-[40px] sm:w-[30px] '>
               <img itemType='label' src={Avatar} alt="_avatar" />
             </div>
           </label>

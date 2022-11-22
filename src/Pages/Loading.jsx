@@ -5,7 +5,6 @@ import './Loading.scss';
 import '../styles.scss';
 
 const Loading = ({ err, msg }) => {
-
     const navigate = useNavigate();
     useEffect(() => {
         const element = document.getElementById('title');
@@ -30,8 +29,7 @@ const Loading = ({ err, msg }) => {
                 {/* <div class="lds-hourglass"></div> */}
             </div>
             <h1 id='title' className='text-white text-2xl font-kanit w-full text-center'>Loading Content</h1>
-            <p id='msg' className='text-white font-poppins my-2 font-normal'>This website is best viewed in large screens & <br />
-                best performed in Google Chrome Version 107.0.5304.107  !</p>
+            <p id='msg' className='text-white font-poppins my-2 font-normal'>This website is best viewed in large screens !</p>
             <div className="lds-ellipsis">
                 <div /> <div /> <div /> <div />
             </div>

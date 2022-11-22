@@ -4,14 +4,17 @@ import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import Router from './routes';
 import 'react-toastify/dist/ReactToastify.css';
+import Loading from './Pages/Loading';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <BrowserRouter>
-  <ToastContainer />
-    <Router />
+  {/* // <ToastContainer />
+  //   <Router /> */}
+  <Loading />
   </BrowserRouter>
+  
 );
 
 // If you want to start measuring performance in your app, pass a function
