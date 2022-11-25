@@ -27,7 +27,7 @@ const initialState = {
     actorMovies: [],
     actorResult: {},
     suggestions: [],
-    trailers:[]
+    trailers: []
 };
 
 const useTmdbApi = create((set) => ({
@@ -74,7 +74,7 @@ const useTmdbApi = create((set) => ({
         }));
         return data;
     },
-    getSuggestions: async ({ genreId, page = 1 }) => {
+    getSuggestions: async ({ genreId = 28, page = 1 }) => {
         console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
         const data = await fetchData(`/discover/movie?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
         if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
