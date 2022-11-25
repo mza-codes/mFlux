@@ -234,7 +234,7 @@ const RecentsNew = () => {
                                     onClick={e => fetchPerson(person)} key={person?.id || i} >
                                     <LazyImage key={i} url={person?.profile_path ?
                                         `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
-                                        className="rounded-lg min-w-[124px] max-h-[180px] object-cover" />
+                                        className="rounded-lg min-w-[124px] max-h-[180px] object-cover aspect-square" />
                                     <span className='text-white text-base max-w-[100%]'>{person?.name || person?.original_name}</span>
                                     <h4 className='text-gray-400 text-sm max-w-[100%]'>{person?.character}</h4>
                                 </div>

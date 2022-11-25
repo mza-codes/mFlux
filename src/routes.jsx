@@ -4,7 +4,8 @@ import LoaderMini from './Components/LoaderMini';
 import Loading from './Pages/Loading';
 import ErrorPage from './Components/ErrorPage';
 
-const RecentsNew = lazy(() => import('./Pages/Recents/Recents_New'));
+// const RecentsNew = lazy(() => import('./Pages/Recents/Recents_New'));
+const RecentsNew = lazy(() => import('./Pages/Recents/RecentsV2'));
 const App = lazy(() => import('./App'));
 const SearchResults = lazy(() => import('./Pages/SearchResults'));
 const ViewActor = lazy(() => import('./Pages/ViewActor'));
