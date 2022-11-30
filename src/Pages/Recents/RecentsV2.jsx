@@ -22,16 +22,11 @@ const RecentsV2 = () => {
     const { addOne } = useRecents();
     const { id } = useParams();
     const [movie, setMovie] = useState({});
-    const [playerScreen, setPlayerScreen] = useState({
-        width: 360,
-        height: 280
-    });
     const [trailers, setTrailers] = useState({
         isActive: false,
         list: [],
         data: {}
     });
-    const { recents } = useRecents();
     const [err, setErr] = useState({
         trailer: {
             active: false,
@@ -122,21 +117,6 @@ const RecentsV2 = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     };
-
-    useEffect(() => {
-        console.log(recents);
-        if (window.innerWidth <= 640) {
-            setPlayerScreen({
-                width: window.innerWidth - 10,
-                height: window.innerHeight / 2 - 10
-            });
-        } else {
-            setPlayerScreen({
-                width: window.innerWidth - 10,
-                height: window.innerHeight - 10
-            });
-        };
-    }, []);
 
     useEffect(() => {
         fetchMovie();
@@ -310,11 +290,7 @@ const RecentsV2 = () => {
                             ))}
                         </div>}
                     <div className="w-full flex items-center justify-center text-center p-1 m-0 ">
-                        {/* <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true} */}
-                        <iframe allowFullScreen={true} style={{
-                            // maxWidth: `${playerScreen.width}`, maxHeight: `${playerScreen.height}`, 
-                            width: "100%", height: "100%"
-                        }}
+                        <iframe allowFullScreen={true} style={{ width: "100%", height: "100%" }}
                             title="Movie Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
                         </iframe>
                     </div>

@@ -3,7 +3,6 @@ import { useRoutes } from 'react-router-dom';
 import Loading from './Pages/Loading';
 import ErrorPage from './Components/ErrorPage';
 
-// const Recents = lazy(() => import('./Pages/Recents/Recents_New'));
 const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
 const App = lazy(() => import('./App'));
 const SearchResults = lazy(() => import('./Pages/SearchResults'));
