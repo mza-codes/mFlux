@@ -312,7 +312,8 @@ const RecentsV2 = () => {
                     <div className="w-full flex items-center justify-center text-center p-1 m-0 ">
                         {/* <iframe width={(playerScreen?.width) - 20} height={(playerScreen?.height) - 20} allowFullScreen={true} */}
                         <iframe allowFullScreen={true} style={{
-                            maxWidth: `${playerScreen.width}`, maxHeight: `${playerScreen.height}`, width: "100%", height: "100%"
+                            // maxWidth: `${playerScreen.width}`, maxHeight: `${playerScreen.height}`, 
+                            width: "100%", height: "100%"
                         }}
                             title="Movie Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
                         </iframe>
