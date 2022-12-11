@@ -15,13 +15,12 @@ const Navbar = () => {
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
   const fetchresult = useSearchResults((state) => state.getResults);
   const query = useSearchResults(state => state?.query);
-  console.log("LOGGING PATH MAIN NAV: ",window.location);
 
   const handleSearch = (e) => {
     const inputRef = document.getElementById('inputRef');
     const key = inputRef.value;
     const isValid = reExSymbols.test(key);
-    console.log("LOGGING PATH: ",window.location);
+
     // Preventing fetching result from same query
     if (key?.toLowerCase() === query?.toLowerCase()) {
       inputRef.style.borderBottom = "3px solid red";
@@ -32,7 +31,7 @@ const Navbar = () => {
       inputRef.style.borderBottom = "3px solid #68fc54";
       fetchresult(key, 1);
       
-      if (window?.location?.pathname !== "#/") {
+      if (window?.location?.pathname !== "#/") { // added #/ to identify page using hashrouter,if using browser router use native /
         route('/search-results');
         return true;
       };
