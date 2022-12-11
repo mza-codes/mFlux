@@ -132,10 +132,12 @@ const RecentsV2 = () => {
         <div className='text-white'>
             <Navbar />
             {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
-            <div className='bg xl:h-[70vh] lg:h-[60vh] md:h-[60vh] sm:h-[60vh] h-[60vh] relative bg-center bg-cover '
-                style={{ backgroundImage: `url(${(POSTER_URL + movie?.backdrop_path) || ""})` }}>
-                <div className="fade_bottom"></div>
-            </div>
+            {movie?.backdrop_path ?
+                <main className='bannerImg relative'>
+                    <img className='movieBanner xl:max-h-[90vh] lg:max-h-[90vh] md:max-h-[60vh] sm:max-h-[60vh]'
+                        src={(POSTER_URL + movie?.backdrop_path)} />
+                    <div className="fade_bottom"></div>
+                </main> : <div className='pt-20'></div>}
 
             <div className="flex flex-row flex-wrap p-3 gap-2 text-center items-center justify-center lg:items-start 
                 lg:justify-start lg:text-start xl:items-start xl:justify-start xl:text-start
