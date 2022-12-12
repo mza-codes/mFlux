@@ -137,7 +137,7 @@ const RecentsV2 = () => {
             {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
             {movie?.backdrop_path ?
                 <section className='bannerImg relative'>
-                    <img className='movieBanner xl:max-h-[90vh] lg:max-h-[90vh] md:max-h-[60vh] sm:max-h-[60vh]'
+                    <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] md:max-h-[60vh] sm:max-h-[60vh]'
                         src={(POSTER_URL + movie?.backdrop_path)} alt="movie_banner" />
                     <div className="fade_bottom"></div>
                 </section> : <div className='pt-20'></div>}

@@ -1,7 +1,7 @@
 import './Navbar.scss';
 import mFlux from './mFlux.png';
 import Avatar from './userAvatar.png';
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react';
 import useSearchResults from '../../Services/ResultFetch';
 import { atom, useAtom } from 'jotai';
@@ -30,7 +30,7 @@ const Navbar = () => {
     if (isValid) {
       inputRef.style.borderBottom = "3px solid #68fc54";
       fetchresult(key, 1);
-      
+
       if (window?.location?.pathname !== "#/") { // added #/ to identify page using hashrouter,if using browser router use native /
         route('/search-results');
         return true;
@@ -49,13 +49,14 @@ const Navbar = () => {
   };
 
   return (<>
-    <div className={`navBar ${hide ? "fixed z-10" : "fixed z-50"}`}>
-      <div className="navWrapper">
+    <header className={`navBar ${hide ? "fixed z-10" : "fixed z-50"}`}>
+      <main className="navWrapper">
         <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"} w-[80px] m-1
           xl:w-[120px] lg:w-[120px] md:w-[95px] sm:w-[85px] lg:m-0 `} onClick={e => route('/')}>
           <img src={mFlux} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
         </div>
-        <div className={`flex flex-row gap-2 items-center justify-center searchSection sm:m-2 
+
+        <section className={`flex flex-row gap-2 items-center justify-center searchSection sm:m-2 
           ${hide ? "opacity-0 hover:opacity-70" : "visible"}`}>
           <div className={`relative inputArea font-poppins text-sm ${isOpen ? "visible" : "invisible"}`}>
             <input type="text" id='inputRef' onKeyPress={handleKeyPress} placeholder='Search titles...' maxLength={50} />
@@ -63,20 +64,28 @@ const Navbar = () => {
               <iconify-icon width="24" height="24" icon="ic:round-send" />
             </button>
           </div>
-          <div className='searchBtn'>
+          {/* <div className='searchBtn'> */}
             <button className='text-white opacity-30 hover:opacity-100 px-1  rounded-xl' onClick={e => setIsOpen((curr) => (!curr))}>
               <iconify-icon width="24" height="24" icon="mingcute:search-3-line" />
             </button>
-          </div>
+          {/* </div> */}
+          <Link to="/watchlist">
+            <button title='View Wachlist'
+              className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
+              <iconify-icon width="24" height="24" icon="ic:round-collections-bookmark" />
+            </button>
+          </Link>
+          {/* mdi:movie-open-settings */}
           <input id="toggler" type="checkbox" hidden onChange={e => setHide(e?.target?.checked)} />
           <label htmlFor="toggler">
             <div className='Avatar  w-[30px] xl:w-[40px] lg:w-[40px] md:w-[40px] sm:w-[30px] '>
               <img itemType='label' src={Avatar} alt="_avatar" />
             </div>
           </label>
-        </div>
-      </div>
-    </div>
+        </section>
+
+      </main>
+    </header>
   </>)
 }
 
