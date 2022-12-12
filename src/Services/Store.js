@@ -17,7 +17,7 @@ const useWatchlist = create(
             addToWatchList: (item) => {
                 console.log("%cAddingData to watchlist", "color:red;font-size:18px;");
                 const oldData = get().watchlist;
-                if (oldData.includes(item?.id)) return false;
+                if (oldData.includes(item)) return false;
                 set(state => ({
                     ...state,
                     watchlist: [item, ...state.watchlist]
