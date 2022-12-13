@@ -58,10 +58,56 @@ const useTmdbApi = create((set) => ({
         };
     },
     // Get MovieDetails
+    getTv: async ({ id }) => {
+        console.log("fetching movie", id);
+        const data = await fetchData(`/tv/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
+        if (data?.code) {
+            // Fetch from tv if error
+            const newData = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
+            if (newData?.code) { return set(state => ({ ...state, error: data, failed: true })) };
+            set((state) => ({
+                ...state,
+                movieData: newData,
+                cast: newData?.credits?.cast,
+                genres: newData?.genres,
+                isFetching: false,
+                error: {},
+                failed: false,
+                trailers: newData?.videos?.results || []
+            }));
+            return newData;
+        };
+        set((state) => ({
+            ...state,
+            movieData: data,
+            cast: data?.credits?.cast,
+            genres: data?.genres,
+            isFetching: false,
+            error: {},
+            failed: false,
+            trailers: data?.videos?.results || []
+        }));
+        return data;
+    },
     getMovie: async ({ id }) => {
         console.log("fetching movie", id);
         const data = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
-        if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
+        if (data?.code) {
+            // Fetch from tv if error
+            const newData = await fetchData(`/tv/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
+            if (newData?.code) { return set(state => ({ ...state, error: data, failed: true })) };
+            set((state) => ({
+                ...state,
+                movieData: newData,
+                cast: newData?.credits?.cast,
+                genres: newData?.genres,
+                isFetching: false,
+                error: {},
+                failed: false,
+                trailers: newData?.videos?.results || []
+            }));
+            return newData;
+        };
         set((state) => ({
             ...state,
             movieData: data,

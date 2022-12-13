@@ -7,7 +7,7 @@ import LazyImage from '../../Components/LazyImage';
 import useTmdbApi from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
@@ -18,8 +18,9 @@ const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c"
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
 
 const RecentsV2 = () => {
-    const { getMovie, movieData, cast, genres, error, failed,
+    const { getMovie, movieData, cast, genres, error, failed, getTv,
         getSuggestions, suggestions, trailers: videos } = useTmdbApi();
+    const { state } = useLocation();
     const { addOne } = useRecents();
     const { id } = useParams();
     const [movie, setMovie] = useState({});
@@ -100,10 +101,18 @@ const RecentsV2 = () => {
     };
 
     const fetchMovie = async () => {
+        console.log("Logging location", state);
         if (movieData?.id === parseInt(id)) {
             console.log("Matched with currentMovie");
             setMovie(movieData);
             return true;
+        };
+        if (state && state === "tv") {
+            const data = await getTv({ id });
+            setMovie(data);
+            let v = Math.floor(Math.random() * data?.genres?.length);
+            getSuggestions({ genreId: data?.genres[v]?.id });
+            return;
         };
         const data = await getMovie({ id });
         setMovie(data);

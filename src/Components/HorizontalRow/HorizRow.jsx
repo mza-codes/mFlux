@@ -37,10 +37,11 @@ const HorizRow = ({ data, title, close, ...props }) => {
         const duplicate = recents.filter((item) => {
             return item.id !== data.id
         });
+        console.log("fech: ", data);
         duplicate.push(data);
         duplicate.reverse();
         setRecents(duplicate);
-        route(`/recents/${data?.id}`, { state: true });
+        route(`/recents/${data?.id}`, { state: data?.media_type ? data?.media_type : "tv" });
         return;
     };
 

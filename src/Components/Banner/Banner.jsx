@@ -63,7 +63,8 @@ const Banner = () => {
                 </Suspense></>}
             {!gotResult && !values.isClosed && err &&
                 <div className='w-full'> <h2 className='font-righteous text-2xl p-4 text-red-400'>{err}</h2> </div>}
-        </>)
-}
+        </>
+    );
+};
 
 export default Banner;
