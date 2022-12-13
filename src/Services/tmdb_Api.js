@@ -30,8 +30,16 @@ const initialState = {
     trailers: []
 };
 
-const useTmdbApi = create((set) => ({
+const useTmdbApi = create((set, get) => ({
     ...initialState,
+
+    setLoading: (status = true) => {
+        set((state) => ({
+            ...state,
+            isFetching: status
+        }));
+        return;
+    },
 
     getMovies: async (genreIdOrCategoryName, page, searchQuery) => {
         console.log("fetching movies by GETMovies", genreIdOrCategoryName, page, searchQuery);
@@ -59,7 +67,7 @@ const useTmdbApi = create((set) => ({
     },
     // Get MovieDetails
     getTv: async ({ id }) => {
-        console.log("fetching movie", id);
+        console.log("fetching TVShow", id);
         const data = await fetchData(`/tv/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
         if (data?.code) {
             // Fetch from tv if error
@@ -119,6 +127,19 @@ const useTmdbApi = create((set) => ({
             trailers: data?.videos?.results || []
         }));
         return data;
+    },
+    getMoreSuggestions: async ({ genreId = 28, page = 1 }) => {
+        const setLoading = get().setLoading;
+        setLoading(true);
+        console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
+        const data = await fetchData(`/discover/movie?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
+        if (data?.code) return set(state => ({ ...state, error: data, failed: true, isFetching: false }));
+        set(state => ({
+            ...state,
+            suggestions: [...state.suggestions, ...data?.results],
+            isFetching: false
+        }));
+        return;
     },
     getSuggestions: async ({ genreId = 28, page = 1 }) => {
         console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
