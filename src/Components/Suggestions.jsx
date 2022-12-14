@@ -1,3 +1,4 @@
+import { useCallback, useRef } from "react";
 import useTmdbApi from "../Services/tmdb_Api";
 import { hooker } from "../Utils/tmdb";
 import LoaderMini from "./LoaderMini";
@@ -5,48 +6,33 @@ import MovieCard, { MovieCardWRef } from "./MovieCard";
 
 let v = 1;
 let called = false;
-const Suggestions = ({ getFunc, genres, currentGenre }) => {
+const Suggestions = ({ getFunc, genres, currentGenre, state }) => {
     const getMoreSuggestions = useTmdbApi(s => s.getMoreSuggestions);
     const suggestions = useTmdbApi(s => s.suggestions);
     const isFetching = hooker("isFetching", useTmdbApi);
+    const totalpages = hooker("totalSuggestions", useTmdbApi);
 
     console.log("Called Value", called);
 
-    const scrollMonitor = () => {
-        console.log("Called function: ", called);
-        if (!called) {
-            called = true;
-            getMoreSuggestions({ genreId: genres[currentGenre]?.id, page: v + 1 });
-            v = v + 1;
-            return true;
-        };
-    };
+    const observer = useRef();
 
-    window.onscroll = () => {
-        if (window.innerHeight +
-            document.documentElement.scrollTop ===
-            document.documentElement.offsetHeight) {
-            scrollMonitor();
-        };
-    };
-
-    if (called) {
-        setTimeout(() => {
-            console.log("Clear for Fetch Again");
-            called = false;
-        }, 5000);
-    };
-
-    // useEffect(() => {
-    //     const myInterval = setTimeout(() => {
-    //         console.log("Clear to fetch again");
-    //         called = false;
-    //     }, (1000 * 5));
-    //     return () => {
-    //         called = false;
-    //         clearInterval(myInterval);
-    //     };
-    // }, [called]);
+    const lastItem = useCallback(node => {
+        if (isFetching) return false;
+        if (observer.current) observer.current?.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0]?.isIntersecting) {
+                console.count("INTERSECTING CALLING API");
+                getMoreSuggestions({ genreId: genres[currentGenre]?.id, page: v + 1, type: state });
+                if (v === totalpages) {
+                    console.log('SETTTING v BACK TO 0, totalpages === v', totalpages, "===", v);
+                    v = 0;
+                } else v = v + 1;
+                console.log("Item Visible");
+                return true;
+            };
+        });
+        if (node) return observer.current.observe(node);
+    }, []);
 
     return (
         <section className="suggestionSection w-full text-center">
@@ -54,7 +40,7 @@ const Suggestions = ({ getFunc, genres, currentGenre }) => {
             <main className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
                 {suggestions?.map((movie, idx) => {
                     if (suggestions?.length === idx + 1) {
-                        return <MovieCardWRef key={parseInt(movie?.id) * (idx - 10)} movie={movie} handleStore={getFunc} />
+                        return <MovieCardWRef key={parseInt(movie?.id) * (idx - 10)} movie={movie} handleStore={getFunc} ref={lastItem} />
                     } else return <MovieCard key={parseInt(movie?.id) * (idx - 10)} movie={movie} handleStore={getFunc} />
                 })}
             </main>

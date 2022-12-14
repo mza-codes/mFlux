@@ -24,13 +24,13 @@ const ActorBio = ({ actor }) => {
     const [loading, setLoading] = useAtom(loaderAtom);
     const navigate = useNavigate();
     const goBack = () => {
-        navigate(`/actor-details/${actor?.id}`, { state: true });
+        // navigate(`/actor-details/${actor?.id}`, { state: true });
+        navigate(-1, { replace: true });
         return;
     };
 
     useEffect(() => {
         if (actor?.id || actor?.name) {
-            console.log("inside actor true,function calling...");
             getMoviesByActorId(actor);
             setLoading(false);
         };

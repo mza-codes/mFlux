@@ -33,3 +33,37 @@ export const hooker = (value, hook) => {
     //     if (node) return observer.current.observe(node);
     // }, []);
 // Dynamic Scroll alt method
+
+// const scrollMonitor = () => {
+//     console.log("Called function: ", called);
+//     if (!called) {
+//         called = true;
+//         getMoreSuggestions({ genreId: genres[currentGenre]?.id, page: v + 1 });
+//         v = v + 1;
+//         return true;
+//     };
+// };
+
+// window.onscroll = () => {
+//     if (window.innerHeight +
+//         document.documentElement.scrollTop ===
+//         document.documentElement.offsetHeight) {
+//         scrollMonitor();
+//     };
+// };
+
+// if (called) {
+//     setTimeout(() => {
+//         console.log("Clear for Fetch Again");
+//         called = false;
+//     }, 5000);
+// };
+
+// const { actor, actorMovies, actorResult, getMoviesByActorId, getActor } = useTmdbApi();
+// const actor = hooker("actor",useTmdbApi);
+// const actorMovies = hooker("actorMovies",useTmdbApi);
+// const actorResult = hooker("actorResult",useTmdbApi);
+// const getMoviesByActorId = hooker("getMoviesByActorId",useTmdbApi);
+// const getActor = hooker("getActor",useTmdbApi);
+// 
+// 
