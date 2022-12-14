@@ -4,6 +4,7 @@ import { POSTER_URL } from '../../Constants/Constants';
 import useRecents from '../../Contexts/useRecents';
 import useSearchResults from '../../Services/ResultFetch';
 import './Banner.scss';
+import { mfluxCache } from '../../Services/Row';
 
 const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 
@@ -11,18 +12,21 @@ const Banner = () => {
     const [banner, setBanner] = useState({});
     const { addOne } = useRecents();
     const route = useNavigate();
-    const movie = localStorage.getItem("comedy2");
+    const movie = localStorage.getItem(mfluxCache);
     const values = useSearchResults((state) => state);
     const { result: results, query, error: err, gotResult } = values;
 
     const changeBg = () => {
         if (movie) {
-            let data = JSON.parse(movie);
-            let v = Math.floor(Math.random() * data.length);
-            console.log(data[v]);
-            setBanner(data[v]);
+            let value = JSON.parse(movie);
+            const data = value?.state?.data;
+            const items = data["trending"];
+            let v = Math.floor(Math.random() * items.length);
+            console.log(items[v]);
+            setBanner(items[v]);
+            return true;
         };
-        return;
+        return false;
     };
 
     const handlePlay = () => {

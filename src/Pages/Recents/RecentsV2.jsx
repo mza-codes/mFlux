@@ -11,17 +11,31 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
-import MovieCard from '../../Components/MovieCard';
 import useWatchlist from '../../Services/Store';
+import Suggestions from '../../Components/Suggestions';
+import { hooker } from '../../Utils/tmdb';
 
 const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
 
+let v = 0;
+
 const RecentsV2 = () => {
-    const { getMovie, movieData, cast, genres, error, failed, getTv,
-        getSuggestions, suggestions, trailers: videos } = useTmdbApi();
+    console.count("Rendered component");
+    // const { movieData, cast, genres, suggestions, trailers: videos } = useTmdbApi();
+    const movieData = hooker("movieData", useTmdbApi);
+    const cast = hooker("cast", useTmdbApi);
+    const genres = hooker("genres", useTmdbApi);
+    const suggestions = hooker("suggestions", useTmdbApi);
+    const videos = hooker("trailers", useTmdbApi);
+    const error = useTmdbApi(s => s.error);
+    const failed = useTmdbApi(s => s.failed);
+    const getTv = hooker("getTv", useTmdbApi);
+    const getSuggestions = hooker("getSuggestions", useTmdbApi);
+    const getMovie = hooker("getMovie", useTmdbApi);
+
     const { state } = useLocation();
-    const { addOne } = useRecents();
+    const addOne = useRecents(s => s.addOne);
     const { id } = useParams();
     const [movie, setMovie] = useState({});
     const [trailers, setTrailers] = useState({
@@ -101,7 +115,7 @@ const RecentsV2 = () => {
     };
 
     const fetchMovie = async () => {
-        console.log("Logging location", state);
+        
         if (movieData?.id === parseInt(id)) {
             console.log("Matched with currentMovie");
             setMovie(movieData);
@@ -110,13 +124,11 @@ const RecentsV2 = () => {
         if (state && state === "tv") {
             const data = await getTv({ id });
             setMovie(data);
-            let v = Math.floor(Math.random() * data?.genres?.length);
             getSuggestions({ genreId: data?.genres[v]?.id });
             return;
         };
         const data = await getMovie({ id });
         setMovie(data);
-        let v = Math.floor(Math.random() * data?.genres?.length);
         getSuggestions({ genreId: data?.genres[v]?.id });
         return;
     };
@@ -310,14 +322,7 @@ const RecentsV2 = () => {
                     </div>
                 </div>}
             {suggestions?.length > 0 &&
-                <section className="suggestionSection w-full text-center">
-                    <h3 className='text-3xl py-3 font-righteous'>You Might Also Like</h3>
-                    <main className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
-                        {suggestions?.map((movie) => (
-                            <MovieCard key={movie?.id} movie={movie} handleStore={getFunc} />
-                        ))}
-                    </main>
-                </section>
+                <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} />
             }
 
         </main>
