@@ -11,19 +11,33 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
-import MovieCard from '../../Components/MovieCard';
 import useWatchlist from '../../Services/Store';
+import Suggestions from '../../Components/Suggestions';
+import { hooker } from '../../Utils/tmdb';
 
 const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
 
+let v = 0;
+
 const RecentsV2 = () => {
-    const { getMovie, movieData, cast, genres, error, failed, getTv,
-        getSuggestions, suggestions, trailers: videos } = useTmdbApi();
-    const { state } = useLocation();
-    const { addOne } = useRecents();
-    const { id } = useParams();
+    console.count("Rendered component");
+
+    const movieData = hooker("movieData", useTmdbApi);
+    const cast = hooker("cast", useTmdbApi);
+    const genres = hooker("genres", useTmdbApi);
+    const suggestions = hooker("suggestions", useTmdbApi);
+    const videos = hooker("trailers", useTmdbApi);
+    const error = useTmdbApi(s => s.error);
+    const failed = useTmdbApi(s => s.failed);
+    const getTv = hooker("getTv", useTmdbApi);
+    const getSuggestions = hooker("getSuggestions", useTmdbApi);
+    const getMovie = hooker("getMovie", useTmdbApi);
     const [movie, setMovie] = useState({});
+    const { state } = useLocation();
+    const addOne = useRecents(s => s.addOne);
+    const { id } = useParams();
+
     const [trailers, setTrailers] = useState({
         isActive: false,
         list: [],
@@ -72,13 +86,6 @@ const RecentsV2 = () => {
         } else { return false; };
     };
 
-    const addToWishlist = (data) => {
-        // console.log("add to wishlist");
-        // console.log(movieData);
-        addToWatchList(data);
-        return true;
-    };
-
     const handleScroll = (param, ref) => {
         if (param === "next") {
             ref.current.scrollTo({
@@ -101,7 +108,7 @@ const RecentsV2 = () => {
     };
 
     const fetchMovie = async () => {
-        console.log("Logging location", state);
+
         if (movieData?.id === parseInt(id)) {
             console.log("Matched with currentMovie");
             setMovie(movieData);
@@ -110,13 +117,11 @@ const RecentsV2 = () => {
         if (state && state === "tv") {
             const data = await getTv({ id });
             setMovie(data);
-            let v = Math.floor(Math.random() * data?.genres?.length);
-            getSuggestions({ genreId: data?.genres[v]?.id });
+            getSuggestions({ genreId: data?.genres[v]?.id, type: state });
             return;
         };
         const data = await getMovie({ id });
         setMovie(data);
-        let v = Math.floor(Math.random() * data?.genres?.length);
         getSuggestions({ genreId: data?.genres[v]?.id });
         return;
     };
@@ -124,17 +129,22 @@ const RecentsV2 = () => {
     const getFunc = async (data) => {
         console.log("getfunc called", data);
         addOne(data);
-        const newMovie = await getMovie(data);
-        setMovie(newMovie);
+        if (state && state === "tv") {
+            const newItem = await getTv(data);
+            setMovie(newItem);
+        } else {
+            const newMovie = await getMovie({ ...data });
+            setMovie(newMovie);
+        };
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+        return true;
     };
 
     useEffect(() => {
         fetchMovie();
-    }, []);
+    }, [id]);
 
-    if (!movie?.id || !id) {
+    if (!movieData?.id || !id) {
         return (
             <Loading err={"No Movie Found!"} msg={"Please try Refreshing the page or Navigate to Home!"} />
         )
@@ -161,14 +171,14 @@ const RecentsV2 = () => {
                 </div>
                 {movie?.id && <div className="sm:w-full md:w-1/2 lg:w-1/2 min-w-[280px] ml-4">
                     <main>
-                        <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
+                        <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || movie?.name || ""}</h1>
                         <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
                         <h2 className='text-xl font-kanit py-1 max-h-[40vh] overflow-y-hidden'>{movie?.overview}</h2>
                         <h4 className='font-righteous'>{movieData?.runtime && movieData?.runtime + " Minutes"}</h4>
                         <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
                             <i className="ri-star-s-fill text-3xl py-2 text-amber-500"></i>
-                            <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movie?.vote_average)?.slice(0, 3)}
-                                <span className='text-base text-gray-500'>&nbsp;({movie?.vote_count})</span>
+                            <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movieData?.vote_average)?.slice(0, 3)}
+                                <span className='text-base text-gray-500'>&nbsp;({movieData?.vote_count})</span>
                             </h4>
                         </div>
                         {/* <div className=''> */}
@@ -186,7 +196,7 @@ const RecentsV2 = () => {
                             onClick={playTrailer} disabled={trailers.isActive}>
                             Watch Trailer</button>
                         <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
-                            onClick={e => addToWishlist(movie)}> Add to Watch</button>
+                            onClick={e => addToWatchList(movieData)}> Add to Watch</button>
                     </div>
                     <div className='space-x-2 space-y-2'>
                         {genres?.map((genre, i) => (
@@ -310,14 +320,7 @@ const RecentsV2 = () => {
                     </div>
                 </div>}
             {suggestions?.length > 0 &&
-                <section className="suggestionSection w-full text-center">
-                    <h3 className='text-3xl py-3 font-righteous'>You Might Also Like</h3>
-                    <main className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
-                        {suggestions?.map((movie) => (
-                            <MovieCard key={movie?.id} movie={movie} handleStore={getFunc} />
-                        ))}
-                    </main>
-                </section>
+                <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} state={state} />
             }
 
         </main>

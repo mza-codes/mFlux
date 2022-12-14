@@ -4,6 +4,7 @@ import { POSTER_URL } from '../../Constants/Constants';
 import useRecents from '../../Contexts/useRecents';
 import useSearchResults from '../../Services/ResultFetch';
 import './Banner.scss';
+import { mfluxCache } from '../../Services/Row';
 
 const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 
@@ -11,23 +12,26 @@ const Banner = () => {
     const [banner, setBanner] = useState({});
     const { addOne } = useRecents();
     const route = useNavigate();
-    const movie = localStorage.getItem("comedy2");
+    const movie = localStorage.getItem(mfluxCache);
     const values = useSearchResults((state) => state);
     const { result: results, query, error: err, gotResult } = values;
 
     const changeBg = () => {
         if (movie) {
-            let data = JSON.parse(movie);
-            let v = Math.floor(Math.random() * data.length);
-            console.log(data[v]);
-            setBanner(data[v]);
+            let value = JSON.parse(movie);
+            const data = value?.state?.data;
+            const items = data["trending"];
+            let v = Math.floor(Math.random() * items.length);
+            console.log(items[v]);
+            setBanner(items[v]);
+            return true;
         };
-        return;
+        return false;
     };
 
     const handlePlay = () => {
         addOne(banner);
-        route(`/recents/${banner?.id}`, { state: true });
+        route(`/recents/${banner?.id}`, { state: banner?.media_type ?? "movie" });
         return;
     };
 
@@ -44,7 +48,7 @@ const Banner = () => {
                             : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
                     }}>
                     <div className="content sm:w-full lg:w-1/2 capitalize">
-                        <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title}</h2>
+                        <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title || banner?.name}</h2>
                         <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
                         <div className="buttons p-3 font-righteous">
                             <button onClick={handlePlay}>Play</button>

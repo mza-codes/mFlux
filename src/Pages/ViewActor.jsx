@@ -8,17 +8,24 @@ import useRecents from '../Contexts/useRecents';
 import { useEffect } from 'react';
 import Loading from './Loading';
 import { useState } from 'react';
+import { hooker } from '../Utils/tmdb';
 
 const ViewActor = () => {
-    const { actor, actorMovies, actorResult, getMoviesByActorId, getActor } = useTmdbApi();
+    const actor = hooker("actor", useTmdbApi);
+    const actorMovies = hooker("actorMovies", useTmdbApi);
+    const actorResult = hooker("actorResult", useTmdbApi);
+    const getMoviesByActorId = hooker("getMoviesByActorId", useTmdbApi);
+    const getActor = hooker("getActor", useTmdbApi);
+
     const [loading, setLoading] = useState(true);
     const { addOne } = useRecents();
     const { id } = useParams();
     const route = useNavigate();
+
     const getFunc = (data) => {
         console.log("getfunc called", data);
         addOne(data);
-        route(`/recents/${data?.id}`, { state: true });
+        route(`/recents/${data?.id}`, { state: data?.media_type });
         return;
     };
 
@@ -43,9 +50,9 @@ const ViewActor = () => {
                     Go Back
                 </button>
                 {actor?.id &&
-                <div className="w-full">
-                    <ActorBio actor={actor} />
-                </div>
+                    <div className="w-full">
+                        <ActorBio actor={actor} />
+                    </div>
                 }
                 {/* Actor Based Movies */}
                 {actorMovies?.length > 0 && <div className="suggestionSection w-full text-center">
