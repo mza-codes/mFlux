@@ -1,5 +1,6 @@
 <p align="center">
-  <a href="#"><img src="https://github.com/mza-codes/mzaFlux/blob/a65bee3602d25a6f41957f7cf1f60e7784798821/src/Components/NavBar/mflux-red.png" width="140" alt="_logo" border="0"></a>
+  <a href="https://mflux.netlify.app/" target="_blank" rel="noreferrer"
+  ><img src="https://github.com/mza-codes/mzaFlux/blob/a65bee3602d25a6f41957f7cf1f60e7784798821/src/Components/NavBar/mflux-red.png" width="140" alt="_logo" border="0"></a>
   <br />
   <p align="center">
   <b> mFlux V2 </b>
@@ -21,3 +22,7 @@
 </p>
 
 ---
+
+<p align="center"><b>
+<a href="https://mflux.netlify.app/" target="_blank" rel="noreferrer"><strong>Visit Here! </strong></a></b></p>
+
