@@ -4,16 +4,16 @@ import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
 import { POSTER_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
-import useTmdbApi from '../../Services/tmdb_Api';
+import useTmdbApi, { controller } from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
-import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
 import useWatchlist from '../../Services/Store';
 import Suggestions from '../../Components/Suggestions';
 import { hooker } from '../../Utils/tmdb';
+import { image404 } from '../../Assets';
 
 const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
@@ -142,21 +142,26 @@ const RecentsV2 = () => {
 
     useEffect(() => {
         fetchMovie();
+        return () => controller?.abort();
     }, [id]);
 
     if (!movieData?.id || !id) {
         return (
-            <Loading err={"No Movie Found!"} msg={"Please try Refreshing the page or Navigate to Home!"} />
-        )
+            <Loading
+                err={`Movie with ID: ${id ?? movieData?.id ?? "undefined"} Not Found!`}
+                msg={`Please try Refreshing the page or Navigate to Home!`}
+            />
+        );
     };
 
     return (
         <main className='text-white'>
             <Navbar />
+
             {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
             {movie?.backdrop_path ?
                 <section className='bannerImg relative'>
-                    <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] md:max-h-[60vh] sm:max-h-[60vh]'
+                    <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] max-h-[60vh]'
                         src={(POSTER_URL + movie?.backdrop_path)} alt="movie_banner" />
                     <div className="fade_bottom"></div>
                 </section> : <div className='pt-20'></div>}
@@ -165,8 +170,8 @@ const RecentsV2 = () => {
                 lg:justify-start lg:text-start xl:items-start xl:justify-start xl:text-start
                  md:items-center md:justify-center md:text-center sm:items-center sm:justify-center sm:text-center">
                 <div className='sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px]'>
-                    <LazyImage url={movie?.poster_path || movie?.backdrop_path ?
-                        (POSTER_URL + movie?.poster_path || movie?.backdrop_path) : defaultImg}
+                    <LazyImage url={movie?.poster_path ? (POSTER_URL + movie?.poster_path) :
+                        movie?.backdrop_path ? (POSTER_URL + movie?.backdrop_path) : image404}
                         className="w-auto h-auto rounded-2xl aspect-[2/3]" />
                 </div>
                 {movie?.id && <div className="sm:w-full md:w-1/2 lg:w-1/2 min-w-[280px] ml-4">
