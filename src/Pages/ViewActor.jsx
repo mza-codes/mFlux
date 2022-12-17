@@ -40,6 +40,11 @@ const ViewActor = () => {
         return () => controller?.abort();
     }, [id]);
 
+    useEffect(() => {
+        getMoviesByActorId({ id: actor?.id });
+        return () => controller?.abort();
+    }, [actor]);
+
     if (!actor?.id || loading) { return <Loading err={`404 Not Found`} msg={`Actor with id "${id}" not found on TMDB Database !`} /> }
 
     return (
@@ -56,25 +61,26 @@ const ViewActor = () => {
                         <ActorBio actor={actor} />
                     </div>
                 }
-                
+
                 {/* Actor Based Movies */}
-                {actorMovies?.length > 0 && <div className="suggestionSection w-full text-center">
-                    <h3 className='text-3xl py-3'>You Might Also Like</h3>
-                    <div className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
-                        {actorMovies?.map((movie) => (
-                            <MovieCard key={movie?.id} movie={movie} handleStore={getFunc} />
-                        ))}
-                    </div>
-                    {actorResult?.total_pages > 1 && <div className="w-full pagin flex items-center justify-center fixed bottom-1">
-                        <div className='bg-zinc-600 rounded-lg'>
-                            <SuggestionsPagination
-                                currentPage={actorResult?.page}
-                                totalPage={actorResult?.total_pages}
-                                api={getMoviesByActorId}
-                                query={actor?.id} />
+                {actorMovies?.length > 0 &&
+                    <div className="suggestionSection w-full text-center">
+                        <h3 className='text-3xl py-3'>You Might Also Like</h3>
+                        <div className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
+                            {actorMovies?.map((movie) => (
+                                <MovieCard key={movie?.id} movie={movie} handleStore={getFunc} />
+                            ))}
                         </div>
+                        {actorResult?.total_pages > 1 && <div className="w-full pagin flex items-center justify-center fixed bottom-1">
+                            <div className='bg-zinc-600 rounded-lg'>
+                                <SuggestionsPagination
+                                    currentPage={actorResult?.page}
+                                    totalPage={actorResult?.total_pages}
+                                    api={getMoviesByActorId}
+                                    query={actor?.id} />
+                            </div>
+                        </div>}
                     </div>}
-                </div>}
             </main>
         </>
     )

@@ -138,9 +138,13 @@ const useTmdbApi = create((set, get) => ({
     },
     getSuggestions: async ({ genreId = 28, page = 1, type }) => {
         console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
-        const data = await fetchData(`/discover/${type || "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
+        let data = await fetchData(`/discover/${type || "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
         console.log("FETCHED DATA", data);
         if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
+        if (data?.results?.length < 1) {
+            data = await fetchData(`/discover/tv?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
+            if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
+        };
         set(state => ({
             ...state,
             suggestions: data?.results,
@@ -164,20 +168,21 @@ const useTmdbApi = create((set, get) => ({
         return data;
     },
     // Get Movies by Actor
-    getMoviesByActorId: async ({ id, page = 1 }) => {
+    getMoviesByActorId: async ({ id, page = 1, type }) => {
+        if (!id) return false;
         const handleError = get().handleError;
         console.log("fetching movies by Actorid", id, page);
-        const data = await fetchData(`/discover/movie?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
-        let newData = [];
-        if (data?.results?.length <= 20) {
-            console.log("result found less than 20");
-            let values = await fetchData(`/discover/tv?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
-            newData = values?.results ?? [];
-        };
-        console.log(data, newData);
-        // Default Error handling
+        const data = await fetchData(`/discover/${(type && page > 1) ? type : "movie"}?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
+        // let newData = [];
+        // if (page === 1) {
+        //     console.log("result found less than 20");
+        //     let values = await fetchData(`/discover/tv?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
+        //     newData = values?.results ?? [];
+        // };
+        // console.log(data, newData);
         if (data?.code) return handleError(data);
-        const newArray = data?.results?.concat(newData);
+        const newArray = data?.results;
+        // data?.results?.concat(newData);
         set((state) => ({
             ...state,
             actorMovies: newArray,

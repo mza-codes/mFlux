@@ -3,7 +3,6 @@ import LazyImage from './LazyImage';
 import defImage from '../Assets/default.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import useTmdbApi from '../Services/tmdb_Api';
 import { atom, useAtom } from 'jotai';
 
 const loaderAtom = atom(false);
@@ -20,7 +19,6 @@ const ErrMsg = ({ route }) => (
 )
 
 const ActorBio = ({ actor }) => {
-    const getMoviesByActorId = useTmdbApi(s => s.getMoviesByActorId);
     const [loading, setLoading] = useAtom(loaderAtom);
     const navigate = useNavigate();
     
@@ -31,7 +29,6 @@ const ActorBio = ({ actor }) => {
 
     useEffect(() => {
         if (actor?.id || actor?.name) {
-            getMoviesByActorId(actor);
             setLoading(false);
         };
     }, [actor]);

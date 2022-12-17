@@ -4,16 +4,22 @@ import PaginatedItems from "../Components/ReactPagination";
 import useRecents from "../Contexts/useRecents";
 import { useNavigate } from "react-router-dom";
 import MovieCard from "../Components/MovieCard";
+import ActorCard from "../Components/ActorCard";
 
 const SearchResults = () => {
     const { query, result, response, oldResult } = useSearchResults();
-    const { addOne } = useRecents();
+    const addOne = useRecents(s => s.addOne);
     const route = useNavigate();
 
     const handleStore = (movie) => {
         addOne(movie);
         route(`/recents/${movie?.id}`, { state: movie?.media_type });
         return;
+    };
+
+    const fetchPerson = (person) => {
+        route(`/actor-details/${person?.id}`, { state: person?.media_type });
+        return true;
     };
 
     return (
@@ -23,16 +29,28 @@ const SearchResults = () => {
                 <h2 className="font-kanit text-2xl text-center"> Displaying {result?.length} Results for "{query}" </h2>
                 <div className="resultContainer">
                     <div className="flex flex-row flex-wrap justify-center mt-4">
-                        {result?.map((movie) => (
-                            <MovieCard key={movie?.id} movie={movie} handleStore={handleStore} />
-                        ))}
+                        {result?.map((movie, i) => {
+                            if (movie?.gender) {
+                                return <ActorCard actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
+                            } else {
+                                return <MovieCard key={movie?.id} movie={movie}
+                                    handleStore={handleStore}
+                                    onClick={e => handleStore(movie)} />
+                            };
+                        })}
                     </div>
-                    <hr className="p-3"/>
+                    <hr className="p-3" />
                     {oldResult?.length >= 1 && <> <h1 className="text-3xl font-kanit text-center">Previous Search Results</h1>
                         <div className="flex flex-row flex-wrap justify-center mt-4">
-                            {oldResult?.map((movie) => (
-                                <MovieCard key={movie?.id} movie={movie} handleStore={handleStore} />
-                            ))}
+                            {oldResult?.map((movie, i) => {
+                                if (movie?.gender) {
+                                    return <ActorCard actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
+                                } else {
+                                    return <MovieCard key={movie?.id} movie={movie}
+                                        handleStore={handleStore}
+                                        onClick={e => handleStore(movie)} />
+                                };
+                            })}
                         </div>
                     </>}
                 </div>
