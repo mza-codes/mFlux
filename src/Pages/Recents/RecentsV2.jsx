@@ -4,16 +4,16 @@ import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
 import { POSTER_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
-import useTmdbApi from '../../Services/tmdb_Api';
+import useTmdbApi, { controller } from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import defImage from '../../Assets/default.jpg'
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
-import defaultImg from '../../Assets/default.jpg';
 import Loading from '../Loading';
 import useWatchlist from '../../Services/Store';
 import Suggestions from '../../Components/Suggestions';
 import { hooker } from '../../Utils/tmdb';
+import { image404 } from '../../Assets';
 
 const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
@@ -22,7 +22,7 @@ let v = 0;
 
 const RecentsV2 = () => {
     console.count("Rendered component");
-    // const { movieData, cast, genres, suggestions, trailers: videos } = useTmdbApi();
+
     const movieData = hooker("movieData", useTmdbApi);
     const cast = hooker("cast", useTmdbApi);
     const genres = hooker("genres", useTmdbApi);
@@ -33,11 +33,11 @@ const RecentsV2 = () => {
     const getTv = hooker("getTv", useTmdbApi);
     const getSuggestions = hooker("getSuggestions", useTmdbApi);
     const getMovie = hooker("getMovie", useTmdbApi);
-
+    const [movie, setMovie] = useState({});
     const { state } = useLocation();
     const addOne = useRecents(s => s.addOne);
     const { id } = useParams();
-    const [movie, setMovie] = useState({});
+
     const [trailers, setTrailers] = useState({
         isActive: false,
         list: [],
@@ -86,13 +86,6 @@ const RecentsV2 = () => {
         } else { return false; };
     };
 
-    const addToWishlist = (data) => {
-        // console.log("add to wishlist");
-        // console.log(movieData);
-        addToWatchList(data);
-        return true;
-    };
-
     const handleScroll = (param, ref) => {
         if (param === "next") {
             ref.current.scrollTo({
@@ -115,7 +108,7 @@ const RecentsV2 = () => {
     };
 
     const fetchMovie = async () => {
-        
+
         if (movieData?.id === parseInt(id)) {
             console.log("Matched with currentMovie");
             setMovie(movieData);
@@ -124,7 +117,7 @@ const RecentsV2 = () => {
         if (state && state === "tv") {
             const data = await getTv({ id });
             setMovie(data);
-            getSuggestions({ genreId: data?.genres[v]?.id });
+            getSuggestions({ genreId: data?.genres[v]?.id, type: state });
             return;
         };
         const data = await getMovie({ id });
@@ -136,29 +129,39 @@ const RecentsV2 = () => {
     const getFunc = async (data) => {
         console.log("getfunc called", data);
         addOne(data);
-        const newMovie = await getMovie(data);
-        setMovie(newMovie);
+        if (state && state === "tv") {
+            const newItem = await getTv(data);
+            setMovie(newItem);
+        } else {
+            const newMovie = await getMovie({ ...data });
+            setMovie(newMovie);
+        };
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+        return true;
     };
 
     useEffect(() => {
         fetchMovie();
-    }, []);
+        return () => controller?.abort();
+    }, [id]);
 
-    if (!movie?.id || !id) {
+    if (!movieData?.id || !id) {
         return (
-            <Loading err={"No Movie Found!"} msg={"Please try Refreshing the page or Navigate to Home!"} />
-        )
+            <Loading
+                err={`Movie with ID: ${id ?? movieData?.id ?? "undefined"} Not Found!`}
+                msg={`Please try Refreshing the page or Navigate to Home!`}
+            />
+        );
     };
 
     return (
         <main className='text-white'>
             <Navbar />
+
             {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
             {movie?.backdrop_path ?
                 <section className='bannerImg relative'>
-                    <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] md:max-h-[60vh] sm:max-h-[60vh]'
+                    <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] max-h-[60vh]'
                         src={(POSTER_URL + movie?.backdrop_path)} alt="movie_banner" />
                     <div className="fade_bottom"></div>
                 </section> : <div className='pt-20'></div>}
@@ -167,20 +170,20 @@ const RecentsV2 = () => {
                 lg:justify-start lg:text-start xl:items-start xl:justify-start xl:text-start
                  md:items-center md:justify-center md:text-center sm:items-center sm:justify-center sm:text-center">
                 <div className='sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px]'>
-                    <LazyImage url={movie?.poster_path || movie?.backdrop_path ?
-                        (POSTER_URL + movie?.poster_path || movie?.backdrop_path) : defaultImg}
+                    <LazyImage url={movie?.poster_path ? (POSTER_URL + movie?.poster_path) :
+                        movie?.backdrop_path ? (POSTER_URL + movie?.backdrop_path) : image404}
                         className="w-auto h-auto rounded-2xl aspect-[2/3]" />
                 </div>
                 {movie?.id && <div className="sm:w-full md:w-1/2 lg:w-1/2 min-w-[280px] ml-4">
                     <main>
-                        <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || ""}</h1>
+                        <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || movie?.name || ""}</h1>
                         <h3 className='text-2xl font-kanit py-2'>{movie?.release_date || movie?.first_air_date}</h3>
                         <h2 className='text-xl font-kanit py-1 max-h-[40vh] overflow-y-hidden'>{movie?.overview}</h2>
                         <h4 className='font-righteous'>{movieData?.runtime && movieData?.runtime + " Minutes"}</h4>
                         <div className="rating flex flex-row items-center text-center min-[220px]:justify-center lg:justify-start">
                             <i className="ri-star-s-fill text-3xl py-2 text-amber-500"></i>
-                            <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movie?.vote_average)?.slice(0, 3)}
-                                <span className='text-base text-gray-500'>&nbsp;({movie?.vote_count})</span>
+                            <h4 className='text-3xl py-2 font-kanit'>&nbsp;{String(movieData?.vote_average)?.slice(0, 3)}
+                                <span className='text-base text-gray-500'>&nbsp;({movieData?.vote_count})</span>
                             </h4>
                         </div>
                         {/* <div className=''> */}
@@ -198,7 +201,7 @@ const RecentsV2 = () => {
                             onClick={playTrailer} disabled={trailers.isActive}>
                             Watch Trailer</button>
                         <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
-                            onClick={e => addToWishlist(movie)}> Add to Watch</button>
+                            onClick={e => addToWatchList(movieData)}> Add to Watch</button>
                     </div>
                     <div className='space-x-2 space-y-2'>
                         {genres?.map((genre, i) => (
@@ -322,7 +325,7 @@ const RecentsV2 = () => {
                     </div>
                 </div>}
             {suggestions?.length > 0 &&
-                <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} />
+                <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} state={state} />
             }
 
         </main>

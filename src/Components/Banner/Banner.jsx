@@ -31,7 +31,7 @@ const Banner = () => {
 
     const handlePlay = () => {
         addOne(banner);
-        route(`/recents/${banner?.id}`, { state: true });
+        route(`/recents/${banner?.id}`, { state: banner?.media_type ?? "movie" });
         return;
     };
 
@@ -48,7 +48,7 @@ const Banner = () => {
                             : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
                     }}>
                     <div className="content sm:w-full lg:w-1/2 capitalize">
-                        <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title}</h2>
+                        <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title || banner?.name}</h2>
                         <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
                         <div className="buttons p-3 font-righteous">
                             <button onClick={handlePlay}>Play</button>

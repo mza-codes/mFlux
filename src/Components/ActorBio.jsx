@@ -20,17 +20,17 @@ const ErrMsg = ({ route }) => (
 )
 
 const ActorBio = ({ actor }) => {
-    const { getMoviesByActorId } = useTmdbApi();
+    const getMoviesByActorId = useTmdbApi(s => s.getMoviesByActorId);
     const [loading, setLoading] = useAtom(loaderAtom);
     const navigate = useNavigate();
+    
     const goBack = () => {
-        navigate(`/actor-details/${actor?.id}`, { state: true });
+        navigate(-1, { replace: true });
         return;
     };
 
     useEffect(() => {
         if (actor?.id || actor?.name) {
-            console.log("inside actor true,function calling...");
             getMoviesByActorId(actor);
             setLoading(false);
         };
@@ -43,13 +43,12 @@ const ActorBio = ({ actor }) => {
         );
     };
     return (
-        // <div className='w-full text-white py-6'>
-        <div className=" text-white py-6 actorWrapper flex flex-row flex-wrap justify-evenly ">
+        <section className=" text-white py-6 actorWrapper flex flex-row flex-wrap justify-evenly ">
             <div className="actorImage sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px] p-3 max-h-fit">
                 <LazyImage url={actor?.profile_path ? POSTER_URL + actor?.profile_path : defImage}
                     className="w-auto rounded-3xl" />
             </div>
-            <div className="profile min-w-[280px] xl:max-w-[46vw] text-center ml-2 lg:max-w-[46vw] 
+            <div className="profile min-w-[280px] xl:max-w-[46vw] text-center ml-2 lg:max-w-[46vw] px-3
             xl:text-start lg:text-start sm:text-center sm:mx-w-[80vw]">
                 <h1 className='text-4xl text-zinc-200 font-righteous py-1' >{actor?.name}</h1>
                 <h2 className='text-3xl text-zinc-300 font-righteous py-1' >{actor?.place_of_birth}</h2>
@@ -67,14 +66,13 @@ const ActorBio = ({ actor }) => {
                         className='text-xl text-blue-500 font-righteous py-1 uppercase' >
                         <iconify-icon icon="dashicons:admin-site" width="33" height="33" /> </a>}
                 </div>
-                <p className='text-xl text-gray-400 py-2 font-kanit font-light '>
+                <p className='text-xl text-gray-400 p-2 font-kanit font-light '>
                     {actor?.biography?.length > 800 ? actor?.biography?.slice(0, 904) + "..."
                         : actor?.biography || "No Biography Found"}
                 </p>
             </div>
-        </div>
-        // </div>
-    )
+        </section>
+    );
 };
 
 export default ActorBio
