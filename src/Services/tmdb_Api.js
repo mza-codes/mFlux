@@ -99,7 +99,7 @@ const useTmdbApi = create((set, get) => ({
         const data = await fetchData(`/tv/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
         if (data?.code) {
             const newData = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
-            if (newData?.code) { return handleError(newData)};
+            if (newData?.code) { return handleError(newData) };
             populate(newData);
             return newData;
         };
@@ -114,7 +114,7 @@ const useTmdbApi = create((set, get) => ({
         const data = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
         if (data?.code) {
             const newData = await fetchData(`/tv/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
-            if (newData?.code) { return handleError(newData)};
+            if (newData?.code) { return handleError(newData) };
             populate(newData);
             return newData;
         };
@@ -126,7 +126,7 @@ const useTmdbApi = create((set, get) => ({
         setLoading(true);
         console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
 
-        const data = await fetchData(`/discover/${type ?? "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
+        const data = await fetchData(`/discover/${type || "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
         console.log("FDetched sauggestions", data);
         if (data?.code) return set(state => ({ ...state, error: data, failed: true, isFetching: false }));
         set(state => ({
@@ -138,7 +138,7 @@ const useTmdbApi = create((set, get) => ({
     },
     getSuggestions: async ({ genreId = 28, page = 1, type }) => {
         console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
-        const data = await fetchData(`/discover/${type ?? "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
+        const data = await fetchData(`/discover/${type || "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
         console.log("FETCHED DATA", data);
         if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         set(state => ({
