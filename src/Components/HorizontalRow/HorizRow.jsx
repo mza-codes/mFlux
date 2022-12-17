@@ -5,7 +5,7 @@ import './HorizRow.scss';
 import useRecents from '../../Contexts/useRecents';
 import { useNavigate } from 'react-router-dom';
 import useSearchResults from '../../Services/ResultFetch';
-import defaultImg from '../../Assets/default.jpg';
+import { image404 } from '../../Assets';
 
 const PaginatedItems = lazy(() => import('../ReactPagination'));
 
@@ -72,8 +72,8 @@ const HorizRow = ({ data, title, close, ...props }) => {
                     {data.map((item, i) => (
                         <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)} >
                             <LazyImage
-                                url={item?.poster_path || item?.backdrop_path ?
-                                    (w500 + item?.poster_path || item?.backdrop_path) : defaultImg} />
+                                url={item?.poster_path ? (w500 + item?.poster_path) : 
+                                    item?.backdrop_path ? (w500 + item?.backdrop_path) : image404} />
                         </div>
                     ))}
                 </div>

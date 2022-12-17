@@ -1,9 +1,7 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import { useRoutes } from 'react-router-dom';
-import Loading from './Pages/Loading';
 import ErrorPage from './Components/ErrorPage';
-import useRow, { mfluxCache } from './Services/Row';
-import { listCategories } from './Pages/Home/Home';
+import useRow from './Services/Row';
 
 const WatchList = lazy(() => import('./Pages/WatchList'));
 const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
@@ -12,25 +10,7 @@ const SearchResults = lazy(() => import('./Pages/SearchResults'));
 const ViewActor = lazy(() => import('./Pages/ViewActor'));
 
 export default function Router() {
-    const populate = useRow(s => s.populate);
-
-    const fillRows = () => {
-        console.count("fillrows func called ");
-        let value = localStorage.getItem(mfluxCache);
-        if (!value) return populate();
-
-        value = JSON.parse(value);
-        const data = value?.state?.data;
-
-        listCategories.every((item) => {
-            const hasValue = data[item.key]?.length >= 1;
-            if (!hasValue) {
-                populate();
-                return false;
-            };
-            return true;
-        });
-    };
+    const fillRows = useRow(s => s.populateLocal);
 
     useEffect(() => {
         console.count("Rendered router");
@@ -39,40 +19,22 @@ export default function Router() {
 
     return useRoutes([
         {
-            path: '/', element:
-                <Suspense fallback={<Loading />}> <App /> </Suspense>
+            path: '/', element: <App />
         },
         {
-            path: 'wishlist', element:
-                <Suspense fallback={<Loading />}> <div /> </Suspense>
+            path: 'recents/:id', element: <Recents />
         },
         {
-            path: 'recents/:id', element:
-                <Suspense fallback={<Loading />}> <Recents /> </Suspense>
+            path: '/*', element: <ErrorPage />
         },
         {
-            path: 'account', element:
-                <Suspense fallback={<Loading />}> <div /> </Suspense>
+            path: 'search-results', element: <SearchResults />
         },
         {
-            path: 'view', element:
-                <Suspense fallback={<Loading />}> <div /> </Suspense>
+            path: 'actor-details/:id', element: <ViewActor />
         },
         {
-            path: '/*', element:
-                <Suspense fallback={<Loading />}> <ErrorPage /> </Suspense>
-        },
-        {
-            path: 'search-results', element:
-                <Suspense fallback={<Loading />}> <SearchResults /> </Suspense>
-        },
-        {
-            path: 'actor-details/:id', element:
-                <Suspense fallback={<Loading />}> <ViewActor /></Suspense>
-        },
-        {
-            path: 'watchlist', element:
-                <Suspense fallback={<Loading />}> <WatchList /></Suspense>
+            path: 'watchlist', element: <WatchList />
         }
     ]);
 };

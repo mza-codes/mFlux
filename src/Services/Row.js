@@ -69,6 +69,25 @@ const useRow = create(
                     return true;
                 });
             },
+            populateLocal: () => {
+                console.count("fillrows func called ");
+                const populate = get().populate;
+                let value = localStorage.getItem(mfluxCache);
+                if (!value) { populate(); return false; };
+
+                value = JSON.parse(value);
+                const data = value?.state?.data;
+
+                listCategories.every((item) => {
+                    const hasValue = data[item.key]?.length >= 1;
+                    if (!hasValue) {
+                        populate();
+                        return false;
+                    };
+                    return true;
+                });
+            },
+
         }), {
         name: mfluxCache,
         getStorage: () => localStorage
