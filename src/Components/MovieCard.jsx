@@ -12,9 +12,15 @@ const MovieCard = ({ movie, handleStore }) => {
                     url={movie?.poster_path ? (w500 + movie?.poster_path) :
                         movie?.backdrop_path ? (w500 + movie?.backdrop_path) : image404} />
                 <div className="absolute text-white text-center text">
-                    <h1 className="font-kanit text-2xl truncate">{movie?.title || movie?.original_title}</h1>
+                    <h1 className="font-kanit text-2xl truncate">{movie?.title || movie?.original_title ||
+                        movie?.original_name || movie?.name}
+                    </h1>
                     <h1 className="font-kanit text-xl truncate">{movie?.release_date || movie?.first_air_date}</h1>
-                    <p className="font-kanit text-lg overview">{movie?.overview}</p>
+                    <p className="font-kanit text-lg overview">{movie?.overview }</p>
+                    {/* <div className="flex flex-col gap-2 items-center text-black">
+                    <p className="bg-yellow-100 p-1 rounded-full w-fit">{movie?.vote_average}</p>
+                    <p className="bg-yellow-100 p-1 rounded-full w-fit">{ movie?.vote_count}</p>
+                    </div> */}
                 </div>
             </div>
         </div>

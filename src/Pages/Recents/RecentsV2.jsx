@@ -108,13 +108,14 @@ const RecentsV2 = () => {
     };
 
     const fetchMovie = async () => {
-
+        console.log("Current State >",state);
         if (movieData?.id === parseInt(id)) {
             console.log("Matched with currentMovie");
             setMovie(movieData);
             return true;
         };
-        if (state && state === "tv") {
+        if (state === "tv") {
+            console.warn("Evaluated to fetchTV TRUE >>",state);
             const data = await getTv({ id });
             setMovie(data);
             getSuggestions({ genreId: data?.genres[v]?.id, type: state });
@@ -129,7 +130,7 @@ const RecentsV2 = () => {
     const getFunc = async (data) => {
         console.log("getfunc called", data);
         addOne(data);
-        if (state && state === "tv") {
+        if (state === "tv") {
             const newItem = await getTv(data);
             setMovie(newItem);
         } else {
@@ -239,7 +240,7 @@ const RecentsV2 = () => {
                         <span className='py-1 px-2 bg-green-700 font-poppins text-sm rounded-md '>{cast?.length}</span>
                     </h2>
                     <div ref={scrollRef} className='w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
-                        <div className=''>
+                        {/* <div className=''> */}
                             <button onClick={e => handleScroll("prev", scrollRef)} onMouseEnter={e => handleScroll("prev", scrollRef)}
                                 className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
                                      hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
@@ -248,7 +249,7 @@ const RecentsV2 = () => {
                                 className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
                                      hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
                                 <i className="ri-arrow-right-s-line "></i> </button>
-                        </div>
+                        {/* </div> */}
                         {cast?.slice(0, 25).map((person, i) => (
                             <div className='mx-1 p-3 cursor-pointer hover:scale-105 transition-all ease-linear'
                                 onClick={e => fetchPerson(person)}

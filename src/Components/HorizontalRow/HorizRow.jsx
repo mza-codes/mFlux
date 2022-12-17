@@ -1,4 +1,4 @@
-import { w500 } from '../../Constants/Constants';
+import { w500, w780 } from '../../Constants/Constants';
 import { lazy, Suspense, useRef } from 'react';
 import LazyImage from '../LazyImage';
 import './HorizRow.scss';
@@ -45,6 +45,11 @@ const HorizRow = ({ data, title, close, ...props }) => {
         return;
     };
 
+    const fetchPerson = (person) => {
+        route(`/actor-details/${person?.id}`, { state: person?.media_type });
+        return true;
+    };
+
     return (
         <div>
             {data.length ? <>
@@ -69,13 +74,26 @@ const HorizRow = ({ data, title, close, ...props }) => {
                             <i className="ri-arrow-left-s-line"></i>
                         </button>
                     </div>
-                    {data.map((item, i) => (
+                    {/* {data.map((item, i) => (
                         <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)} >
                             <LazyImage
                                 url={item?.poster_path ? (w500 + item?.poster_path) : 
                                     item?.backdrop_path ? (w500 + item?.backdrop_path) : image404} />
                         </div>
-                    ))}
+                    ))} */}
+                    {data?.map((item, i) => {
+                        if (item?.gender) {
+                            return <div key={i} className="poster cursor-pointer" onClick={e => fetchPerson(item)} >
+                                <LazyImage url={item?.profile_path ? (w780 + item?.profile_path) : image404} />
+                            </div>
+                        } else {
+                            return <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)} >
+                                <LazyImage
+                                    url={item?.poster_path ? (w500 + item?.poster_path) :
+                                        item?.backdrop_path ? (w500 + item?.backdrop_path) : image404} />
+                            </div>
+                        };
+                    })}
                 </div>
                 {close && resultData?.total_pages > 1 &&
                     <div className='w-full flex flex-row justify-center items-center'>

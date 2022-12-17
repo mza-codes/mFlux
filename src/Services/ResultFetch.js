@@ -1,6 +1,9 @@
 import create from 'zustand';
-import { API_KEY, TMDB_URL } from '../Constants/Constants';
+import { API_KEY } from '../Constants/Constants';
 import { tmdbApi } from '../Utils/tmdb';
+
+// https://api.themoviedb.org/3/search/multi?api_key=<key>&query=luther&page=1&include_adult=false
+// /search/movie?api_key=${API_KEY}&query=${query}&page=${page}`
 
 const useSearchResults = create((set) => ({
     gotResult: false,
@@ -15,9 +18,9 @@ const useSearchResults = create((set) => ({
         // let pageNum = parseInt(page) + 1;
         console.log(`Fetching PAGE ${page}`);
         try {
-            const { data } = await tmdbApi.get(`/search/movie?api_key=${API_KEY}&query=${query}&page=${page}`);
+            const { data } = await tmdbApi.get(`/search/multi?api_key=${API_KEY}&query=${query}&page=${page}`);
             console.log("RESULT Fetched", data);
-            if (data?.results?.length) {
+            if (data?.results?.length >= 0) {
                 set((state) => ({
                     ...state,
                     gotResult: true,
@@ -59,9 +62,8 @@ const useSearchResults = create((set) => ({
         set(state => ({
             ...state,
             response: { ...state.response, page: page }
-        }))
-    }
-
+        }));
+    },
 
 }));
 
