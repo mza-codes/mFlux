@@ -9,6 +9,27 @@ body {
     }
 }
 
+:root {
+    background: #111;
+    --theme-color: #111;
+}
+
+// Native CSS method testing via overriding classes
+.lightMode {
+    background: #ccc;
+    --theme-color: #ccc;
+
+    .text-white {
+        color: #000 !important;
+    }
+
+    .movieCard {
+        .text-white {
+            color: #fff !important;
+        }
+    }
+}
+
 // testclass
 .test {
     color: #42fc5b;
@@ -112,13 +133,13 @@ body::-webkit-scrollbar {
     transition: all 900ms;
     cursor: pointer;
 
-    img{
+    img {
         aspect-ratio: 2/3;
     }
 
     &:hover {
         // transform: scale(1.1);
-        background-color:rgba($color: #000000, $alpha: 1.0) ;
+        background-color: rgba($color: #000000, $alpha: 1.0);
         z-index: 6;
 
         img {

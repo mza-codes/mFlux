@@ -33,3 +33,39 @@ const useWatchlist = create(
 );
 
 export default useWatchlist;
+
+const dataModel = {
+    persons: [],
+};
+
+const useFavouritesStore = create(
+    persist(
+        (set, get) => ({
+            ...dataModel,
+            populate: () => {
+                console.log("Populating Data");
+                // case
+            },
+            addPerson: (person) => {
+                console.log("%cAddingData to persons", "color:yellow;font-size:16px;");
+                const oldData = get().persons;
+                if (oldData.includes(person)) return false;
+                set(state => ({
+                    ...state,
+                    persons: [person, ...state.persons]
+                }));
+                return true;
+            },
+            clearFavourites: () => {
+                set((state) => ({ ...dataModel }));
+                return true;
+            },
+        }),
+        {
+            name: 'mflux-favourites', // name of item in the storage (must be unique)
+            getStorage: () => localStorage, // (optional) by default the 'localStorage' is used
+        }
+    )
+);
+
+export { useFavouritesStore };

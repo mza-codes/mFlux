@@ -8,6 +8,7 @@ const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
 const App = lazy(() => import('./App'));
 const SearchResults = lazy(() => import('./Pages/SearchResults'));
 const ViewActor = lazy(() => import('./Pages/ViewActor'));
+const ViewActors = lazy(() => import('./Pages/Favourites/ViewActors'));
 
 export default function Router() {
     const fillRows = useRow(s => s.populateLocal);
@@ -34,7 +35,11 @@ export default function Router() {
             path: 'actor-details/:id', element: <ViewActor />
         },
         {
+            path: 'favourites/actors', element: <ViewActors />
+        },
+        {
             path: 'watchlist', element: <WatchList />
         }
+
     ]);
 };

@@ -10,7 +10,7 @@ const WatchList = () => {
 
     const handleStore = (movie) => {
         // addOne(movie);
-        route(`/recents/${movie?.id}`, { state: true });
+        route(`/recents/${movie?.id}`, { state: movie?.media_type });
         return;
     };
 

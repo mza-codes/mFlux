@@ -5,11 +5,15 @@ import useRecents from "../Contexts/useRecents";
 import { useNavigate } from "react-router-dom";
 import MovieCard from "../Components/MovieCard";
 import ActorCard from "../Components/ActorCard";
+import { hooker } from "../Utils/tmdb";
 
 const SearchResults = () => {
-    const { query, result, response, oldResult } = useSearchResults();
-    const addOne = useRecents(s => s.addOne);
     const route = useNavigate();
+    const query = hooker("query", useSearchResults);
+    const result = hooker("result", useSearchResults);
+    const response = hooker("response", useSearchResults);
+    const oldResult = hooker("oldResult", useSearchResults);
+    const addOne = useRecents(s => s.addOne);
 
     const handleStore = (movie) => {
         addOne(movie);

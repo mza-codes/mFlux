@@ -74,6 +74,8 @@
         bottom: -3px; // fix for line on bottom
         width: 100%;
         height: 200px;
-        background: linear-gradient(to bottom, transparent 0%, #111 80%);
+        background: linear-gradient(to bottom, transparent 0%, var(--theme-color) 80%);
+        // background: linear-gradient(to bottom, transparent 0%, #111 80%);
+        
     }
 }
