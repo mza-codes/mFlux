@@ -1,10 +1,10 @@
 import { POSTER_URL } from '../Constants/Constants';
-import LazyImage from './LazyImage';
 import defImage from '../Assets/default.jpg';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { atom, useAtom } from 'jotai';
 import { useFavouritesStore } from '../Services/Store';
+import LazyLoad from 'react-lazy-load';
 
 const loaderAtom = atom(false);
 
@@ -44,11 +44,20 @@ const ActorBio = ({ actor }) => {
     return (
         <section className=" text-white py-6 actorWrapper flex flex-row flex-wrap justify-evenly ">
             <div className="actorImage sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px] p-3 max-h-fit relative">
-                <LazyImage url={actor?.profile_path ? POSTER_URL + actor?.profile_path : defImage}
-                    className="w-auto rounded-3xl" />
-                <div className="icon text-rose-500 hover:text-rose-600 z-[104] 
-                    cursor-pointer absolute right-6 top-5" onClick={() => addPerson(actor)} >
-                    <iconify-icon icon="mdi:favourite" width={36} height={36} />
+                <div className="flex items-center justify-center">
+
+                    <div className='relative'>
+                        <LazyLoad offset={300}>
+                            <img className="w-auto rounded-3xl"
+                                src={actor?.profile_path ? POSTER_URL + actor?.profile_path : defImage}
+                                alt="_actor_image" />
+                        </LazyLoad>
+
+                        <div className="icon text-rose-500 hover:text-rose-600 z-[104] 
+                        cursor-pointer absolute right-2 top-2" onClick={() => addPerson(actor)} >
+                            <iconify-icon icon="mdi:favourite" width={36} height={36} />
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className="profile min-w-[280px] xl:max-w-[46vw] text-center ml-2 lg:max-w-[46vw] px-3

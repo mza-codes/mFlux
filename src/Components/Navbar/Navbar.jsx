@@ -65,24 +65,28 @@ const Navbar = () => {
               <iconify-icon width="24" height="24" icon="ic:round-send" />
             </button>
           </div>
-          {/* <div className='searchBtn'> */}
-            <button className='text-white opacity-30 hover:opacity-100 px-1  rounded-xl' onClick={e => setIsOpen((curr) => (!curr))}>
-              <iconify-icon width="24" height="24" icon="mingcute:search-3-line" />
-            </button>
-          {/* </div> */}
-          <Link to="/watchlist">
-            <button title='View Wachlist'
-              className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
-              <iconify-icon width="24" height="24" icon="ic:round-collections-bookmark" />
-            </button>
+
+          <button className='text-white opacity-30 hover:opacity-100 px-1  rounded-xl'
+            onClick={e => setIsOpen((curr) => (!curr))}>
+            <iconify-icon width="24" height="24" icon="mingcute:search-3-line" />
+          </button>
+
+          <Link to="/watchlist" title='View Wachlist'
+            className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
+            <iconify-icon width="24" height="24" icon="ic:round-collections-bookmark" />
           </Link>
-          {/* mdi:movie-open-settings */}
+          <Link to="/favourites/actors" title='View Favourited Persons'
+            className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
+            <iconify-icon width="24" height="24" icon="mdi:account-star" />
+          </Link>
+
           <input id="toggler" type="checkbox" hidden onChange={e => setHide(e?.target?.checked)} />
           <label htmlFor="toggler">
-            <div className='Avatar  w-[30px] xl:w-[40px] lg:w-[40px] md:w-[40px] sm:w-[30px] '>
+            <div className='Avatar w-[30px] xl:w-[40px] lg:w-[40px] md:w-[40px] sm:w-[30px] '>
               <img itemType='label' src={Avatar} alt="_avatar" />
             </div>
           </label>
+          
         </section>
 
       </main>

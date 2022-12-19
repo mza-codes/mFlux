@@ -42,7 +42,10 @@ const ViewActor = () => {
 
     useEffect(() => {
         getMoviesByActorId({ id: actor?.id });
-        return () => controller?.abort();
+        return () => {
+            console.log("Useeffect Return func,Controller.abort() priniting Controller", controller);
+            controller?.abort();
+        };
     }, [actor]);
 
     if (!actor?.id || loading) { return <Loading err={`404 Not Found`} msg={`Actor with id "${id}" not found on TMDB Database !`} /> }
