@@ -6,7 +6,7 @@ import { image404 } from "../Assets";
 const MovieCard = ({ movie, handleStore }) => {
 
     return (
-        <div className="imageContainer max-h-screen max-w-xs m-4 " onClick={e => handleStore(movie)} >
+        <div className="movieCard max-h-screen max-w-xs m-4 " onClick={e => handleStore(movie)} >
             <div className="image w-64  sm:w-full sm:h-full relative resultImg">
                 <LazyImage alt="_loading" className="rounded-xl object-cover w-64 as"
                     url={movie?.poster_path ? (w500 + movie?.poster_path) :

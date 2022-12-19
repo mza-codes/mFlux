@@ -2,7 +2,7 @@ import './Navbar.scss';
 import mFlux from './mFlux.png';
 import Avatar from './userAvatar.png';
 import { Link, useNavigate } from 'react-router-dom'
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import useSearchResults from '../../Services/ResultFetch';
 import { atom, useAtom } from 'jotai';
 
@@ -15,20 +15,21 @@ const Navbar = () => {
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
   const fetchresult = useSearchResults((state) => state.getResults);
   const query = useSearchResults(state => state?.query);
+  const inputRef = useRef();
 
   const handleSearch = (e) => {
-    const inputRef = document.getElementById('inputRef');
-    const key = inputRef.value;
+    // const inputRef = document.getElementById('inputRef');
+    const key = inputRef.current.value;
     const isValid = reExSymbols.test(key);
 
     // Preventing fetching result from same query
     if (key?.toLowerCase() === query?.toLowerCase()) {
-      inputRef.style.borderBottom = "3px solid red";
+      inputRef.current.style.borderBottom = "3px solid red";
       return;
     };
 
     if (isValid) {
-      inputRef.style.borderBottom = "3px solid #68fc54";
+      inputRef.current.style.borderBottom = "3px solid #68fc54";
       fetchresult(key, 1);
 
       if (window?.location?.pathname !== "#/") { // added #/ to identify page using hashrouter,if using browser router use native /
@@ -36,7 +37,7 @@ const Navbar = () => {
         return true;
       };
     } else {
-      inputRef.style.borderBottom = "3px solid red";
+      inputRef.current.style.borderBottom = "3px solid red";
       return;
     };
   };
@@ -59,7 +60,7 @@ const Navbar = () => {
         <section className={`flex flex-row gap-2 items-center justify-center searchSection sm:m-2 
           ${hide ? "opacity-0 hover:opacity-70" : "visible"}`}>
           <div className={`relative inputArea font-poppins text-sm ${isOpen ? "visible" : "invisible"}`}>
-            <input type="text" id='inputRef' onKeyPress={handleKeyPress} placeholder='Search titles...' maxLength={50} />
+            <input type="text" ref={inputRef} onKeyPress={handleKeyPress} placeholder='Search titles...' maxLength={50} />
             <button onClick={handleSearch} className='text-white opacity-30 hover:opacity-100 my-1 rounded-xl absolute right-2'>
               <iconify-icon width="24" height="24" icon="ic:round-send" />
             </button>

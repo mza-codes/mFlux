@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <HashRouter hashType="hashbang">
     <Suspense fallback={<Loading />}>
-    <Router />
+      <Router />
     </Suspense>
   </HashRouter>
 );
