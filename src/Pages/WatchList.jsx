@@ -6,6 +6,7 @@ import useWatchlist from "../Services/Store";
 const WatchList = () => {
     const route = useNavigate();
     const watchlist = useWatchlist(s => s.watchlist);
+    const removeFromWatchlist = useWatchlist(s => s.removeFromWatchlist);
     console.log("prinitng user watchlist", watchlist);
 
     const handleStore = (movie) => {
@@ -32,7 +33,13 @@ const WatchList = () => {
                 </div>
                 <main className="flex flex-row flex-wrap justify-center mt-4">
                     {watchlist?.map((movie) => (
-                        <MovieCard key={movie?.id} movie={movie} handleStore={handleStore} />
+                        <div className="relative" key={movie?.id}>
+                            <MovieCard movie={movie} handleStore={handleStore} />
+                            <div title="Delete Movie" className="absolute left-4 top-4 z-[105] opacity-0 hover:opacity-90
+                                 hover:text-red-400 cursor-pointer" onClick={() => removeFromWatchlist(movie)}>
+                                <iconify-icon icon="material-symbols:bookmark-remove-rounded" height={36} width={36} />
+                            </div>
+                        </div>
                     ))}
                 </main>
             </section>

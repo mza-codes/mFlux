@@ -6,6 +6,7 @@ import { useFavouritesStore } from "../../Services/Store";
 const ViewActors = () => {
     const route = useNavigate();
     const actors = useFavouritesStore(s => s.persons);
+    const removePerson = useFavouritesStore(s => s.removePerson);
     // const clearFavourites = useFavouritesStore(s => s.clearFavourites);
 
     const fetchPerson = (person) => {
@@ -13,7 +14,7 @@ const ViewActors = () => {
         return true;
     };
 
-    console.log("actors print",actors);
+    console.log("actors print", actors);
     // clearFavourites();
 
     return (
@@ -29,12 +30,18 @@ const ViewActors = () => {
                                 <button className="bg-emerald-800 bg-opacity-60 hover:bg-opacity-100  p-2 rounded-lg">Browse</button>
                             </Link>
                         </>
-                        : <span className="text-xl">Seems like you have some favourite actors !</span>
+                        : <span className="text-xl">Seems like you have saved some of your favourite persons !</span>
                     }
                 </div>
                 <main className="flex flex-row flex-wrap justify-center mt-4">
-                    {actors?.map((movie, i) => (
-                        <ActorCard actor={movie} key={movie?.id || i} hide={1} onClick={e => fetchPerson(movie)} />
+                    {actors?.map((person, i) => (
+                        <div className="relative" key={person?.id || i}>
+                            <ActorCard actor={person} hide={1} onClick={e => fetchPerson(person)} />
+                            <div title="Delete Person" className="absolute left-4 top-4 z-[105] opacity-0 hover:opacity-90
+                                 hover:text-red-400 cursor-pointer" onClick={() => removePerson(person)}>
+                                <iconify-icon icon="material-symbols:bookmark-remove-rounded" height={36} width={36} />
+                            </div>
+                        </div>
                     ))}
                 </main>
             </section>

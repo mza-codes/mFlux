@@ -6,7 +6,6 @@ import { POSTER_URL } from '../../Constants/Constants';
 import LazyImage from '../../Components/LazyImage';
 import useTmdbApi, { controller } from '../../Services/tmdb_Api';
 import { useRef } from 'react';
-import defImage from '../../Assets/default.jpg'
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import ErrorBar from '../../Components/ErrorBar';
 import Loading from '../Loading';
@@ -14,6 +13,8 @@ import useWatchlist from '../../Services/Store';
 import Suggestions from '../../Components/Suggestions';
 import { hooker } from '../../Utils/tmdb';
 import { image404 } from '../../Assets';
+import { ActorSmallPhoto } from '../../Components/SmallPhoto';
+import CrewSmallPhoto from '../../Components/SmallPhoto';
 
 const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
@@ -33,6 +34,8 @@ const RecentsV2 = () => {
     const getTv = hooker("getTv", useTmdbApi);
     const getSuggestions = hooker("getSuggestions", useTmdbApi);
     const getMovie = hooker("getMovie", useTmdbApi);
+    const addToWatchList = useWatchlist(s => s.addToWatchList);
+
     const [movie, setMovie] = useState({});
     const { state } = useLocation();
     const addOne = useRecents(s => s.addOne);
@@ -50,7 +53,6 @@ const RecentsV2 = () => {
             err: {}
         }
     });
-    const addToWatchList = useWatchlist(s => s.addToWatchList);
     const scrollRef = useRef();
     const crewScroll = useRef();
     const route = useNavigate();
@@ -108,14 +110,14 @@ const RecentsV2 = () => {
     };
 
     const fetchMovie = async () => {
-        console.log("Current State >",state);
+        console.log("Current State >", state);
         if (movieData?.id === parseInt(id)) {
             console.log("Matched with currentMovie");
             setMovie(movieData);
             return true;
         };
         if (state === "tv") {
-            console.warn("Evaluated to fetchTV TRUE >>",state);
+            console.warn("Evaluated to fetchTV TRUE >>", state);
             const data = await getTv({ id });
             setMovie(data);
             getSuggestions({ genreId: data?.genres[v]?.id, type: state });
@@ -240,26 +242,24 @@ const RecentsV2 = () => {
                         <span className='py-1 px-2 bg-green-700 font-poppins text-sm rounded-md '>{cast?.length}</span>
                     </h2>
                     <div ref={scrollRef} className='w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
-                        {/* <div className=''> */}
-                            <button onClick={e => handleScroll("prev", scrollRef)} onMouseEnter={e => handleScroll("prev", scrollRef)}
-                                className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
+
+                        <button onClick={e => handleScroll("prev", scrollRef)} onMouseEnter={e => handleScroll("prev", scrollRef)}
+                            className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
                                      hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
-                                <i className="ri-arrow-left-s-line"></i> </button>
-                            <button onClick={e => handleScroll("next", scrollRef)} onMouseEnter={e => handleScroll("next", scrollRef)}
-                                className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
+                            <i className="ri-arrow-left-s-line"></i>
+                        </button>
+                        <button onClick={e => handleScroll("next", scrollRef)} onMouseEnter={e => handleScroll("next", scrollRef)}
+                            className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
                                      hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
-                                <i className="ri-arrow-right-s-line "></i> </button>
-                        {/* </div> */}
+                            <i className="ri-arrow-right-s-line "></i>
+                        </button>
+
                         {cast?.slice(0, 25).map((person, i) => (
-                            <div className='mx-1 p-3 cursor-pointer hover:scale-105 transition-all ease-linear'
+                            <ActorSmallPhoto
+                                person={person}
                                 onClick={e => fetchPerson(person)}
-                                key={(parseInt(person?.id) * i) - i || person?.id || person?.credit_id} >
-                                <LazyImage key={i} url={person?.profile_path ?
-                                    `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
-                                    className="rounded-lg min-w-[124px] max-h-[150px] object-cover aspect-square" />
-                                <span className='text-white text-base max-w-[100%]'>{person?.name || person?.original_name}</span>
-                                <h4 className='text-gray-400 text-sm max-w-[100%]'>{person?.character}</h4>
-                            </div>
+                                key={(parseInt(person?.id) * i) - i || person?.id || person?.credit_id}
+                            />
                         ))}
                     </div>
                 </div>)}
@@ -272,25 +272,22 @@ const RecentsV2 = () => {
                     </h2>
                     <div ref={crewScroll} className='w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
                         <div className=''>
-                            <button onClick={e => handleScroll("prev", crewScroll)} onMouseEnter={e => handleScroll("prev", crewScroll)}
+                            <button onClick={e => handleScroll("prev", crewScroll)}
+                                onMouseEnter={e => handleScroll("prev", crewScroll)}
                                 className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
                                      hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
                                 <i className="ri-arrow-left-s-line"></i> </button>
-                            <button onClick={e => handleScroll("next", crewScroll)} onMouseEnter={e => handleScroll("next", crewScroll)}
+                            <button onClick={e => handleScroll("next", crewScroll)}
+                                onMouseEnter={e => handleScroll("next", crewScroll)}
                                 className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
                                      hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
                                 <i className="ri-arrow-right-s-line "></i> </button>
                         </div>
                         {crew?.map((person, i) => (
-                            <div className='mx-1 p-3 cursor-pointer hover:scale-105 transition-all ease-linear'
-                                onClick={e => fetchPerson(person)} key={(parseInt(person?.id) * i) - i || person?.credit_id} >
-                                <LazyImage key={i} url={person?.profile_path ?
-                                    `https://image.tmdb.org/t/p/w300${person?.profile_path}` : defImage}
-                                    className="rounded-lg min-w-[124px] max-h-[150px] object-cover aspect-square " />
-                                <span className='text-white text-base max-w-[100%]'>{person?.name || person?.original_name}</span>
-                                <h4 className='text-gray-400 text-sm max-w-[100%]'>{person?.job || person?.known_for_department
-                                    || person?.department}</h4>
-                            </div>
+                            <CrewSmallPhoto
+                                key={(parseInt(person?.id) * i) - i || person?.id || person?.credit_id}
+                                person={person}
+                                onClick={e => fetchPerson(person)} />
                         ))}
                     </div>
                 </div>)}

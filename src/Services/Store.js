@@ -14,14 +14,28 @@ const useWatchlist = create(
                 console.log("Populating Data");
                 // case
             },
+            removeFromWatchlist: (data) => {
+                set((s) => ({
+                    ...s,
+                    watchlist: s.watchlist.filter((item) => {
+                        return data.id !== item.id
+                    })
+                }));
+                return true;
+            },
             addToWatchList: (item) => {
-                console.log("%cAddingData to watchlist", "color:red;font-size:18px;");
-                const oldData = get().watchlist;
-                if (oldData.includes(item)) return false;
+                const newArray = get().watchlist.filter((data) => {
+                    return data.id !== item.id;
+                });
+                // newArray.push(item);
                 set(state => ({
                     ...state,
-                    watchlist: [item, ...state.watchlist]
+                    watchlist: [item,...newArray]
                 }));
+                return true;
+            },
+            clearWatchlist: () => {
+                set(() => ({ ...initialState }));
                 return true;
             },
         }),
@@ -47,12 +61,22 @@ const useFavouritesStore = create(
                 // case
             },
             addPerson: (person) => {
-                console.log("%cAddingData to persons", "color:yellow;font-size:16px;");
-                const oldData = get().persons;
-                if (oldData.includes(person)) return false;
+                const newArray = get().persons.filter((data) => {
+                    return data.id !== person.id;
+                });
+                // newArray.push(person);
                 set(state => ({
                     ...state,
-                    persons: [person, ...state.persons]
+                    persons: [person,...newArray]
+                }));
+                return true;
+            },
+            removePerson: (data) => {
+                set((s) => ({
+                    ...s,
+                    persons: s.persons.filter((item) => {
+                        return data.id !== item.id
+                    })
                 }));
                 return true;
             },
