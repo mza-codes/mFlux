@@ -23,7 +23,7 @@ const MovieCard = ({ movie, hide, handleStore }) => {
                         onClick={() => { addToWatchList(movie) }}>
                         <iconify-icon icon="mdi:movie-open-star" width={18} height={18} />
                     </div>}
-                <div className="absolute text-white text-center text">
+                <div className="absolute text-white text-center text" onClick={e => handleStore(movie)}>
                     <h1 className="font-kanit text-2xl truncate">{movie?.title || movie?.original_title ||
                         movie?.original_name || movie?.name}
                     </h1>

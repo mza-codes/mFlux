@@ -7,6 +7,7 @@ import './Banner.scss';
 import { mfluxCache } from '../../Services/Row';
 import { useAtom } from 'jotai';
 import { rowAtom } from '../../Assets';
+import LazyLoad from 'react-lazy-load';
 
 const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 
@@ -27,7 +28,7 @@ const Banner = () => {
     const changeBg = () => {
         if (movie) {
             let value = JSON.parse(movie);
-            const items = value?.state?.data["originals"];
+            const items = value?.state?.data["trending2"];
             let v = Math.floor(Math.random() * items.length);
             setBanner(items[v]);
             return true;
@@ -55,28 +56,30 @@ const Banner = () => {
     return (
         <>
             <div className='Banner'>
-                <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh]"
-                    style={{
-                        backgroundImage: `url(${POSTER_URL + (banner?.backdrop_path ? banner?.backdrop_path
-                            : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
-                    }}>
-                    <div className="content sm:w-full lg:w-1/2 capitalize mix-blend-">
-                        <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title || banner?.name}</h2>
-                        <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
-                        <div className="buttons p-3 font-righteous">
-                            <button onClick={handlePlay}>Play</button>
-                            <button>View</button>
+                <LazyLoad offset={100}>
+                    <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh] lozad"
+                        style={{
+                            backgroundImage: `url(${POSTER_URL +
+                                (banner?.backdrop_path ? banner?.backdrop_path : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
+                        }} >
+                        <div className="content sm:w-full lg:w-1/2 capitalize mix-blend-">
+                            <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title || banner?.name}</h2>
+                            <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
+                            <div className="buttons p-3 font-righteous">
+                                <button onClick={handlePlay}>Play</button>
+                                <button>View</button>
+                            </div>
+                        </div>
+                        <div className="changeBtn">
+                            <button type='button' onClick={toggleAnimation} title="Toggle Minimal Animations" >
+                                <iconify-icon icon="mdi:settings-refresh" width="auto" height="auto" />
+                            </button>
+                            <button type='button' className='font-kanit' onClick={changeBg} title="Change current Banner">
+                                <i className="text-2xl ri-restart-fill"></i>
+                            </button>
                         </div>
                     </div>
-                    <div className="changeBtn">
-                        <button type='button' onClick={toggleAnimation} title="Toggle Minimal Animations" >
-                            <iconify-icon icon="mdi:settings-refresh" width="auto" height="auto" />
-                        </button>
-                        <button type='button' className='font-kanit' onClick={changeBg} title="Change current Banner">
-                            <i className="text-2xl ri-restart-fill"></i>
-                        </button>
-                    </div>
-                </div>
+                </LazyLoad>
                 <div className="fade"></div>
             </div>
             {results?.length >= 1 && !isClosed && <>
