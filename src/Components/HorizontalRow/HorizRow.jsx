@@ -2,19 +2,26 @@ import { w500, w780 } from '../../Constants/Constants';
 import { lazy, Suspense, useRef } from 'react';
 import LazyImage from '../LazyImage';
 import './HorizRow.scss';
-import useRecents from '../../Contexts/useRecents';
 import { useNavigate } from 'react-router-dom';
 import useSearchResults from '../../Services/ResultFetch';
-import { image404 } from '../../Assets';
+import { image404, rowAtom } from '../../Assets';
+import useWatchlist, { useFavouritesStore } from '../../Services/Store';
+import { useAtom } from 'jotai';
+import { useEffect } from 'react';
 
 const PaginatedItems = lazy(() => import('../ReactPagination'));
 
 const HorizRow = ({ data, title, close, ...props }) => {
     // data = [];
-    const { recents, addItem: setRecents } = useRecents();
-    const { toggleClose: closeResult, response: resultData } = useSearchResults();
+    const closeResult = useSearchResults(s => s.toggleClose);
+    const resultData = useSearchResults(s => s.response);
+    const addPerson = useFavouritesStore(s => s.addPerson);
+    const addToWatchList = useWatchlist(s => s.addToWatchList);
     const elRef = useRef();
     const route = useNavigate();
+    const horizRow = document.querySelectorAll('.horizRow');
+    
+    const [rowProvider,setRowProvider] = useAtom(rowAtom);
 
     const handleScroll = (param) => {
         switch (param) {
@@ -34,13 +41,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
     };
 
     const handleStore = (data) => {
-        const duplicate = recents.filter((item) => {
-            return item.id !== data.id
-        });
-        console.log("fech: ", data);
-        duplicate.push(data);
-        duplicate.reverse();
-        setRecents(duplicate);
+        // case for recents storage
         route(`/recents/${data?.id}`, { state: data?.media_type ?? "tv" });
         return;
     };
@@ -50,9 +51,15 @@ const HorizRow = ({ data, title, close, ...props }) => {
         return true;
     };
 
+    useEffect(() => {
+        if(rowProvider.length <= 0){
+           setRowProvider(horizRow);
+        };
+    }, [horizRow]);
+
     return (
         <div>
-            {data.length ? <>
+            {data.length > 0 ? <>
                 <div className='w-full flex flex-row justify-between items-center'>
                     <h3 className={`px-4 text-white text-2xl font-righteous pointer-events-none max-w-[80%]
                     ${close ? "text-emerald-400" : "capitalize"}`}>
@@ -74,23 +81,33 @@ const HorizRow = ({ data, title, close, ...props }) => {
                             <i className="ri-arrow-left-s-line"></i>
                         </button>
                     </div>
-                    {/* {data.map((item, i) => (
-                        <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)} >
-                            <LazyImage
-                                url={item?.poster_path ? (w500 + item?.poster_path) : 
-                                    item?.backdrop_path ? (w500 + item?.backdrop_path) : image404} />
-                        </div>
-                    ))} */}
+
                     {data?.map((item, i) => {
                         if (item?.gender) {
-                            return <div key={i} className="poster cursor-pointer" onClick={e => fetchPerson(item)} >
-                                <LazyImage url={item?.profile_path ? (w780 + item?.profile_path) : image404} />
+                            return <div key={i} className="poster cursor-pointer relative">
+                                <LazyImage
+                                    url={item?.profile_path ? (w780 + item?.profile_path) : image404}
+                                    onClick={e => fetchPerson(item)}
+                                />
+                                <div title='Add To Favourites'
+                                    className="icon text-rose-600 hover:text-rose-500 z-[104] opacity-0 hover:opacity-95
+                                        cursor-pointer absolute right-2 top-2"
+                                    onClick={() => { addPerson(item) }}>
+                                    <iconify-icon icon="mdi:favourite" width={18} height={18} />
+                                </div>
                             </div>
                         } else {
-                            return <div key={i} className="poster cursor-pointer" onClick={e => handleStore(item)} >
-                                <LazyImage
+                            return <div key={i} className="poster cursor-pointer relative">
+                                <LazyImage onClick={e => handleStore(item)}
                                     url={item?.poster_path ? (w500 + item?.poster_path) :
-                                        item?.backdrop_path ? (w500 + item?.backdrop_path) : image404} />
+                                        item?.backdrop_path ? (w500 + item?.backdrop_path) : image404}
+                                />
+                                <div title='Add To Favourites'
+                                    className="icon text-rose-600 hover:text-rose-500 z-[104] opacity-0 hover:opacity-95
+                                        cursor-pointer absolute right-2 top-2"
+                                    onClick={() => { addToWatchList(item) }}>
+                                    <iconify-icon icon="mdi:movie-open-star" width={18} height={18} />
+                                </div>
                             </div>
                         };
                     })}
@@ -103,12 +120,14 @@ const HorizRow = ({ data, title, close, ...props }) => {
                             </Suspense>
                         </div>
                     </div>}
-            </> : <>
-                <div className='loadText'></div>
-                <div className='rowSkeleton'>
-                    <div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div />
-                </div>
-            </>}
+            </> :
+                <>
+                    <div className='loadText'></div>
+                    <div className='rowSkeleton'>
+                        <div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div />
+                    </div>
+                </>
+            }
         </div>
     )
 }

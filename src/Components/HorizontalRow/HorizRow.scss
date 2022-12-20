@@ -13,7 +13,7 @@
         display: none;
     }
 
-    &:first-child{
+    &:first-child {
         margin-left: 10px;
     }
 
@@ -73,6 +73,36 @@
                 left: 0;
             }
         }
+    }
+}
+
+.notransition {
+    -webkit-transition: all 500ms ease-in !important;
+    -moz-transition: all 500ms ease-in !important;
+    -o-transition: all 500ms ease-in !important;
+    -ms-transition: all 500ms ease-in !important;
+    transition: all 500ms ease-in !important;
+
+    .poster:focus,:hover {
+        transform: scale(0.9);
+    }
+
+    .scrollButtons {
+        display: none;
+    }
+
+    &:hover,
+    &:focus,
+    :focus-within {
+        .poster {
+            transform: none !important;
+            z-index: 70;
+        }
+    }
+
+    &:focus~.poster,
+    &:hover~.poster {
+        transform: none;
     }
 }
 

@@ -36,7 +36,7 @@ const ViewActors = () => {
                 <main className="flex flex-row flex-wrap justify-center mt-4">
                     {actors?.map((person, i) => (
                         <div className="relative" key={person?.id || i}>
-                            <ActorCard actor={person} hide={1} onClick={e => fetchPerson(person)} />
+                            <ActorCard actor={person} hide={1} onClick={e => fetchPerson(person)} key={person?.id || i}/>
                             <div title="Delete Person" className="absolute left-4 top-4 z-[105] opacity-0 hover:opacity-90
                                  hover:text-red-400 cursor-pointer" onClick={() => removePerson(person)}>
                                 <iconify-icon icon="material-symbols:bookmark-remove-rounded" height={36} width={36} />
