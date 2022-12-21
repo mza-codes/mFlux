@@ -5,15 +5,18 @@
   <p align="center">
   <b> mFlux V2 </b>
   <br />
-    <b>A Netflix Similar Clone!</b>
+    <b>A Netflix Inspired Clone!</b>
     <br />
     <b>Built using React !</b>
     <br />
-    <b>Integrated with TMDB API & LazyLoad for Images!</b>
+    <b>Integrated with TMDB API & React-LazyLoad for Images!</b>
+    <br />
+    <b>Majority State Management using Zustand!</b>
     <br />
      <b>More Features to be added!</b>
      <br />
-    <a href="https://github.com/mza-codes/"><strong>Author</strong></a>
+    <a href="https://github.com/mza-codes/"><strong>Author
+    </strong></a>
     <br />
     <a href="https://github.com/mza-codes/mFlux/issues/"><strong>Report</strong></a>
     ·

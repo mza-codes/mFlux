@@ -1,9 +1,10 @@
-import logo from '../Navbar/mFlux.png';
+import { mFluxLogo } from "../../Assets";
+
 const Footer = () => {
     return (
         <div className="w-full flex flex-col items-center justify-center text-center text-white">
             <div className="ml-5 footerLogo">
-                <img src={logo} alt="_logo_mFlux" className='max-w-[150px] max-h-[150px]' />
+                <img src={mFluxLogo} alt="_logo_mFlux" className='max-w-[150px] max-h-[150px]' />
             </div>
             <div className="texts py-3 flex flex-col items-center justify-center text-center space-y-1 font-poppins font-medium">
                 <h4>Copyrights © {new Date().getFullYear()}</h4>
@@ -24,7 +25,7 @@ const Footer = () => {
                 <h4>mza-codes</h4>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Footer
+export default Footer;

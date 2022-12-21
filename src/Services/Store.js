@@ -1,9 +1,20 @@
+import { Flip, toast } from 'react-toastify';
 import create from 'zustand';
 import { persist } from 'zustand/middleware';
 // persist method
 
 const initialState = {
     watchlist: [],
+};
+
+const toastOptions = {
+    position: "top-center",
+    theme: "light",
+    hideProgressBar: true,
+    autoClose: 3000,
+    className: "font-poppins font-semibold text-center",
+    transition: Flip,
+    draggable: true,
 };
 
 const useWatchlist = create(
@@ -21,6 +32,7 @@ const useWatchlist = create(
                         return data.id !== item.id
                     })
                 }));
+                toast.success("Item Removed From Watchlist!", toastOptions);
                 return true;
             },
             addToWatchList: (item) => {
@@ -30,8 +42,9 @@ const useWatchlist = create(
                 // newArray.push(item);
                 set(state => ({
                     ...state,
-                    watchlist: [item,...newArray]
+                    watchlist: [item, ...newArray]
                 }));
+                toast.success("Item Added To Watchlist!", toastOptions);
                 return true;
             },
             clearWatchlist: () => {
@@ -64,11 +77,11 @@ const useFavouritesStore = create(
                 const newArray = get().persons.filter((data) => {
                     return data.id !== person.id;
                 });
-                // newArray.push(person);
                 set(state => ({
                     ...state,
-                    persons: [person,...newArray]
+                    persons: [person, ...newArray]
                 }));
+                toast.success("Person Added to Favourites!", toastOptions);
                 return true;
             },
             removePerson: (data) => {
@@ -78,9 +91,11 @@ const useFavouritesStore = create(
                         return data.id !== item.id
                     })
                 }));
+                toast.success("Person Removed from Favourites!", toastOptions);
                 return true;
             },
             clearFavourites: () => {
+                toast.info("Cleared Favourites Store!", toastOptions);
                 set((state) => ({ ...dataModel }));
                 return true;
             },

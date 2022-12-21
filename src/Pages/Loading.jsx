@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../Components/Navbar/mFlux.png';
 import './Loading.scss';
 import '../styles.scss';
+import { mFluxLogo } from '../Assets';
 
 const Loading = ({ err, msg, timeout = 10000 }) => {
 
@@ -33,7 +33,7 @@ const Loading = ({ err, msg, timeout = 10000 }) => {
     return (
         <section className='loadPage '>
             <div className='logoContainer '>
-                <img src={logo} alt="_logo_mFlux" />
+                <img src={mFluxLogo} alt="_logo_mFlux" />
             </div>
 
             <div id='loader' className="lds-ellipsis">

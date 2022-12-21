@@ -36,8 +36,8 @@ const WatchList = () => {
                         <div className="relative" key={movie?.id}>
                             <MovieCard movie={movie} handleStore={handleStore} hide={1} />
                             <div title="Delete Movie" className="absolute left-4 top-4 z-[105] opacity-0 hover:opacity-90
-                                 hover:text-red-400 cursor-pointer" onClick={() => removeFromWatchlist(movie)}>
-                                <iconify-icon icon="material-symbols:bookmark-remove-rounded" height={36} width={36} />
+                                 hover:text-[red] cursor-pointer" onClick={() => removeFromWatchlist(movie)}>
+                                <iconify-icon icon="material-symbols:bookmark-remove-rounded" height={26} width={26} />
                             </div>
                         </div>
                     ))}

@@ -1,10 +1,11 @@
 import './Navbar.scss';
-import mFlux from './mFlux.png';
-import Avatar from './userAvatar.png';
+// import mFlux from './mFlux.png';
+// import Avatar from './userAvatar.png';
 import { Link, useNavigate } from 'react-router-dom'
 import { useRef, useState } from 'react';
 import useSearchResults from '../../Services/ResultFetch';
 import { atom, useAtom } from 'jotai';
+import { Avatar, mFluxLogo } from '../../Assets';
 
 const viewAtom = atom(false);
 
@@ -54,7 +55,7 @@ const Navbar = () => {
       <main className="navWrapper">
         <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"} w-[80px] m-1
           xl:w-[120px] lg:w-[120px] md:w-[95px] sm:w-[85px] lg:m-0 `} onClick={e => route('/')}>
-          <img src={mFlux} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
+          <img src={mFluxLogo} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
         </div>
 
         <section className={`flex flex-row gap-2 items-center justify-center searchSection sm:m-2 

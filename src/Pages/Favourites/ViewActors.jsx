@@ -13,8 +13,6 @@ const ViewActors = () => {
         route(`/actor-details/${person?.id}`, { state: person?.media_type });
         return true;
     };
-
-    console.log("actors print", actors);
     // clearFavourites();
 
     return (
@@ -27,7 +25,7 @@ const ViewActors = () => {
                         <>
                             <span className="text-xl">There's nothing in your Favourite Actors !</span>
                             <Link to="/">
-                                <button className="bg-emerald-800 bg-opacity-60 hover:bg-opacity-100  p-2 rounded-lg">Browse</button>
+                                <button className="bg-emerald-800 bg-opacity-60 hover:bg-opacity-100 p-2 rounded-lg">Browse</button>
                             </Link>
                         </>
                         : <span className="text-xl ">Seems like you have saved some of your favourite persons !</span>
@@ -36,10 +34,10 @@ const ViewActors = () => {
                 <main className="flex flex-row flex-wrap justify-center mt-4">
                     {actors?.map((person, i) => (
                         <div className="relative" key={person?.id || i}>
-                            <ActorCard actor={person} hide={1} onClick={e => fetchPerson(person)} key={person?.id || i}/>
+                            <ActorCard actor={person} hide={1} onClick={e => fetchPerson(person)} />
                             <div title="Delete Person" className="absolute left-4 top-4 z-[105] opacity-0 hover:opacity-90
-                                 hover:text-red-400 cursor-pointer" onClick={() => removePerson(person)}>
-                                <iconify-icon icon="material-symbols:bookmark-remove-rounded" height={36} width={36} />
+                                 hover:text-[red] cursor-pointer" onClick={() => removePerson(person)}>
+                                <iconify-icon icon="jam:bookmark-remove-f" height={28} width={28} />
                             </div>
                         </div>
                     ))}
