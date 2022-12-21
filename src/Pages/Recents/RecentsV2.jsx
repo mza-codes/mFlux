@@ -3,7 +3,6 @@ import './Recents.scss';
 import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
 import { POSTER_URL } from '../../Constants/Constants';
-import LazyImage from '../../Components/LazyImage';
 import useTmdbApi, { controller } from '../../Services/tmdb_Api';
 import { useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -15,6 +14,7 @@ import { hooker } from '../../Utils/tmdb';
 import { image404 } from '../../Assets';
 import { ActorSmallPhoto } from '../../Components/SmallPhoto';
 import CrewSmallPhoto from '../../Components/SmallPhoto';
+import LazyLoad from 'react-lazy-load';
 
 const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
@@ -162,21 +162,26 @@ const RecentsV2 = () => {
             <Navbar />
 
             {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
+
             {movie?.backdrop_path ?
                 <section className='bannerImg relative'>
-                    <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] max-h-[60vh]'
-                        src={(POSTER_URL + movie?.backdrop_path)} alt="movie_banner" />
+                    <LazyLoad offset={100}>
+                        <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] max-h-[60vh]'
+                            src={(POSTER_URL + movie?.backdrop_path)}
+                            alt="movie_banner"
+                        />
+                    </LazyLoad>
                     <div className="fade_bottom"></div>
                 </section> : <div className='pt-20'></div>}
 
             <section className="flex flex-row flex-wrap p-3 gap-2 text-center items-center justify-center lg:items-start 
                 lg:justify-start lg:text-start xl:items-start xl:justify-start xl:text-start
                  md:items-center md:justify-center md:text-center sm:items-center sm:justify-center sm:text-center">
-                <div className='sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px]'>
-                    <LazyImage url={movie?.poster_path ? (POSTER_URL + movie?.poster_path) :
+                <LazyLoad className="sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px]" offset={100}>
+                    <img src={movie?.poster_path ? (POSTER_URL + movie?.poster_path) :
                         movie?.backdrop_path ? (POSTER_URL + movie?.backdrop_path) : image404}
                         className="w-auto h-auto rounded-2xl aspect-[2/3]" />
-                </div>
+                </LazyLoad>
                 {movie?.id && <div className="sm:w-full md:w-1/2 lg:w-1/2 min-w-[280px] ml-4">
                     <main>
                         <h1 className='text-4xl font-righteous py-1'>{movie?.title || movie?.original_title || movie?.name || ""}</h1>

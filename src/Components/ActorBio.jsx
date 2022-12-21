@@ -53,7 +53,7 @@ const ActorBio = ({ actor }) => {
                                 alt="_actor_image" />
                         </LazyLoad>
 
-                        <div className="icon text-rose-500 hover:text-rose-600 z-[104] 
+                        <div className="icon text-rose-500 hover:text-rose-600 z-[104] opacity-0 hover:opacity-100
                         cursor-pointer absolute right-2 top-2" onClick={() => addPerson(actor)} >
                             <iconify-icon icon="mdi:favourite" width={36} height={36} />
                         </div>

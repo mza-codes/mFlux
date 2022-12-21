@@ -19,7 +19,7 @@ const WatchList = () => {
         <>
             <Navbar />
             <section className="text-white watvhlist pt-20">
-                <div className="flex flex-col gap-2 items-center">
+                <div className="flex flex-col gap-2 items-center text-center">
                     <h2 className="font-kanit text-4xl">Your Watchlist</h2>
                     {watchlist?.length <= 0 ?
                         <>
@@ -34,7 +34,7 @@ const WatchList = () => {
                 <main className="flex flex-row flex-wrap justify-center mt-4">
                     {watchlist?.map((movie) => (
                         <div className="relative" key={movie?.id}>
-                            <MovieCard movie={movie} handleStore={handleStore} />
+                            <MovieCard movie={movie} handleStore={handleStore} hide={1} />
                             <div title="Delete Movie" className="absolute left-4 top-4 z-[105] opacity-0 hover:opacity-90
                                  hover:text-red-400 cursor-pointer" onClick={() => removeFromWatchlist(movie)}>
                                 <iconify-icon icon="material-symbols:bookmark-remove-rounded" height={36} width={36} />

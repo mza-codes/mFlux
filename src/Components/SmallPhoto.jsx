@@ -13,8 +13,10 @@ const CrewSmallPhoto = ({ person, ...props }) => {
                         `https://image.tmdb.org/t/p/w300${person?.profile_path}` : image404}
                     className="rounded-lg min-w-[124px] max-h-[150px] object-cover aspect-square " />
                 <div className="icon text-rose-600 hover:text-rose-500 z-[104] 
-                                        cursor-pointer absolute right-1 top-1" onClick={() => addPerson(person)} >
-                    <iconify-icon icon="mdi:favourite" width={26} height={26} />
+                    cursor-pointer absolute right-1 top-1"
+                    onClick={() => addPerson(person)}
+                    title="Add To Favourites">
+                    <iconify-icon icon="mdi:favourite" width={18} height={18} />
                 </div>
             </div>
             <span className='text-white text-base max-w-[100%]'>{person?.name || person?.original_name}</span>
@@ -39,8 +41,10 @@ export const ActorSmallPhoto = ({ person, ...props }) => {
                     className="rounded-lg min-w-[124px] max-h-[150px] object-cover aspect-square"
                 />
                 <div className="icon text-rose-600 hover:text-rose-500 z-[104] 
-                    cursor-pointer absolute right-1 top-1" onClick={() => addPerson(person)} >
-                    <iconify-icon icon="mdi:favourite" width={26} height={26} />
+                    cursor-pointer absolute right-1 top-1"
+                    title="Add To Favourites"
+                    onClick={() => addPerson(person)} >
+                    <iconify-icon icon="mdi:favourite" width={18} height={18} />
                 </div>
             </div>
             <span className='text-white text-base max-w-[100%]'>{person?.name || person?.original_name}</span>
