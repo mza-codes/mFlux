@@ -15,6 +15,14 @@
     opacity: 1;
 }
 
+.toastCustom {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
 
 /* Available Fonts:
 font-family: 'Abel', sans-serif;

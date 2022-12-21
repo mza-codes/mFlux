@@ -5,12 +5,14 @@ import Router from './routes';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
 import Loading from './Pages/Loading';
+import { ToastContainer } from 'react-toastify';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <HashRouter hashType="hashbang">
     <Suspense fallback={<Loading />}>
+      <ToastContainer limit={3} />
       <Router />
     </Suspense>
   </HashRouter>
