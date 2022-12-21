@@ -19,7 +19,7 @@ const WatchList = () => {
         <>
             <Navbar />
             <section className="text-white watvhlist pt-20">
-                <div className="flex flex-col gap-2 items-center">
+                <div className="flex flex-col gap-2 items-center text-center">
                     <h2 className="font-kanit text-4xl">Your Watchlist</h2>
                     {watchlist?.length <= 0 ?
                         <>

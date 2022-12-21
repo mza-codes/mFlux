@@ -21,7 +21,7 @@ const ViewActors = () => {
         <>
             <Navbar />
             <section className="text-white watvhlist pt-20">
-                <div className="flex flex-col gap-2 items-center">
+                <div className="flex flex-col gap-2 items-center text-center">
                     <h2 className="font-kanit text-4xl">Favourite Actors</h2>
                     {actors?.length <= 0 ?
                         <>
@@ -30,7 +30,7 @@ const ViewActors = () => {
                                 <button className="bg-emerald-800 bg-opacity-60 hover:bg-opacity-100  p-2 rounded-lg">Browse</button>
                             </Link>
                         </>
-                        : <span className="text-xl">Seems like you have saved some of your favourite persons !</span>
+                        : <span className="text-xl ">Seems like you have saved some of your favourite persons !</span>
                     }
                 </div>
                 <main className="flex flex-row flex-wrap justify-center mt-4">
