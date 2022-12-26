@@ -1,87 +1,109 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { POSTER_URL } from '../../Constants/Constants';
 import useRecents from '../../Contexts/useRecents';
 import useSearchResults from '../../Services/ResultFetch';
 import './Banner.scss';
-import { mfluxCache } from '../../Services/Row';
-import { useAtom } from 'jotai';
-import { rowAtom } from '../../Assets';
 import LazyLoad from 'react-lazy-load';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import useWatchlist from '../../Services/Store';
+import { default as items } from '../../Assets/data';
 
 const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 
 const Banner = () => {
-    const [banner, setBanner] = useState({});
-    const { addOne } = useRecents();
+    const addOne = useRecents(s => s.addOne);
     const route = useNavigate();
-    const movie = localStorage.getItem(mfluxCache);
-    // const values = useSearchResults((state) => state);
-    // const { result: results, query, error: err, gotResult } = values;
+    // const movie = localStorage.getItem(mfluxCache);
+    // const items = useMemo(() => {
+    //     console.warn("MEMO USED");
+    //     return JSON.parse(movie)?.state?.data["trending2"];
+    // }, []);
+    // console.log(items);
+    // const items = movies;
+
+    const addToWatchList = useWatchlist(s => s.addToWatchList);
     const isClosed = useSearchResults(s => s.isClosed);
     const results = useSearchResults((state) => state.result);
     const query = useSearchResults((state) => state.query);
     const err = useSearchResults((state) => state.error);
     const gotResult = useSearchResults((state) => state.gotResult);
-    const rowProvider = useAtom(rowAtom)[0];
 
-    const changeBg = () => {
-        if (movie) {
-            let value = JSON.parse(movie);
-            const items = value?.state?.data["trending2"];
-            let v = Math.floor(Math.random() * items.length);
-            setBanner(items[v]);
-            return true;
-        };
-        return false;
-    };
-
-    const toggleAnimation = () => {
-        rowProvider.forEach((element) => {
-            element?.classList?.toggle('notransition');
-        });
+    const handlePlay = (data) => {
+        addOne(data);
+        route(`/recents/${data?.id}`, { state: data?.media_type ?? "movie" });
         return;
     };
 
-    const handlePlay = () => {
-        addOne(banner);
-        route(`/recents/${banner?.id}`, { state: banner?.media_type ?? "movie" });
-        return;
+    const SampleNextArrow = (props) => {
+        const { onClick } = props;
+        return (
+            <div className='control-btn hover:text-[#202020]' onClick={onClick}>
+                <button className='next'>
+                    <iconify-icon icon="material-symbols:chevron-right-rounded" width="50" height="50" />
+                </button>
+            </div>
+        );
     };
 
-    useEffect(() => {
-        changeBg();
-    }, []);
+    const SamplePrevArrow = (props) => {
+        const { onClick } = props;
+        return (
+            <div className='control-btn hover:text-[#fff]' onClick={onClick} >
+                <button className='prev'>
+                    <iconify-icon icon="material-symbols:chevron-left-rounded" width="50" height="50" />
+                </button>
+            </div>
+        );
+    };
+
+    const settings = {
+        dots: false,
+        infinite: true,
+        speed: 1000,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />,
+    };
 
     return (
         <>
-            <div className='Banner'>
-                <LazyLoad offset={100}>
-                    <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh] lozad"
-                        style={{
-                            backgroundImage: `url(${POSTER_URL +
-                                (banner?.backdrop_path ? banner?.backdrop_path : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
-                        }} >
-                        <div className="content sm:w-full lg:w-1/2 capitalize mix-blend-">
-                            <h2 className='font-righteous text-4xl p-3 lg:w-1/2'>{banner?.title || banner?.original_title || banner?.name}</h2>
-                            <h5 className='font-light font-abel text-xl p-3'>{banner?.overview || ""}</h5>
-                            <div className="buttons p-3 font-righteous">
-                                <button onClick={handlePlay}>Play</button>
-                                <button>View</button>
+            <Slider {...settings}>
+                {items.map((item, i) => (
+                    <main className='Banner' key={item?.id ?? i}>
+                        <LazyLoad offset={100}>
+                            <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh] lozad"
+                                style={{
+                                    backgroundImage: `url(${POSTER_URL +
+                                        (item?.backdrop_path ? item?.backdrop_path : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
+                                }} >
+                                <div className="content capitalize sm:w-full lg:w-1/2 w-full">
+                                    <h2 className='font-righteous font-black styledTitle p-3'>
+                                        {item?.title || item?.original_title || item?.name}
+                                    </h2>
+                                    <h5 className='font-light font-abel text-xl p-3'>{item?.overview || ""}</h5>
+                                    <div className="buttons p-3 font-righteous">
+                                        <button onClick={() => handlePlay(item)}>Play</button>
+                                        <button>View</button>
+                                    </div>
+                                </div>
+                                <div className="changeBtn">
+                                    <div title="Favourite This" className='icon text-rose-500 hover:text-rose-600
+                                        opacity-60 cursor-pointer hover:opacity-100'
+                                        onClick={() => { addToWatchList(item) }} >
+                                        <iconify-icon icon="mdi:favourite" width={"auto"} height={"auto"} />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="changeBtn">
-                            <button type='button' onClick={toggleAnimation} title="Toggle Minimal Animations" >
-                                <iconify-icon icon="mdi:settings-refresh" width="auto" height="auto" />
-                            </button>
-                            <button type='button' className='font-kanit' onClick={changeBg} title="Change current Banner">
-                                <i className="text-2xl ri-restart-fill"></i>
-                            </button>
-                        </div>
-                    </div>
-                </LazyLoad>
-                <div className="fade"></div>
-            </div>
+                        </LazyLoad>
+                        <div className="fade"></div>
+                    </main>
+                ))}
+            </Slider>
+
             {results?.length >= 1 && !isClosed && <>
                 <Suspense fallback={<> <h2 className='text-center font-righteous text-6xl text-yellow-100 p-4 m-4'>Loading...</h2> </>}>
                     <HorizRow title={`Displaying ${results?.length} titles for "${query}" `} data={results} close />
