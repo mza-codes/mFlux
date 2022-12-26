@@ -2,8 +2,8 @@ import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import Router from './routes';
-import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
 import Loading from './Pages/Loading';
 import { ToastContainer } from 'react-toastify';
 
