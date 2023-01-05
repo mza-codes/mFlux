@@ -1,8 +1,8 @@
 import './styles.scss';
 import Banner from './Components/Banner/Banner';
 import Navbar from './Components/Navbar/Navbar';
-import Home from './Pages/Home/Home';
 import Footer from './Components/Footer/Footer';
+import HomeV2 from './Pages/HomeV2';
 
 if (process.env.NODE_ENV === 'production') {
     console.log = () => { return; }
@@ -15,10 +15,11 @@ const App = () => {
     return (
         <>
             <Navbar />
-            <Banner />
-            <Home />
+            <main className='hidden lg:block'>
+                <Banner />
+            </main>
+            <HomeV2 />
             <Footer />
-            {/* <ErrorBar err='Everything is Fine !'/> */}
         </>
     )
 };

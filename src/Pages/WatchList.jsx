@@ -10,7 +10,6 @@ const WatchList = () => {
     console.log("prinitng user watchlist", watchlist);
 
     const handleStore = (movie) => {
-        // addOne(movie);
         route(`/recents/${movie?.id}`, { state: movie?.media_type });
         return;
     };

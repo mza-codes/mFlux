@@ -55,6 +55,9 @@
             right: 10px;
             bottom: 3.5rem;
             z-index: 12;
+            display: flex;
+            gap: 4px;
+            align-items: center;
 
             button {
                 padding: 6px;

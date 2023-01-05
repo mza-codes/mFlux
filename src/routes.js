@@ -1,10 +1,10 @@
 import { lazy, useEffect } from 'react';
 import { useRoutes } from 'react-router-dom';
 import ErrorPage from './Components/ErrorPage';
+import HomeV1 from './Pages/HomeV1';
 import useRow from './Services/Row';
 
 const WatchList = lazy(() => import('./Pages/WatchList'));
-// const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
 const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
 const App = lazy(() => import('./App'));
 const SearchResults = lazy(() => import('./Pages/SearchResults'));
@@ -22,6 +22,9 @@ export default function Router() {
     return useRoutes([
         {
             path: '/', element: <App />
+        },
+        {
+            path: '/mflux-v1', element: <HomeV1 />
         },
         {
             path: 'recents/:id', element: <Recents />

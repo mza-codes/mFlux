@@ -3,8 +3,6 @@ import useSearchResults from "../Services/ResultFetch";
 import PaginatedItems from "../Components/ReactPagination";
 import useRecents from "../Contexts/useRecents";
 import { useNavigate } from "react-router-dom";
-import MovieCard from "../Components/MovieCard";
-import ActorCard from "../Components/ActorCard";
 import { hooker } from "../Utils/tmdb";
 import ActorPost from "../Components/ActorPost";
 import { PostModelN } from "../Components/PostModel";
@@ -34,7 +32,7 @@ const SearchResults = () => {
             <div className="text-white page pt-20">
                 <h2 className="font-kanit text-2xl text-center"> Displaying {result?.length} Results for "{query}" </h2>
                 <div className="resultContainer">
-                    <div className="flex flex-row flex-wrap justify-center mt-4">
+                    <div className="flex flex-row flex-wrap justify-center items-center mt-4">
                         {result?.map((movie, i) => {
                             if (movie?.gender) {
                                 return <ActorPost actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
@@ -47,7 +45,7 @@ const SearchResults = () => {
                     </div>
                     <hr className="p-3" />
                     {oldResult?.length >= 1 && <> <h1 className="text-3xl font-kanit text-center">Previous Search Results</h1>
-                        <div className="flex flex-row flex-wrap justify-center mt-4">
+                        <div className="flex flex-row flex-wrap justify-center items-center mt-4">
                             {oldResult?.map((movie, i) => {
                                 if (movie?.gender) {
                                     return <ActorPost actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
