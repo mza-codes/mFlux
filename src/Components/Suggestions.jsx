@@ -2,17 +2,15 @@ import { useCallback, useRef } from "react";
 import useTmdbApi from "../Services/tmdb_Api";
 import { hooker } from "../Utils/tmdb";
 import LoaderMini from "./LoaderMini";
-import MovieCard, { MovieCardWRef } from "./MovieCard";
+import { PostModelN, PostModelNWRef } from "./PostModel";
 
 let v = 1;
-let called = false;
 const Suggestions = ({ getFunc, genres, currentGenre, state }) => {
+
     const getMoreSuggestions = useTmdbApi(s => s.getMoreSuggestions);
     const suggestions = useTmdbApi(s => s.suggestions);
     const isFetching = hooker("isFetching", useTmdbApi);
     const totalpages = hooker("totalSuggestions", useTmdbApi);
-
-    console.log("Called Value", called);
 
     const observer = useRef();
 
@@ -40,8 +38,8 @@ const Suggestions = ({ getFunc, genres, currentGenre, state }) => {
             <main className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
                 {suggestions?.map((movie, idx) => {
                     if (suggestions?.length === idx + 1) {
-                        return <MovieCardWRef key={parseInt(movie?.id) * (idx - 10)} movie={movie} handleStore={getFunc} ref={lastItem} />
-                    } else return <MovieCard key={parseInt(movie?.id) * (idx - 10)} movie={movie} handleStore={getFunc} />
+                        return <PostModelNWRef key={parseInt(movie?.id) * (idx - 10)} movie={movie} handleStore={getFunc} ref={lastItem} />
+                    } else return <PostModelN key={parseInt(movie?.id) * (idx - 10)} movie={movie} handleStore={getFunc} />
                 })}
             </main>
             {isFetching && <LoaderMini />}

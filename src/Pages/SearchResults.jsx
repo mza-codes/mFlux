@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import MovieCard from "../Components/MovieCard";
 import ActorCard from "../Components/ActorCard";
 import { hooker } from "../Utils/tmdb";
+import ActorPost from "../Components/ActorPost";
+import { PostModelN } from "../Components/PostModel";
 
 const SearchResults = () => {
     const route = useNavigate();
@@ -35,9 +37,9 @@ const SearchResults = () => {
                     <div className="flex flex-row flex-wrap justify-center mt-4">
                         {result?.map((movie, i) => {
                             if (movie?.gender) {
-                                return <ActorCard actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
+                                return <ActorPost actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
                             } else {
-                                return <MovieCard key={movie?.id} movie={movie}
+                                return <PostModelN key={movie?.id} movie={movie}
                                     handleStore={handleStore}
                                     onClick={e => handleStore(movie)} />
                             };
@@ -48,9 +50,9 @@ const SearchResults = () => {
                         <div className="flex flex-row flex-wrap justify-center mt-4">
                             {oldResult?.map((movie, i) => {
                                 if (movie?.gender) {
-                                    return <ActorCard actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
+                                    return <ActorPost actor={movie} key={movie?.id || i} onClick={e => fetchPerson(movie)} />
                                 } else {
-                                    return <MovieCard key={movie?.id} movie={movie}
+                                    return <PostModelN key={movie?.id} movie={movie}
                                         handleStore={handleStore}
                                         onClick={e => handleStore(movie)} />
                                 };

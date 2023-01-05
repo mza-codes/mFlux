@@ -5,6 +5,7 @@ import { image404 } from "../Assets";
 import useWatchlist from "../Services/Store";
 
 const MovieCard = ({ movie, hide, handleStore }) => {
+
     const addToWatchList = useWatchlist(s => s.addToWatchList);
 
     return (
@@ -12,7 +13,7 @@ const MovieCard = ({ movie, hide, handleStore }) => {
             <div className="image w-64  sm:w-full sm:h-full relative resultImg">
                 <LazyImage alt="_loading"
                     className="rounded-xl object-cover w-64 as"
-                    onClick={e => handleStore(movie)}
+                    onClick={() => handleStore(movie)}
                     url={movie?.poster_path ? (w500 + movie?.poster_path) :
                         movie?.backdrop_path ? (w500 + movie?.backdrop_path) : image404}
                 />
@@ -38,11 +39,8 @@ const MovieCard = ({ movie, hide, handleStore }) => {
 
 export default MovieCard;
 
-export const MovieCardWRef = forwardRef((props, ref) => {
-    // const { movie, handleStore } = props;
-    return (
-        <div ref={ref}>
-            <MovieCard {...props} />
-        </div>
-    );
-});
+export const MovieCardWRef = forwardRef((props, ref) => (
+    <div ref={ref}>
+        <MovieCard {...props} />
+    </div>
+));

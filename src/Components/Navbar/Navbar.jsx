@@ -1,11 +1,10 @@
 import './Navbar.scss';
-// import mFlux from './mFlux.png';
-// import Avatar from './userAvatar.png';
 import { Link, useNavigate } from 'react-router-dom'
 import { useRef, useState } from 'react';
 import useSearchResults from '../../Services/ResultFetch';
 import { atom, useAtom } from 'jotai';
 import { Avatar, mFluxLogo } from '../../Assets';
+import { scrollToTop } from '../../Utils';
 
 const viewAtom = atom(false);
 
@@ -18,8 +17,7 @@ const Navbar = () => {
   const query = useSearchResults(state => state?.query);
   const inputRef = useRef();
 
-  const handleSearch = (e) => {
-    // const inputRef = document.getElementById('inputRef');
+  const handleSearch = () => {
     const key = inputRef.current.value;
     const isValid = reExSymbols.test(key);
 
@@ -33,7 +31,8 @@ const Navbar = () => {
       inputRef.current.style.borderBottom = "3px solid #68fc54";
       fetchresult(key, 1);
 
-      if (window?.location?.pathname !== "#/") { // added #/ to identify page using hashrouter,if using browser router use native /
+      if (window?.location?.hash !== "#/") {
+        // added #/ to identify page using hashrouter,if using browser router use native /
         route('/search-results');
         return true;
       };
@@ -50,11 +49,16 @@ const Navbar = () => {
     } else return false;
   };
 
-  return (<>
+  const handleLogoClick = () => {
+    if (window?.location?.hash !== "#/") return route('/');
+    else return scrollToTop();
+  };
+
+  return (
     <header className={`navBar ${hide ? "fixed z-10" : "fixed z-50"}`}>
       <main className="navWrapper">
         <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"} w-[80px] m-1
-          xl:w-[120px] lg:w-[120px] md:w-[95px] sm:w-[85px] lg:m-0 `} onClick={e => route('/')}>
+          xl:w-[120px] lg:w-[120px] md:w-[95px] sm:w-[85px] lg:m-0 `} onClick={handleLogoClick}>
           <img src={mFluxLogo} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
         </div>
 
@@ -87,12 +91,12 @@ const Navbar = () => {
               <img itemType='label' src={Avatar} alt="_avatar" />
             </div>
           </label>
-          
+
         </section>
 
       </main>
     </header>
-  </>)
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
