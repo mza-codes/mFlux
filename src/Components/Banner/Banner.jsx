@@ -16,6 +16,7 @@ const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 const Banner = () => {
     const addOne = useRecents(s => s.addOne);
     const route = useNavigate();
+    let v = Math.floor(Math.random() * items?.length);
 
     const addToWatchList = useWatchlist(s => s.addToWatchList);
     const isClosed = useSearchResults(s => s.isClosed);
@@ -60,6 +61,7 @@ const Banner = () => {
         slidesToScroll: 1,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />,
+        initialSlide: v
     };
 
     return (

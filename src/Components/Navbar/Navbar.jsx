@@ -57,14 +57,14 @@ const Navbar = () => {
   return (
     <header className={`navBar ${hide ? "fixed z-10" : "fixed z-50"}`}>
       <main className="navWrapper">
-        <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "visible"} w-[80px] m-1
+        <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "block"} w-[80px] m-1
           xl:w-[120px] lg:w-[120px] md:w-[95px] sm:w-[85px] lg:m-0 `} onClick={handleLogoClick}>
-          <img src={mFluxLogo} className={`${isOpen && "invisible"} min-[440px]:visible sm:m-2 `} alt="_logo_mFlux" />
+          <img src={mFluxLogo} className={`${isOpen && "hidden"} min-[440px]:block sm:m-2 `} alt="_logo_mFlux" />
         </div>
 
         <section className={`flex flex-row gap-2 items-center justify-center searchSection sm:m-2 
-          ${hide ? "opacity-0 hover:opacity-70" : "visible"}`}>
-          <div className={`relative inputArea font-poppins text-sm ${isOpen ? "visible" : "invisible"}`}>
+          ${hide ? "opacity-0 hover:opacity-70" : "block"}`}>
+          <div className={`relative inputArea font-poppins text-sm ${isOpen ? "block" : "hidden"}`}>
             <input type="text" ref={inputRef} onKeyPress={handleKeyPress} placeholder='Search titles...' maxLength={50} />
             <button onClick={handleSearch} className='text-white opacity-30 hover:opacity-100 my-1 rounded-xl absolute right-2'>
               <iconify-icon width="24" height="24" icon="ic:round-send" />
@@ -83,6 +83,10 @@ const Navbar = () => {
           <Link to="/favourites/actors" title='View Favourited Persons'
             className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
             <iconify-icon width="24" height="24" icon="mdi:account-star" />
+          </Link>
+          <Link to="/mflux-v1" title='Change to Desktop View'
+            className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
+            <iconify-icon width="24" height="24" icon="iconoir:modern-tv-4k" />
           </Link>
 
           <input id="toggler" type="checkbox" hidden onChange={e => setHide(e?.target?.checked)} />

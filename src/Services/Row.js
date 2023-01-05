@@ -79,7 +79,8 @@ const useRow = create(
                 value = JSON.parse(value);
                 const data = value?.state?.data;
 
-                listCategories.every((item) => {  // used every instead of forEach due to error in returns and breaking
+                listCategories.every((item) => {  
+                    // used every instead of forEach due to error in returns and breaking
                     const hasValue = data[item.key]?.length >= 1;
                     if (!hasValue) {
                         populate();
