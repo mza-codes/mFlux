@@ -16,13 +16,6 @@ const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 const Banner = () => {
     const addOne = useRecents(s => s.addOne);
     const route = useNavigate();
-    // const movie = localStorage.getItem(mfluxCache);
-    // const items = useMemo(() => {
-    //     console.warn("MEMO USED");
-    //     return JSON.parse(movie)?.state?.data["trending2"];
-    // }, []);
-    // console.log(items);
-    // const items = movies;
 
     const addToWatchList = useWatchlist(s => s.addToWatchList);
     const isClosed = useSearchResults(s => s.isClosed);

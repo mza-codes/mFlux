@@ -7,7 +7,7 @@ const initialState = {
     watchlist: [],
 };
 
-const toastOptions = {
+export const toastOptions = {
     position: "top-center",
     theme: "light",
     hideProgressBar: true,

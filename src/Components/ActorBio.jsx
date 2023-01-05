@@ -61,7 +61,7 @@ const ActorBio = ({ actor }) => {
                 </div>
             </div>
             <div className="profile min-w-[280px] xl:max-w-[46vw] text-center ml-2 lg:max-w-[46vw] px-3
-            xl:text-start lg:text-start sm:text-center sm:mx-w-[80vw]">
+                xl:text-start lg:text-start sm:text-center sm:mx-w-[80vw]">
                 <h1 className='text-4xl text-zinc-200 font-righteous py-1' >{actor?.name}</h1>
                 <h2 className='text-3xl text-zinc-300 font-righteous py-1' >{actor?.place_of_birth}</h2>
                 <p className='text-2xl text-slate-300 font-righteous py-1' >{actor?.birthday && "Birthday: " + actor?.birthday}</p>

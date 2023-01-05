@@ -1,29 +1,30 @@
-import { useEffect, useState } from 'react';
-import './Recents.scss';
-import useRecents from '../../Contexts/useRecents';
-import Navbar from '../../Components/Navbar/Navbar';
-import { POSTER_URL } from '../../Constants/Constants';
-import useTmdbApi, { controller } from '../../Services/tmdb_Api';
+import { useEffect, useMemo, useState } from 'react';
+import useRecents from '../Contexts/useRecents';
+import Navbar from '../Components/Navbar/Navbar';
+import { POSTER_URL } from '../Constants/Constants';
+import useTmdbApi, { controller } from '../Services/tmdb_Api';
 import { useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import ErrorBar from '../../Components/ErrorBar';
-import Loading from '../Loading';
-import useWatchlist from '../../Services/Store';
-import Suggestions from '../../Components/Suggestions';
-import { hooker } from '../../Utils/tmdb';
-import { image404 } from '../../Assets';
-import { ActorSmallPhoto } from '../../Components/SmallPhoto';
-import CrewSmallPhoto from '../../Components/SmallPhoto';
+import Loading from './Loading';
+import useWatchlist from '../Services/Store';
+import Suggestions from '../Components/Suggestions';
+import { hooker } from '../Utils/tmdb';
+import { image404 } from '../Assets';
+import { ActorSmallPhoto } from '../Components/SmallPhoto';
+import CrewSmallPhoto from '../Components/SmallPhoto';
 import LazyLoad from 'react-lazy-load';
-import { scrollToTop } from '../../Utils';
+import Slider from 'react-slick';
 
 const colors = ["#b0e48c", "#c1e56c", "#d2e84c", "#e3e38c", "#f4e98c", "#g2e36c", "#b4e78c", "#b8e25c",
     "#b8e48c", "#b9e48c", "#b0e18c", "#b0e42c", "#b0e43c"];
 
 let v = 0;
 
-const RecentsV2 = () => {
+const RecentsV3 = () => {
     console.count("Rendered component");
+    const { id } = useParams();
+    const { state } = useLocation();
+    const route = useNavigate();
 
     const movieData = hooker("movieData", useTmdbApi);
     const cast = hooker("cast", useTmdbApi);
@@ -36,36 +37,21 @@ const RecentsV2 = () => {
     const getSuggestions = hooker("getSuggestions", useTmdbApi);
     const getMovie = hooker("getMovie", useTmdbApi);
     const addToWatchList = useWatchlist(s => s.addToWatchList);
+    const addOne = useRecents(s => s.addOne);
 
     const [movie, setMovie] = useState({});
-    const { state } = useLocation();
-    const addOne = useRecents(s => s.addOne);
-    const { id } = useParams();
 
-    const [trailers, setTrailers] = useState({
-        isActive: false,
-        list: [],
-        data: {}
-    });
-    const [err, setErr] = useState({
-        trailer: {
-            active: false,
-            msg: "",
-            err: {}
-        }
-    });
     const scrollRef = useRef();
     const crewScroll = useRef();
-    const route = useNavigate();
-    const crew = movieData?.credits?.crew?.filter((person) => {
+
+    const crew = useMemo(() => movieData?.credits?.crew?.filter((person) => {
         return (person.known_for_department === "Directing" || "Production") ||
             person?.job === ("Director" || "Producer") || person?.department === ("Directing" || "Production")
-    }) || [];
+    }) || [], [movieData]);
 
     const playTrailer = () => {
         if (videos?.length) {
             let v = Math.floor(Math.random() * videos.length);
-            setTrailers((curr) => ({ ...curr, list: videos, data: videos[v], isActive: true }));
             setTimeout(() => {
                 const view = document.getElementById('watchTrailer');
                 view && view.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -73,20 +59,8 @@ const RecentsV2 = () => {
             }, 1500);
         } else {
             let reason = "There are no related videos available!";
-            console.log("No videos Available");
-            setErr((curr) => ({ ...curr, trailer: { active: true, msg: reason } }))
             return false;
         };
-    };
-
-    const handleChange = () => {
-        let isAvailable = trailers.list?.length >= 1;
-        console.log(isAvailable);
-        if (isAvailable) {
-            let v = Math.floor(Math.random() * trailers?.list?.length);
-            setTrailers((curr) => ({ ...curr, data: curr?.list[v] }));
-            return;
-        } else { return false; };
     };
 
     const handleScroll = (param, ref) => {
@@ -106,19 +80,17 @@ const RecentsV2 = () => {
     };
 
     const fetchPerson = (person) => {
-        route(`/actor-details/${person?.id}`, { state: true });
+        route(`/actor-details/${person?.id}`, { state: state });
         return true;
     };
 
     const fetchMovie = async () => {
-        console.log("Current State >", state);
         if (movieData?.id === parseInt(id)) {
-            console.log("Matched with currentMovie");
+            console.warn("Matched with currentMovie");
             setMovie(movieData);
             return true;
         };
         if (state === "tv") {
-            console.warn("Evaluated to fetchTV TRUE >>", state);
             const data = await getTv({ id });
             setMovie(data);
             getSuggestions({ genreId: data?.genres[v]?.id, type: state });
@@ -131,7 +103,6 @@ const RecentsV2 = () => {
     };
 
     const getFunc = async (data) => {
-        console.log("getfunc called", data);
         addOne(data);
         if (state === "tv") {
             const newItem = await getTv(data);
@@ -140,13 +111,44 @@ const RecentsV2 = () => {
             const newMovie = await getMovie({ ...data });
             setMovie(newMovie);
         };
-        scrollToTop();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         return true;
+    };
+
+    const SampleNextArrow = (props) => {
+        const { onClick } = props;
+        return (
+            <div className='control-btn hover:text-[#202020]' onClick={onClick}>
+                <button className='next'>
+                    <iconify-icon icon="material-symbols:chevron-right-rounded" width="50" height="50" />
+                </button>
+            </div>
+        );
+    };
+
+    const SamplePrevArrow = (props) => {
+        const { onClick } = props;
+        return (
+            <div className='control-btn hover:text-[#fff]' onClick={onClick} >
+                <button className='prev'>
+                    <iconify-icon icon="material-symbols:chevron-left-rounded" width="50" height="50" />
+                </button>
+            </div>
+        );
+    };
+
+    const settings = {
+        dots: false,
+        infinite: true,
+        speed: 1000,
+        slidesToShow: 2,
+        slidesToScroll: 2,
+        nextArrow: <SampleNextArrow />,
+        prevArrow: <SamplePrevArrow />,
     };
 
     useEffect(() => {
         fetchMovie();
-        scrollToTop();
         return () => controller?.abort();
     }, [id]);
 
@@ -162,8 +164,6 @@ const RecentsV2 = () => {
     return (
         <main className='text-white'>
             <Navbar />
-
-            {(err?.trailer?.active && failed) && <ErrorBar err={error?.message || err?.trailer?.msg} />}
 
             {movie?.backdrop_path ?
                 <section className='bannerImg relative'>
@@ -196,19 +196,19 @@ const RecentsV2 = () => {
                                 <span className='text-base text-gray-500'>&nbsp;({movieData?.vote_count})</span>
                             </h4>
                         </div>
-                        {/* <div className=''> */}
+
                         <div className=''>
                             <a href={`https://imdb.com/title/${movieData?.imdb_id}`} target="_blank" rel="noreferrer"
                                 className="text-amber-400 hover:text-yellow-600">
                                 <iconify-icon icon="fa:imdb" width={34} height={34} />
                             </a>
                         </div>
-                        {/* </div> */}
                     </main>
+
                     <div className="gap-2">
                         <button className='p-2 my-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600
                              text-white disabled:line-through disabled:hover:bg-inherit'
-                            onClick={playTrailer} disabled={trailers.isActive}>
+                            onClick={playTrailer} >
                             Watch Trailer</button>
                         <button className='p-2 my-2 ml-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600 text-white'
                             onClick={e => addToWatchList(movieData)}> Add to Watch</button>
@@ -234,11 +234,7 @@ const RecentsV2 = () => {
                             <p className='font-kanit red'>{error?.message}</p>
                             <p className='font-kanit red'>{error?.response?.data?.status_message}</p>
                         </div>}
-                    {err?.trailer?.active &&
-                        <div className='w-[90%] lg:w-1/2'>
-                            <p className='font-kanit red'>{err?.trailer?.msg}</p>
-                            <p className='font-kanit red'>{err?.trailer?.err?.code}</p>
-                        </div>}
+
                 </div>}
             </section>
 
@@ -248,26 +244,16 @@ const RecentsV2 = () => {
                     <h2 className='font-righteous text-2xl py-2 ml-4'>Top Cast &nbsp;
                         <span className='py-1 px-2 bg-green-700 font-poppins text-sm rounded-md '>{cast?.length}</span>
                     </h2>
-                    <div ref={scrollRef} className='w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
-
-                        <button onClick={e => handleScroll("prev", scrollRef)} onMouseEnter={e => handleScroll("prev", scrollRef)}
-                            className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
-                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
-                            <i className="ri-arrow-left-s-line"></i>
-                        </button>
-                        <button onClick={e => handleScroll("next", scrollRef)} onMouseEnter={e => handleScroll("next", scrollRef)}
-                            className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
-                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
-                            <i className="ri-arrow-right-s-line "></i>
-                        </button>
-
-                        {cast?.slice(0, 25).map((person, i) => (
-                            <ActorSmallPhoto
-                                person={person}
-                                onClick={e => fetchPerson(person)}
-                                key={(parseInt(person?.id) * i) - i || person?.id || person?.credit_id}
-                            />
-                        ))}
+                    <div ref={scrollRef} className='w-full max-h-64 h-auto flex overflow-x-auto overflow-y-hidden'>
+                        <Slider {...settings}>
+                            {cast?.slice(0, 25).map((person, i) => (
+                                <ActorSmallPhoto
+                                    person={person}
+                                    onClick={e => fetchPerson(person)}
+                                    key={(parseInt(person?.id) * i) - i || person?.id || person?.credit_id}
+                                />
+                            ))}
+                        </Slider>
                     </div>
                 </div>)}
 
@@ -277,58 +263,22 @@ const RecentsV2 = () => {
                     <h2 className='font-righteous text-2xl py-2 ml-4'>Crew &nbsp;
                         <span className='py-1 px-2 bg-green-700 font-poppins text-sm rounded-md '>{crew?.length}</span>
                     </h2>
-                    <div ref={crewScroll} className='w-full h-auto flex overflow-x-auto overflow-y-hidden castArea'>
-                        <div className=''>
-                            <button onClick={e => handleScroll("prev", crewScroll)}
-                                onMouseEnter={e => handleScroll("prev", crewScroll)}
-                                className='absolute top-0 bottom-0 text-2xl left-0 text-orange-200 
-                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
-                                <i className="ri-arrow-left-s-line"></i> </button>
-                            <button onClick={e => handleScroll("next", crewScroll)}
-                                onMouseEnter={e => handleScroll("next", crewScroll)}
-                                className='absolute top-0 bottom-0 text-2xl right-0 text-orange-200 
-                                     hover:text-black rounded-2xl hover:bg-white hover:opacity-50' >
-                                <i className="ri-arrow-right-s-line "></i> </button>
-                        </div>
-                        {crew?.map((person, i) => (
-                            <CrewSmallPhoto
-                                key={(parseInt(person?.id) * i) - i || person?.id || person?.credit_id}
-                                person={person}
-                                onClick={e => fetchPerson(person)} />
-                        ))}
+                    <div ref={crewScroll} className='w-full max-h-64 h-auto flex overflow-x-auto overflow-y-hidden'>
+                        <Slider {...settings}>
+                            {crew?.map((person, i) => (
+                                <CrewSmallPhoto
+                                    key={(parseInt(person?.id) * i) - i || person?.id || person?.credit_id}
+                                    person={person}
+                                    onClick={e => fetchPerson(person)} />
+                            ))}
+                        </Slider>
                     </div>
                 </div>)}
+                
             {movieData?.id && cast?.length <= 0 && <div className='w-full text-center'>
                 <p className='font-kanit text-2xl'>There is no cast information available</p></div>}
-            {/* Trailer Using current innerwidth values */}
-            {trailers.isActive &&
-                <div id='watchTrailer' className='w-auto h-auto'>
-                    <div className='w-full flex flex-row justify-between text-white'>
-                        <button className='text-2xl m-2 roundBtn' onClick={handleChange} >
-                            <i className="ri-refresh-fill"></i>
-                        </button>
-                        <button className='text-2xl m-2 roundBtn' onClick={e => setTrailers(curr => ({ ...curr, isActive: false }))} >
-                            <i className="ri-close-circle-fill"></i>
-                        </button>
-                    </div>
-                    {trailers?.list?.length &&
-                        <div className='w-full flex flex-row items-center flex-wrap p-2
-                        justify-center text-center gap-2'>
-                            {trailers?.list?.map((video) => (
-                                <div key={video.key} className="w-16 items-center justify-center text-center flex h-16 
-                                    bg-gradient-to-br  from-orange-400 to-red-600 cursor-pointer text-white rounded-lg 
-                                    opacity-50 z-50 hover:opacity-100 p-3 m-1 text-xs"
-                                    onClick={e => setTrailers(curr => ({ ...curr, data: video }))}>
-                                    {video?.type}
-                                </div>
-                            ))}
-                        </div>}
-                    <div className="w-full flex items-center justify-center text-center p-1 m-0 ">
-                        <iframe allowFullScreen={true} style={{ width: "100%", height: "100%" }}
-                            title="Movie Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
-                        </iframe>
-                    </div>
-                </div>}
+            
+            
             {suggestions?.length > 0 &&
                 <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} state={state} />
             }
@@ -337,4 +287,4 @@ const RecentsV2 = () => {
     );
 };
 
-export default RecentsV2;
+export default RecentsV3;

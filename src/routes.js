@@ -4,6 +4,7 @@ import ErrorPage from './Components/ErrorPage';
 import useRow from './Services/Row';
 
 const WatchList = lazy(() => import('./Pages/WatchList'));
+// const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
 const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
 const App = lazy(() => import('./App'));
 const SearchResults = lazy(() => import('./Pages/SearchResults'));

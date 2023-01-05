@@ -12,7 +12,7 @@ const CrewSmallPhoto = ({ person, ...props }) => {
                     url={person?.profile_path ?
                         `https://image.tmdb.org/t/p/w300${person?.profile_path}` : image404}
                     className="rounded-lg min-w-[124px] max-h-[150px] object-cover aspect-square " />
-                <div className="icon text-rose-600 hover:text-rose-500 z-[104] 
+                <div className="icon text-rose-600 hover:text-rose-500 z-[104] opacity-0 hover:opacity-100
                     cursor-pointer absolute right-1 top-1"
                     onClick={() => addPerson(person)}
                     title="Add To Favourites">
@@ -40,7 +40,7 @@ export const ActorSmallPhoto = ({ person, ...props }) => {
                     url={person?.profile_path ? `https://image.tmdb.org/t/p/w300${person?.profile_path}` : image404}
                     className="rounded-lg min-w-[124px] max-h-[150px] object-cover aspect-square"
                 />
-                <div className="icon text-rose-600 hover:text-rose-500 z-[104] 
+                <div className="icon text-rose-600 hover:text-rose-500 z-[104] opacity-0 hover:opacity-100
                     cursor-pointer absolute right-1 top-1"
                     title="Add To Favourites"
                     onClick={() => addPerson(person)} >
