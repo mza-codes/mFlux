@@ -1,7 +1,5 @@
 import { lazy, useEffect } from 'react';
 import { useRoutes } from 'react-router-dom';
-import ErrorPage from './Components/ErrorPage';
-import HomeV1 from './Pages/HomeV1';
 import useRow from './Services/Row';
 
 const WatchList = lazy(() => import('./Pages/WatchList'));
@@ -10,6 +8,8 @@ const App = lazy(() => import('./App'));
 const SearchResults = lazy(() => import('./Pages/SearchResults'));
 const ViewActor = lazy(() => import('./Pages/ViewActor'));
 const ViewActors = lazy(() => import('./Pages/Favourites/ViewActors'));
+const HomeV1 = lazy(() => import('./Pages/HomeV1'));
+const ErrorPage = lazy(() => import('./Components/ErrorPage'));
 
 export default function Router() {
     const fillRows = useRow(s => s.populateLocal);
@@ -24,10 +24,13 @@ export default function Router() {
             path: '/', element: <App />
         },
         {
-            path: '/mflux-v1', element: <HomeV1 />
+            path: 'mflux-v1', element: <HomeV1 />
         },
         {
             path: 'recents/:id', element: <Recents />
+        },
+        {
+            path: 'explore/:id/:q', element: <Recents />
         },
         {
             path: '/*', element: <ErrorPage />
@@ -44,6 +47,5 @@ export default function Router() {
         {
             path: 'watchlist', element: <WatchList />
         }
-
     ]);
 };

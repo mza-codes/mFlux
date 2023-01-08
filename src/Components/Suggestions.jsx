@@ -19,14 +19,11 @@ const Suggestions = ({ getFunc, genres, currentGenre, state }) => {
         if (observer.current) observer.current?.disconnect();
         observer.current = new IntersectionObserver(entries => {
             if (entries[0]?.isIntersecting) {
-                console.count("INTERSECTING CALLING API");
-                getMoreSuggestions({ genreId: genres[currentGenre]?.id, page: v + 1, type: state });
-                if (v === totalpages) {
-                    console.log('SETTTING v BACK TO 0, totalpages === v', totalpages, "===", v);
-                    v = 0;
-                } else v = v + 1;
-                console.log("Item Visible");
-                return true;
+                if (v <= totalpages) {
+                    getMoreSuggestions({ genreId: genres[currentGenre]?.id, page: v + 1, type: state });
+                    v = v + 1;
+                    return true;
+                } else return false;
             };
         });
         if (node) return observer.current.observe(node);

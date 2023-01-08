@@ -16,12 +16,15 @@ export const PostModelN = ({ movie }) => {
 
     const handleShare = () => {
         const url = window.location.href;
-        navigator.clipboard.writeText(url ?? "null");
+        // navigator.clipboard.writeText(`${url}#/recents/${movie?.id}` ?? "null");
+        navigator.clipboard.writeText(`${url}#/explore/${movie?.id}/${movie?.media_type ?? "tv"}` ?? "null");
+        
         toast.info("URL Copied to Clipboard!", toastOptions);
         return true;
     };
 
     const handleLike = () => {
+        // usage of ref for storing previous values, this can also be done by (!liked) value
         likeRef.current = liked;
         setLiked(prev => !prev);
         movie.vote_count = !likeRef.current ? movie.vote_count + 1 : movie.vote_count - 1;
@@ -29,7 +32,8 @@ export const PostModelN = ({ movie }) => {
     };
 
     const viewMovie = () => {
-        route(`/recents/${movie?.id}`, { state: movie?.media_type ?? "tv" });
+        // route(`/recents/${movie?.id}`, { state: movie?.media_type ?? "tv" });
+        route(`/explore/${movie?.id}/${movie?.media_type ?? "tv"}`, { state: movie?.media_type ?? "tv" });
     };
 
     return (

@@ -2,13 +2,12 @@ import ReactPaginate from 'react-paginate';
 import useSearchResults from '../Services/ResultFetch';
 
 function PaginatedItems({ data }) {
-    console.log("props Data from pagination", data);
     const { page, total_pages } = data;
-    const { getResults, query } = useSearchResults();
+    const getResults = useSearchResults(s => s.getResults);
+    const query = useSearchResults(s => s.query);
 
     const handlePageBrowse = (e) => {
         let pageNum = (parseInt(e.selected) + 1);
-        console.log("trying fetch", e.selected);
         if (page > total_pages || pageNum < 1) return;
         getResults(query, pageNum);
         return;
@@ -33,6 +32,6 @@ function PaginatedItems({ data }) {
             />
         </div>
     );
-}
+};
 
 export default PaginatedItems;
