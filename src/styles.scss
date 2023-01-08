@@ -16,8 +16,12 @@ body {
 
 // Native CSS method testing via overriding classes
 .lightMode {
-    background: #ccc;
-    --theme-color: #ccc;
+    background: rgb(36, 36, 36);
+    --theme-color: rgb(37, 37, 37);
+
+    *{
+        color: #fff;
+    }
 
     .text-white {
         color: #000 !important;
