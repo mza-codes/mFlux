@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './Recents.scss';
 import useRecents from '../../Contexts/useRecents';
 import Navbar from '../../Components/Navbar/Navbar';
@@ -10,7 +10,7 @@ import ErrorBar from '../../Components/ErrorBar';
 import Loading from '../Loading';
 import useWatchlist from '../../Services/Store';
 import Suggestions from '../../Components/Suggestions';
-import { hooker } from '../../Utils/tmdb';
+import { hook } from '../../Utils';
 import { image404 } from '../../Assets';
 import { ActorSmallPhoto } from '../../Components/SmallPhoto';
 import CrewSmallPhoto from '../../Components/SmallPhoto';
@@ -25,22 +25,22 @@ let v = 0;
 const RecentsV2 = () => {
     console.count("Rendered component");
 
-    const movieData = hooker("movieData", useTmdbApi);
-    const cast = hooker("cast", useTmdbApi);
-    const genres = hooker("genres", useTmdbApi);
-    const suggestions = hooker("suggestions", useTmdbApi);
-    const videos = hooker("trailers", useTmdbApi);
+    const movieData = hook("movieData", useTmdbApi);
+    const cast = hook("cast", useTmdbApi);
+    const genres = hook("genres", useTmdbApi);
+    const suggestions = hook("suggestions", useTmdbApi);
+    const videos = hook("trailers", useTmdbApi);
     const error = useTmdbApi(s => s.error);
     const failed = useTmdbApi(s => s.failed);
-    const getTv = hooker("getTv", useTmdbApi);
-    const getSuggestions = hooker("getSuggestions", useTmdbApi);
-    const getMovie = hooker("getMovie", useTmdbApi);
+    const getTv = hook("getTv", useTmdbApi);
+    const getSuggestions = hook("getSuggestions", useTmdbApi);
+    const getMovie = hook("getMovie", useTmdbApi);
     const addToWatchList = useWatchlist(s => s.addToWatchList);
 
     const [movie, setMovie] = useState({});
-    const { state } = useLocation();
+    let { state } = useLocation();
     const addOne = useRecents(s => s.addOne);
-    const { id } = useParams();
+    const { id, q } = useParams();
 
     const [trailers, setTrailers] = useState({
         isActive: false,
@@ -57,10 +57,10 @@ const RecentsV2 = () => {
     const scrollRef = useRef();
     const crewScroll = useRef();
     const route = useNavigate();
-    const crew = movieData?.credits?.crew?.filter((person) => {
+    const crew = useMemo(() => movieData?.credits?.crew?.filter((person) => {
         return (person.known_for_department === "Directing" || "Production") ||
             person?.job === ("Director" || "Producer") || person?.department === ("Directing" || "Production")
-    }) || [];
+    }) || [], [movieData?.credits?.crew]);
 
     const playTrailer = () => {
         if (videos?.length) {
@@ -106,7 +106,7 @@ const RecentsV2 = () => {
     };
 
     const fetchPerson = (person) => {
-        route(`/actor-details/${person?.id}`, { state: true });
+        route(`/actor-details/${person?.id}`, { state: person?.media_type });
         return true;
     };
 
@@ -117,11 +117,11 @@ const RecentsV2 = () => {
             setMovie(movieData);
             return true;
         };
-        if (state === "tv") {
+        if ((state || q) === "tv") {
             console.warn("Evaluated to fetchTV TRUE >>", state);
             const data = await getTv({ id });
             setMovie(data);
-            getSuggestions({ genreId: data?.genres[v]?.id, type: state });
+            getSuggestions({ genreId: data?.genres[v]?.id, type: state ?? q });
             return;
         };
         const data = await getMovie({ id });
@@ -181,7 +181,7 @@ const RecentsV2 = () => {
                  md:items-center md:justify-center md:text-center sm:items-center sm:justify-center sm:text-center">
                 <LazyLoad className="sm:w-full md:w-1/2 lg:w-1/2 max-w-md min-w-[280px]" offset={100}>
                     <img src={movie?.poster_path ? (POSTER_URL + movie?.poster_path) :
-                        movie?.backdrop_path ? (POSTER_URL + movie?.backdrop_path) : image404}
+                        movie?.backdrop_path ? (POSTER_URL + movie?.backdrop_path) : image404} alt="movie_banner"
                         className="w-auto h-auto rounded-2xl aspect-[2/3]" />
                 </LazyLoad>
                 {movie?.id && <div className="sm:w-full md:w-1/2 lg:w-1/2 min-w-[280px] ml-4">
@@ -196,14 +196,14 @@ const RecentsV2 = () => {
                                 <span className='text-base text-gray-500'>&nbsp;({movieData?.vote_count})</span>
                             </h4>
                         </div>
-                        {/* <div className=''> */}
+
                         <div className=''>
                             <a href={`https://imdb.com/title/${movieData?.imdb_id}`} target="_blank" rel="noreferrer"
                                 className="text-amber-400 hover:text-yellow-600">
                                 <iconify-icon icon="fa:imdb" width={34} height={34} />
                             </a>
                         </div>
-                        {/* </div> */}
+
                     </main>
                     <div className="gap-2">
                         <button className='p-2 my-2 rounded-md bg-white bg-opacity-10 hover:bg-orange-600
@@ -330,7 +330,7 @@ const RecentsV2 = () => {
                     </div>
                 </div>}
             {suggestions?.length > 0 &&
-                <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} state={state} />
+                <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} state={state ?? q} />
             }
 
         </main>

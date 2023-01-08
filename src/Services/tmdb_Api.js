@@ -9,7 +9,6 @@ const fetchData = async (url) => {
         const { data } = await tmdbApi.get(url, { signal: controller.signal });
         return data;
     } catch (err) {
-        console.log("Error Fetching Data", err);
         return err;
     };
 };
@@ -40,9 +39,8 @@ const useTmdbApi = create((set, get) => ({
         }));
         return;
     },
-    populateMovieData: (newData) => {
+    populate: (newData) => {
         if (!newData) return false;
-
         set((state) => ({
             ...state,
             movieData: newData,
@@ -66,11 +64,10 @@ const useTmdbApi = create((set, get) => ({
         return true;
     },
 
-    getMovies: async (genreIdOrCategoryName, page, searchQuery) => {
-        console.log("fetching movies by GETMovies", genreIdOrCategoryName, page, searchQuery);
+    getMovieAlt: async (genreIdOrCategoryName, page, query) => {
         // Get Movies by Search
-        if (searchQuery) {
-            const data = await fetchData(`/search/movie?query=${searchQuery}&page=${page}&api_key=${API_KEY}`);
+        if (query) {
+            const data = await fetchData(`/search/movie?query=${query}&page=${page}&api_key=${API_KEY}`);
             return data;
         };
         // Get Movies by Category
@@ -86,48 +83,39 @@ const useTmdbApi = create((set, get) => ({
                 ...state,
                 suggestions: data?.results
             }));
-            console.log("FETCHED DATA", data);
             return;
         };
     },
-    // Get MovieDetails
+    // Get TV Show Details
     getTv: async ({ id }) => {
-        const handleError = get().handleError;
-        const populate = get().populateMovieData;
-
-        console.log("fetching TVShow", id);
         const data = await fetchData(`/tv/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
         if (data?.code) {
             const newData = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
-            if (newData?.code) { return handleError(newData) };
-            populate(newData);
+            if (newData?.code) {
+                return get().handleError(newData)
+            };
+            get().populate(newData);
             return newData;
         };
-        populate(data);
+        get().populate(data);
         return data;
     },
     getMovie: async ({ id }) => {
-        const handleError = get().handleError;
-        const populate = get().populateMovieData;
-
-        console.log("fetching movie", id);
         const data = await fetchData(`/movie/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
         if (data?.code) {
             const newData = await fetchData(`/tv/${id}?append_to_response=videos,credits&api_key=${API_KEY}`);
-            if (newData?.code) { return handleError(newData) };
-            populate(newData);
+            if (newData?.code) {
+                return get().handleError(newData)
+            };
+            get().populate(newData);
             return newData;
         };
-        populate(data);
+        get().populate(data);
         return data;
     },
     getMoreSuggestions: async ({ genreId = 28, page = 1, type }) => {
-        const setLoading = get().setLoading;
-        setLoading(true);
-        console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
-
-        const data = await fetchData(`/discover/${type || "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
-        console.log("FDetched sauggestions", data);
+        get().setLoading(true);
+        const data = await fetchData(`/discover/${type ?? "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
         if (data?.code) return set(state => ({ ...state, error: data, failed: true, isFetching: false }));
         set(state => ({
             ...state,
@@ -137,9 +125,7 @@ const useTmdbApi = create((set, get) => ({
         return data;
     },
     getSuggestions: async ({ genreId = 28, page = 1, type }) => {
-        console.log("FETCHING WITH GENRE ID", genreId + "page nomber", page);
-        let data = await fetchData(`/discover/${type || "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
-        console.log("FETCHED DATA", data);
+        let data = await fetchData(`/discover/${type ?? "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
         if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         if (data?.results?.length < 1) {
             data = await fetchData(`/discover/tv?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
@@ -155,7 +141,6 @@ const useTmdbApi = create((set, get) => ({
     // Get ActorDetails
     getActor: async ({ id }) => {
         const handleError = get().handleError;
-        console.log("fetching ACTOR", id);
         const data = await fetchData(`/person/${id}?api_key=${API_KEY}`);
         // Default Error handling
         if (data?.code) return handleError(data);
@@ -170,19 +155,9 @@ const useTmdbApi = create((set, get) => ({
     // Get Movies by Actor
     getMoviesByActorId: async ({ id, page = 1, type }) => {
         if (!id) return false;
-        const handleError = get().handleError;
-        console.log("fetching movies by Actorid", id, page);
         const data = await fetchData(`/discover/${(type && page > 1) ? type : "movie"}?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
-        // let newData = [];
-        // if (page === 1) {
-        //     console.log("result found less than 20");
-        //     let values = await fetchData(`/discover/tv?with_cast=${id}&page=${page}&api_key=${API_KEY}`);
-        //     newData = values?.results ?? [];
-        // };
-        // console.log(data, newData);
-        if (data?.code) return handleError(data);
+        if (data?.code) return get().handleError(data);
         const newArray = data?.results;
-        // data?.results?.concat(newData);
         set((state) => ({
             ...state,
             actorMovies: newArray,
@@ -201,7 +176,7 @@ const useTmdbApi = create((set, get) => ({
         return true;
     },
     resetAndUpdate: (newState) => {
-        set((state) => ({ ...initialState, ...newState }));
+        set((s) => ({ ...initialState, ...newState }));
     },
     fetchTrailer: async (url) => {
         const data = await fetchData(url);

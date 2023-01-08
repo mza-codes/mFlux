@@ -1,6 +1,6 @@
 {
-  "short_name": "mFlux Movies",
-  "name": "mFlux Movies -TMDB.org",
+  "short_name": "mFlux",
+  "name": "mFlux -TMDB.org",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#fff",
-  "background_color": "#111"
+  "theme_color": "#111",
+  "background_color": "#ccc"
 }
