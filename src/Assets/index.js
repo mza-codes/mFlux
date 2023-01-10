@@ -1,4 +1,3 @@
-import { atom } from 'jotai';
 import notFoundImage from './default.jpg';
 import waveGif from './wave.gif';
 import mFluxPng from './mFlux.png';
@@ -9,5 +8,5 @@ export const waveLoader = waveGif;
 export const mFluxLogo = mFluxPng;
 export const Avatar = avatar;
 
-export const rowAtom = atom([]);
+
 
