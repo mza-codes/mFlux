@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Loading.scss';
 import '../styles.scss';
+import { mFluxLogo } from '../Assets';
 
-const Loading = ({ err, msg, timeout = 15000 }) => {
+const Loading = ({ err, msg, timeout = 10000 }) => {
 
     useEffect(() => {
         const element = document.getElementById('title');
@@ -15,12 +17,12 @@ const Loading = ({ err, msg, timeout = 15000 }) => {
         }, timeout);
 
         const newTime = setTimeout(() => {
-            svg.style.color = "#ffbf00";
+            svg.style.color = "#ffc000";
             svg.innerHTML = `<div><iconify-icon icon="bx:error" width="180" height="180" /></div>`;
             element.innerText = `It seems like the site is not responding, Please try again later!`;
             messager.innerText = `We sincerely apologize for this issue, Visit again!`;
             document.getElementById('loader').style.display = "none";
-        }, 40 * 1000);
+        }, 38 * 1000);
 
         return () => {
             clearTimeout(displayer);
@@ -29,27 +31,28 @@ const Loading = ({ err, msg, timeout = 15000 }) => {
     }, [err, msg]);
 
     return (
-        <div className={"loaderParentPage"}>
-            <h2 className='logoContainer movieLog font-black font-righteous text-7xl lg:text-9xl'>mFlux</h2>
-            <div id='loader' className="loaderContainer py-4">
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
-                <div className="wave" />
+        <section className='loadPage '>
+            <div className='logoContainer '>
+                <img src={mFluxLogo} alt="_logo_mFlux" />
             </div>
-            <h4 id='title' className='gradient-text text-2xl'>Loading Content</h4>
-            <p id='msg' className='gradient-text0 text-zinc-200 font-poppins my-2 font-normal max-w-[90%]'>
+
+            <div id='loader' className="lds-ellipsis">
+                <div /> <div /> <div /> <div />
+            </div>
+
+            <h1 id='title' className='text-white text-2xl font-kanit w-full text-center'>Loading Content</h1>
+            <p id='msg' className='text-white font-poppins my-2 font-normal max-w-[90%]'>
                 This website is best viewed in larger screens!
             </p>
-            <span className='gradient-text text-xl pt-6'> © <br /> {new Date().getFullYear()} <br /> mza-codes</span>
-        </div>
+
+            <p>CopyRights © {(new Date().getFullYear())} <br />
+                <a href="https://mza-codes.github.io/" rel='noreferrer' target="_blank" className='mza-link'>mza-codes</a>
+            </p>
+
+            {err && <Link to="/" className='text-2xl text-zinc-300 cursor-pointer text-center py-3 font-kanit 
+                font-[300] flex justify-center hover:text-gray-200'>
+                Go to HomePage
+            </Link>}
+        </section>
     );
 };
-
-export default Loading;

@@ -2,15 +2,12 @@ import './Navbar.scss';
 import { Link, useNavigate } from 'react-router-dom'
 import { useRef, useState } from 'react';
 import useSearchResults from '../../Services/ResultFetch';
-import { atom, useAtom } from 'jotai';
 import { Avatar, mFluxLogo } from '../../Assets';
 import { scrollToTop } from '../../Utils';
 
-const viewAtom = atom(false);
-
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hide, setHide] = useAtom(viewAtom);
+  const [hide, setHide] = useState(false);
   const route = useNavigate();
   const reExSymbols = /^[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
   const fetchresult = useSearchResults((state) => state.getResults);
@@ -54,9 +51,15 @@ const Navbar = () => {
     else return scrollToTop();
   };
 
+  const toggleTheme = () => {
+    // document.body.classList.toggle('lightMode');
+    return;
+  };
+
   return (
     <header className={`navBar ${hide ? "fixed z-10" : "fixed z-50"}`}>
       <main className="navWrapper">
+
         <div className={`logo ${hide ? "opacity-0 hover:opacity-70" : "block"} w-[80px] m-1
           xl:w-[120px] lg:w-[120px] md:w-[95px] sm:w-[85px] lg:m-0 `} onClick={handleLogoClick}>
           <img src={mFluxLogo} className={`${isOpen && "hidden"} min-[440px]:block sm:m-2 `} alt="_logo_mFlux" />
@@ -75,19 +78,28 @@ const Navbar = () => {
             onClick={e => setIsOpen((curr) => (!curr))}>
             <iconify-icon width="24" height="24" icon="mingcute:search-3-line" />
           </button>
+          {!isOpen && <>
+            <Link to="/watchlist" title='View Wachlist'
+              className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
+              <iconify-icon width="24" height="24" icon="ic:round-collections-bookmark" />
+            </Link>
+            <Link to="/favourites/actors" title='View Favourited Persons'
+              className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
+              <iconify-icon width="24" height="24" icon="mdi:account-star" />
+            </Link>
+            <Link to="/mflux-v1" title='Change to Desktop View'
+              className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
+              <iconify-icon width="24" height="24" icon="iconoir:modern-tv-4k" />
+            </Link>
+          </>}
+          {/* 
+          <button className='text-white opacity-30 hover:opacity-100 px-1  rounded-xl' type='button' onClick={toggleTheme}>
+            <iconify-icon width="24" height="24" icon="line-md:sunny-filled-loop-to-moon-filled-loop-transition" />
+          </button>
 
-          <Link to="/watchlist" title='View Wachlist'
-            className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
-            <iconify-icon width="24" height="24" icon="ic:round-collections-bookmark" />
-          </Link>
-          <Link to="/favourites/actors" title='View Favourited Persons'
-            className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
-            <iconify-icon width="24" height="24" icon="mdi:account-star" />
-          </Link>
-          <Link to="/mflux-v1" title='Change to Desktop View'
-            className='text-white opacity-30 hover:opacity-100 px-1 rounded-xl'>
-            <iconify-icon width="24" height="24" icon="iconoir:modern-tv-4k" />
-          </Link>
+          <button className='text-white opacity-30 hover:opacity-100 px-1  rounded-xl' type='button' onClick={toggleTheme}>
+            <iconify-icon width="24" height="24" icon="material-symbols:settings-suggest" />
+          </button> */}
 
           <input id="toggler" type="checkbox" hidden onChange={e => setHide(e?.target?.checked)} />
           <label htmlFor="toggler">

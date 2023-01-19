@@ -4,12 +4,6 @@ import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer/Footer';
 import HomeV2 from './Pages/HomeV2';
 
-if (process.env.NODE_ENV === 'production') {
-    console.log = () => { return; }
-    console.error = () => { return; }
-    console.debug = () => { return; }
-};
-
 const App = () => {
 
     return (

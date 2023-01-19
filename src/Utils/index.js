@@ -11,5 +11,5 @@ export const hook = (value, hook) => {
 export const toastOptions = {
     position: toast.POSITION.TOP_CENTER,
     hideProgressBar: true,
-    autoClose: 2000
+    autoClose: 2000,
 };

@@ -1,5 +1,6 @@
 import ReactPaginate from 'react-paginate';
 import useSearchResults from '../Services/ResultFetch';
+import { scrollToTop } from '../Utils';
 
 function PaginatedItems({ data }) {
     const { page, total_pages } = data;
@@ -10,7 +11,7 @@ function PaginatedItems({ data }) {
         let pageNum = (parseInt(e.selected) + 1);
         if (page > total_pages || pageNum < 1) return;
         getResults(query, pageNum);
-        return;
+        return scrollToTop();
     };
 
     const nextBtn = <iconify-icon icon="material-symbols:arrow-circle-right-rounded" height="34" width={"34"} />;

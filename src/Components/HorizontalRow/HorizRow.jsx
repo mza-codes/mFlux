@@ -4,24 +4,19 @@ import LazyImage from '../LazyImage';
 import './HorizRow.scss';
 import { useNavigate } from 'react-router-dom';
 import useSearchResults from '../../Services/ResultFetch';
-import { image404, rowAtom } from '../../Assets';
+import { image404 } from '../../Assets';
 import useWatchlist, { useFavouritesStore } from '../../Services/Store';
-import { useAtom } from 'jotai';
-import { useEffect } from 'react';
 
 const PaginatedItems = lazy(() => import('../ReactPagination'));
 
 const HorizRow = ({ data, title, close, ...props }) => {
-    // data = [];
+    
     const closeResult = useSearchResults(s => s.toggleClose);
     const resultData = useSearchResults(s => s.response);
     const addPerson = useFavouritesStore(s => s.addPerson);
     const addToWatchList = useWatchlist(s => s.addToWatchList);
     const elRef = useRef();
     const route = useNavigate();
-    const horizRow = document.querySelectorAll('.horizRow');
-    
-    const [rowProvider,setRowProvider] = useAtom(rowAtom);
 
     const handleScroll = (param) => {
         switch (param) {
@@ -50,12 +45,6 @@ const HorizRow = ({ data, title, close, ...props }) => {
         route(`/actor-details/${person?.id}`, { state: person?.media_type });
         return true;
     };
-
-    useEffect(() => {
-        if(rowProvider.length <= 0){
-           setRowProvider(horizRow);
-        };
-    }, [horizRow]);
 
     return (
         <div>
@@ -129,7 +118,7 @@ const HorizRow = ({ data, title, close, ...props }) => {
                 </>
             }
         </div>
-    )
-}
+    );
+};
 
 export default HorizRow;
