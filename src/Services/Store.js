@@ -9,10 +9,11 @@ const initialState = {
 
 export const toastOptions = {
     position: "top-center",
-    theme: "light",
+    theme: "dark",
+    type:"info",
     hideProgressBar: true,
-    autoClose: 3000,
-    className: "font-poppins font-semibold text-center",
+    autoClose: 2000,
+    className: "font-poppins tracking-wide font-semibold text-center",
     transition: Flip,
     draggable: true,
 };
