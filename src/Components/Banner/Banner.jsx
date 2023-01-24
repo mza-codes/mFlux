@@ -9,7 +9,7 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useWatchlist from '../../Services/Store';
-import { default as items } from '../../Assets/data';
+import { default as items } from '../../Assets/v2';
 
 const HorizRow = lazy(() => import('../HorizontalRow/HorizRow'));
 
@@ -61,7 +61,8 @@ const Banner = () => {
         slidesToScroll: 1,
         nextArrow: <SampleNextArrow />,
         prevArrow: <SamplePrevArrow />,
-        initialSlide: v
+        initialSlide: v,
+        lazyLoad: 'true'
     };
 
     return (
