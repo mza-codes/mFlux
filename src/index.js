@@ -8,12 +8,15 @@ import Loading from './Pages/Loading';
 import { ToastContainer } from 'react-toastify';
 import * as ServiceWorker from "./serviceWorkerRegistration";
 
+const production = true;
 const root = createRoot(document.getElementById('root'));
 
-if (process.env.NODE_ENV === 'production') {
-  console.log = () => { return; }
-  console.error = () => { return; }
-  console.debug = () => { return; }
+if (process.env.NODE_ENV === 'production' || production) {
+  console = {
+    log: () => false,
+    count: () => false,
+    warn: () => false
+  };
 };
 
 root.render(

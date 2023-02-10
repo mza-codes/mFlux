@@ -144,6 +144,14 @@ const RecentsV2 = () => {
         return true;
     };
 
+    const handleGenre = async (genreId) => {
+        console.warn("Fetching GenreID:", genreId);
+        await getSuggestions({ genreId });
+        const el = document.querySelector(".suggestionSection");
+        el && el.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+    };
+
     useEffect(() => {
         fetchMovie();
         scrollToTop();
@@ -215,7 +223,8 @@ const RecentsV2 = () => {
                     </div>
                     <div className='space-x-2 space-y-2'>
                         {genres?.map((genre, i) => (
-                            <button key={genre?.id || i} className={`p-2 rounded-md font-semibold text-base bg-gradient-to-tr
+                            <button key={genre?.id || i} onClick={() => handleGenre(genre?.id)}
+                                className={`p-2 rounded-md font-semibold text-base bg-gradient-to-tr
                                  from-orange-300 via-amber-300 to-indigo-300 text-black 
                                  hover:bg-gradient-to-tl`}>{genre?.name}</button>
                         ))}
@@ -328,7 +337,8 @@ const RecentsV2 = () => {
                             title="Movie Trailers" src={`https://www.youtube.com/embed/${trailers?.data?.key}?fs=1`}>
                         </iframe>
                     </div>
-                </div>}
+                </div>
+            }
             {suggestions?.length > 0 &&
                 <Suggestions getFunc={getFunc} genres={genres} currentGenre={v} state={state ?? q} />
             }
