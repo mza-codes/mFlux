@@ -125,10 +125,11 @@ const useTmdbApi = create((set, get) => ({
         return data;
     },
     getSuggestions: async ({ genreId = 28, page = 1, type }) => {
-        let data = await fetchData(`/discover/${type ?? "movie"}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
+        const category = type === "movie" ? "tv" : "movie";
+        let data = await fetchData(`/discover/${type ?? category}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
         if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         if (data?.results?.length < 1) {
-            data = await fetchData(`/discover/tv?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
+            data = await fetchData(`/discover/${category}?with_genres=${genreId}&page=${page}&api_key=${API_KEY}`);
             if (data?.code) return set(state => ({ ...state, error: data, failed: true }));
         };
         set(state => ({

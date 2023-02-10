@@ -25,12 +25,12 @@ const Suggestions = ({ getFunc, genres, currentGenre, state }) => {
                     return true;
                 } else return false;
             };
-        });
+        }, { rootMargin:"400px" });
         if (node) return observer.current.observe(node);
     }, []);
 
     return (
-        <section className="suggestionSection w-full text-center">
+        <section className="suggestionSection w-full text-center px-4">
             <h3 className='text-3xl py-3 font-righteous'>You Might Also Like</h3>
             <main className="suggestionsWrapper flex flex-row flex-wrap w-full items-center justify-center ">
                 {suggestions?.map((movie, idx) => {

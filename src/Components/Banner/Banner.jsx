@@ -31,6 +31,12 @@ const Banner = () => {
         return;
     };
 
+    const viewItem = (movie) => {
+        route(`/explore/${movie?.id}/${movie?.media_type ?? "tv"}`, {
+            state: movie?.media_type ?? "tv"
+        }); return;
+    };
+
     const SampleNextArrow = (props) => {
         const { onClick } = props;
         return (
@@ -71,7 +77,7 @@ const Banner = () => {
                 {items.map((item, i) => (
                     <main className='Banner' key={item?.id ?? i}>
                         <LazyLoad offset={100}>
-                            <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh] lozad"
+                            <div className="bg xl:h-[100vh] lg:h-[80vh] md:h-[70vh] sm:h-[66vh] h-[68vh]"
                                 style={{
                                     backgroundImage: `url(${POSTER_URL +
                                         (item?.backdrop_path ? item?.backdrop_path : "/sobIeWp1a3saZTBkoRTAf8sfC7J.jpg")})`
@@ -83,7 +89,7 @@ const Banner = () => {
                                     <h5 className='font-light font-abel text-xl p-3'>{item?.overview || ""}</h5>
                                     <div className="buttons p-3 font-righteous">
                                         <button onClick={() => handlePlay(item)}>Play</button>
-                                        <button>View</button>
+                                        <button onClick={() => viewItem(item)} >View</button>
                                     </div>
                                 </div>
                                 <div className="changeBtn">
@@ -103,7 +109,8 @@ const Banner = () => {
             {results?.length >= 1 && !isClosed && <>
                 <Suspense fallback={<> <h2 className='text-center font-righteous text-6xl text-yellow-100 p-4 m-4'>Loading...</h2> </>}>
                     <HorizRow title={`Displaying ${results?.length} titles for "${query}" `} data={results} close />
-                </Suspense></>}
+                </Suspense>
+            </>}
             {!gotResult && !isClosed && err &&
                 <div className='w-full'> <h2 className='font-righteous text-2xl p-4 text-red-400'>{err}</h2> </div>}
         </>
