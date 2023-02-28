@@ -15,7 +15,7 @@ export const PostModelN = ({ movie }) => {
     const likeRef = useRef(false);
 
     const handleShare = () => {
-        const url = window.location.href;
+        const url = "https://mflux.netlify.app/";
         navigator.clipboard.writeText(
             `${url}#/explore/${movie?.id}/${movie?.media_type ?? "tv"}` ?? "null");
 
