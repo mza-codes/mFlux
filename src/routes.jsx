@@ -1,7 +1,7 @@
 import { lazy, useEffect } from 'react';
 import { useRoutes } from 'react-router-dom';
 import { listCategories } from './Pages/Home/Home';
-import useRow, { mfluxCache } from './Services/Row';
+import useRow from './Services/Row';
 
 const WatchList = lazy(() => import('./Pages/WatchList'));
 const Recents = lazy(() => import('./Pages/Recents/RecentsV2'));
@@ -13,7 +13,7 @@ const HomeV1 = lazy(() => import('./Pages/HomeV1'));
 const ErrorPage = lazy(() => import('./Components/ErrorPage'));
 
 function clearCache() {
-    localStorage.removeItem(mfluxCache);
+    // localStorage.removeItem(mfluxCache);
     listCategories.forEach(({ key }) => {
         localStorage.removeItem(key);
     });
@@ -25,8 +25,8 @@ export default function Router() {
 
     useEffect(() => {
         console.count("Rendered router");
-        fillRows();
         clearCache();
+        fillRows();
     }, []);
 
     return useRoutes([

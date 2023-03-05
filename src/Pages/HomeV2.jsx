@@ -4,20 +4,22 @@ import ErrorBar from "../Components/ErrorBar";
 import { PostModelN, PostModelNWRef } from "../Components/PostModel";
 import useRow from "../Services/Row";
 import { listCategories } from "./Home/Home";
-import { default as bannerData } from "../Assets/data";
 
 const HomeV2 = () => {
     const data = useRow(s => s.data);
     const err = useRow(s => s.err);
-    const [items, setItems] = useState(bannerData ?? []);
+    const random = Math.floor(Math.random() * listCategories.length - 1) + 1;
+    const [items, setItems] = useState(data[listCategories?.[random]?.key] ?? []);
     const v = useRef(1);
     const observer = useRef();
+    console.log("DATA ROW: ", data);
 
     const finalObj = useCallback((node) => {
         if (observer.current) observer.current?.disconnect();
         observer.current = new IntersectionObserver(entries => {
             if (entries[0]?.isIntersecting) {
-                if (v.current >= listCategories.length) {
+                if (v.current === random) v.current++;
+                if (v.current >= listCategories.length - 1) {
                     console.log("limited", v.current, "<><>", listCategories.length);
                     return false; // v.current = 0;
                 };
@@ -26,7 +28,7 @@ const HomeV2 = () => {
                 setItems(curr => ([...curr, ...newData]));
                 return true;
             };
-        })
+        }, { rootMargin: "400px" })
         if (node) observer.current?.observe(node);
     }, []);
 
