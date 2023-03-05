@@ -8,7 +8,7 @@ import Loading from './Pages/Loading';
 import { ToastContainer } from 'react-toastify';
 import * as ServiceWorker from "./serviceWorkerRegistration";
 
-const production = true;
+const production = false;
 const root = createRoot(document.getElementById('root'));
 
 if (process.env.NODE_ENV === 'production' || production) {

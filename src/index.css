@@ -24,6 +24,10 @@
     transform: translateX(-50%) translateY(-50%);
 }
 
+.load-placeholder{
+    @apply bg-white bg-opacity-50 animate-pulse font-bold text-white
+}
+
 /* PostModel */
 .text-overflow {
     overflow: hidden;

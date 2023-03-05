@@ -176,7 +176,8 @@ const RecentsV2 = () => {
             {movie?.backdrop_path ?
                 <section className='bannerImg relative'>
                     <LazyLoad offset={100}>
-                        <img className='movieBanner xl:max-h-[100vh] lg:max-h-[100vh] max-h-[60vh]'
+                        <img loading='eager' onLoad={(e) => e.currentTarget.classList.remove("load-placeholder")}
+                            className='load-placeholder movieBanner xl:max-h-[100vh] lg:max-h-[100vh] max-h-[60vh]'
                             src={(POSTER_URL + movie?.backdrop_path)}
                             alt="movie_banner"
                         />
