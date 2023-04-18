@@ -25,7 +25,7 @@ export default function Router() {
 
     useEffect(() => {
         console.count("Rendered router");
-        clearCache();
+        // clearCache();
         fillRows();
     }, []);
 
