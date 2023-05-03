@@ -48,7 +48,12 @@ const useRow = create(
     persist(
         (set, get) => ({
             ...initialState,
-
+            setLoading(boolean) {
+                set((s) => ({
+                    ...s,
+                    loading: boolean,
+                }));
+            },
             setData: (payload) => {
                 console.log("SetData called with: ", payload);
                 set((s) => ({
@@ -60,46 +65,53 @@ const useRow = create(
                 }));
                 return true;
             },
-            populate: () => {
-                get().loading = true;
-                console.log(":Called populate");
-                const setData = get().setData;
-                listCategories.forEach(async (item) => {
-                    const data = await fetchCategory(item);
-                    if (data?.code) {
-                        return set((state) => ({
-                            ...state,
-                            err: data?.message ?? "Error Occured While Fetching Data !",
-                        }));
-                    }
-                    setData({ [item.key]: data?.results ?? [] });
+            populate: async () => {
+                return new Promise(async (res, rej) => {
+                    listCategories.forEach(async (item, i) => {
+                        const data = await fetchCategory(item);
+                        if (data?.code) {
+                            set((state) => ({
+                                ...state,
+                                err: data?.message ?? "Error Occured While Fetching Data !",
+                            }));
+                            return false;
+                        }
+                        get().setData({ [item.key]: data?.results ?? [] });
+
+                        if (i === listCategories.length - 1) res(true);
+                    });
                 });
-                // setData(payload);
-                get().loading = false;
             },
-            populateLocal: () => {
-                get().loading = true;
-                console.count("fillrows func called ");
-                const populate = get().populate;
-                let value = localStorage.getItem(mfluxCache);
-                if (!value) {
-                    populate();
-                    return false;
-                }
+            populateLocal: async () => {
+                return new Promise(async (res, rej) => {
+                    console.count("fillrows func called ");
+                    const populate = get().populate;
 
-                value = JSON.parse(value);
-                const data = value?.state?.data;
-
-                listCategories.every((item) => {
-                    // used every instead of forEach due to error in returns and breaking
-                    const hasValue = data[item.key]?.length >= 1;
-                    if (!hasValue) {
-                        populate();
-                        return false;
+                    let value = localStorage.getItem(mfluxCache);
+                    if (!value) {
+                        const status = await populate();
+                        res(status);
                     }
-                    return true;
+
+                    value = JSON.parse(value);
+                    const data = value?.state?.data;
+
+                    const result = listCategories.every((item) => {
+                        // used every instead of forEach due to error in returns and breaking
+                        const hasValue = data[item.key]?.length >= 1;
+                        if (!hasValue) return false;
+                        return true;
+                    });
+                    console.log("inside promise", result);
+
+                    if (!result) {
+                        const status = await populate();
+                        res(status);
+                    }
+                    res(true);
+                }).then(() => {
+                    get().setLoading(false);
                 });
-                get().loading = false;
             },
         }),
         {
